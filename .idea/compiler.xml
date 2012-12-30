@@ -45,6 +45,7 @@
         <module name="generator" />
         <module name="org.echocat.jemoni.carbon" />
         <module name="org.echocat.jemoni.jmx" />
+        <module name="org.echocat.jomon.bundle" />
         <module name="org.echocat.jomon.cache" />
         <module name="org.echocat.jomon.demo.generator" />
         <module name="org.echocat.jomon.demo.repository" />
@@ -81,6 +82,7 @@
       <module name="org.echocat.jemoni.carbon" target="1.6" />
       <module name="org.echocat.jemoni.jmx" target="1.6" />
       <module name="org.echocat.jomon" target="1.7" />
+      <module name="org.echocat.jomon.bundle" target="1.7" />
       <module name="org.echocat.jomon.cache" target="1.7" />
       <module name="org.echocat.jomon.demo" target="1.7" />
       <module name="org.echocat.jomon.demo.generator" target="1.7" />

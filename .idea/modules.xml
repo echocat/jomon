@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/org.echocat.jomon.iml" filepath="$PROJECT_DIR$/org.echocat.jomon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bundle/org.echocat.jomon.bundle.iml" filepath="$PROJECT_DIR$/bundle/org.echocat.jomon.bundle.iml" />
       <module fileurl="file://$PROJECT_DIR$/cache/org.echocat.jomon.cache.iml" filepath="$PROJECT_DIR$/cache/org.echocat.jomon.cache.iml" />
       <module fileurl="file://$PROJECT_DIR$/demo/org.echocat.jomon.demo.iml" filepath="$PROJECT_DIR$/demo/org.echocat.jomon.demo.iml" group="org.echocat.jomon.demo and modules" />
       <module fileurl="file://$PROJECT_DIR$/demo/generator/org.echocat.jomon.demo.generator.iml" filepath="$PROJECT_DIR$/demo/generator/org.echocat.jomon.demo.generator.iml" group="org.echocat.jomon.demo and modules" />

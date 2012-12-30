@@ -32,6 +32,7 @@
         <module>resources</module>
         <module>runtime</module>
         <module>testing</module>
+        <module>bundle</module>
     </modules>
 
     <licenses>
@@ -315,6 +316,24 @@
                         <arguments>-DskipTests</arguments>
                         <scmCommentPrefix>* [RELEASE] </scmCommentPrefix>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.2.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptors>
+                                    <descriptor>src/main/assemble/distribution.xml</descriptor>
+                                </descriptors>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
