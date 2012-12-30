@@ -264,6 +264,11 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.2</version>
                     <configuration>
@@ -306,7 +311,9 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.4</version>
                     <configuration>
-                        <tagNameFormat>release-@{project.version}</tagNameFormat>
+                        <tagNameFormat>version-@{project.version}</tagNameFormat>
+                        <arguments>-DskipTests</arguments>
+                        <scmCommentPrefix>* [RELEASE] </scmCommentPrefix>
                     </configuration>
                 </plugin>
             </plugins>
