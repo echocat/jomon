@@ -80,8 +80,26 @@ h2. Other useful stuff
 
 h1. Links
 
-| Maven Repository | http://repo.echocat.org/echocat |
-| Issues | https://github.com/echocat/jomon/issues |
+* "Maven Repository":http://repo.echocat.org/echocat
+* "Download latest bundle":https://repo.echocat.org/jomon-releases/org/echocat/jomon/bundle/[RELEASE]/bundle-[RELEASE]-distribution.zip (If you don't want to use maven)
+* "Issues":https://github.com/echocat/jomon/issues
+
+h1. Use with Maven
+
+bc.. <repositories>
+    <repository>
+        <id>echocat</id>
+        <url>http://repo.echocat.org/all</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>runtime</artifactId>
+        <version><latest-version></version>
+    </dependency>
+</dependencies>
 
 h1. Want to help?
 
