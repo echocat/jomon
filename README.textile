@@ -89,7 +89,7 @@ h1. Use with Maven
 bc. <repositories>
     <repository>
         <id>echocat</id>
-        <url>http://repo.echocat.org/all</url>
+        <url>http://repo.echocat.org/echocat</url>
     </repository>
 </repositories>
 <dependencies>
