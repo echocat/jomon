@@ -17,13 +17,13 @@ There are extensions (of this interface) that adds some more features to the bas
 Currently there are basic implementations available:
 | @org.echocat.jomon.cache.CombinedCache@ | which makes it possible to stack multiple Cache |
 | @org.echocat.jomon.cache.ServletRequestBasedCache@ | which provides caching based on a ServletRequest |
-| @org.echocat.jomon.cache.LfuCache@ |  |
-| @org.echocat.jomon.cache.LruCache@ |  |
-| @org.echocat.jomon.cache.FifoCache@ |  |
+| @org.echocat.jomon.cache.LfuCache@ | Least Frequently Used |
+| @org.echocat.jomon.cache.LruCache@ | Least Recently Used |
+| @org.echocat.jomon.cache.FifoCache@ | First In First Out |
 
 Retrieve an instance of a Cache?
 
-bc.. cacheProvider.provide(getClass(), "hostToIp",
+bc. cacheProvider.provide(getClass(), "hostToIp",
     lruCache(String.class, String.class).withCapacity(10000).withMaximumLifetime("1h")
 );
 
@@ -55,12 +55,12 @@ You just have to reconfigure the DNS-Server entries and the nodes in the cluster
 
 Config:
 
-bc.. TcpClusterChannel.service = ttc
+bc. TcpClusterChannel.service = ttc
 TcpClusterChannel.remoteAddresses = cluster.example.com
 
 Hosts:
 
-bc.. _ttc._tcp.cluster.example.com. 86400 IN SRV 10 60 5060 node1.example.com.
+bc. _ttc._tcp.cluster.example.com. 86400 IN SRV 10 60 5060 node1.example.com.
 _ttc._tcp.cluster.example.com. 86400 IN SRV 10 60 5060 node2.example.com.
 _ttc._tcp.cluster.example.com. 86400 IN SRV 10 60 5060 node3.example.com.
 
