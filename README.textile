@@ -96,10 +96,58 @@ bc.. <repositories>
 <dependencies>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
+        <artifactId>cache</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>cluster</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>common</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>http</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>service</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>testing</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>process</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>resources</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon</groupId>
         <artifactId>runtime</artifactId>
-        <version><latest-version></version>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>testing</artifactId>
+        <version>-- version --</version>
     </dependency>
 </dependencies>
+
+"Find out what are the possible versions or what is the latest version.":http://repo.echocat.org/echocat/org/echocat/jomon/
+
 
 h1. Want to help?
 
