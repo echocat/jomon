@@ -15,6 +15,7 @@ There are extensions (of this interface) that adds some more features to the bas
 * ...
 
 Currently there are basic implementations available:
+
 | @org.echocat.jomon.cache.CombinedCache@ | which makes it possible to stack multiple Cache |
 | @org.echocat.jomon.cache.ServletRequestBasedCache@ | which provides caching based on a ServletRequest |
 | @org.echocat.jomon.cache.LfuCache@ | Least Frequently Used |
