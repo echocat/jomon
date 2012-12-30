@@ -1,0 +1,36 @@
+/*****************************************************************************************
+ * *** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 2.0
+ *
+ * echocat Jomon, Copyright (c) 2012 echocat
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * *** END LICENSE BLOCK *****
+ ****************************************************************************************/
+
+package org.echocat.jomon.cache.management;
+
+import org.echocat.jomon.cache.Cache;
+import org.echocat.jomon.cache.LfuCache;
+import org.echocat.jomon.cache.LimitedCache;
+
+import javax.annotation.Nonnull;
+
+public class LfuCacheCreator extends DefaultCacheCreatorSupport {
+
+    @Override
+    public boolean canHandleType(@Nonnull Class<? extends Cache<?, ?>> type) throws Exception {
+        return LfuCache.class.isAssignableFrom(type);
+    }
+
+    @Nonnull
+    @Override
+    protected <K, V> LimitedCache<K, V> newInstance(@Nonnull CacheDefinition<K, V, ?> by) throws Exception {
+        return new LfuCache<>(by.getKeyType(), by.getValueType());
+    }
+
+}

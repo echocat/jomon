@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ **** BEGIN LICENSE BLOCK *****
+  ~
+  ~ Version: MPL 2.0
+  ~
+  ~ echocat Jomon, Copyright (c) 2012 echocat
+  ~
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~
+  ~ **** END LICENSE BLOCK *****
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <import resource="../baseBeans.xml" />
+    <import resource="classpath:/org/echocat/jomon/cache/management/baseBeans.xml" />
+
+    <bean class="org.echocat.jomon.resources.optimizing.MakeCssResourcePathAbsoluteOptimizer" />
+    <bean class="org.echocat.jomon.resources.optimizing.YuiCssResourceOptimizer" />
+    <bean class="org.echocat.jomon.resources.optimizing.CombineCssResourcesOptimizer" />
+    <bean class="org.echocat.jomon.resources.optimizing.YuiJavaScriptResourceOptimizer" />
+    <bean class="org.echocat.jomon.resources.optimizing.CombineJavaScriptResourcesOptimizer" />
+
+    <bean id="org.echocat.jomon.resources.optimizing.ResourcesOptimizer" class="org.echocat.jomon.resources.optimizing.CombinedResourcesOptimizer"
+          c:cacheProvider-ref="org.echocat.jomon.cache.management.CacheProvider">
+        <constructor-arg index="0">
+            <list>
+                <ref bean="org.echocat.jomon.resources.optimizing.MakeCssResourcePathAbsoluteOptimizer" />
+                <ref bean="org.echocat.jomon.resources.optimizing.YuiCssResourceOptimizer" />
+                <ref bean="org.echocat.jomon.resources.optimizing.YuiJavaScriptResourceOptimizer" />
+            </list>
+        </constructor-arg>
+        <property name="postResourcesOptimizers">
+            <list>
+                <ref bean="org.echocat.jomon.resources.optimizing.CombineCssResourcesOptimizer" />
+                <ref bean="org.echocat.jomon.resources.optimizing.CombineJavaScriptResourcesOptimizer" />
+            </list>
+        </property>
+    </bean>
+
+    <!--suppress SpringModelInspection -->
+    <bean class="org.echocat.jomon.resources.optimizing.OptimizationContextFactory"
+          c:optimizer-ref="org.echocat.jomon.resources.optimizing.ResourcesOptimizer"
+          c:resourceProvider-ref="org.echocat.jomon.resources.PathBasedResourceProvider"
+          c:resourceRequestUriGenerator-ref="org.echocat.jomon.resources.ResourceRequestUriGenerator"
+          c:resourceRepository-ref="org.echocat.jomon.resources.ResourceRepository"/>
+</beans>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ **** BEGIN LICENSE BLOCK *****
+  ~
+  ~ Version: MPL 2.0
+  ~
+  ~ echocat Jomon, Copyright (c) 2012 echocat
+  ~
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~
+  ~ **** END LICENSE BLOCK *****
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <!--suppress SpringModelInspection -->
+    <bean id="org.echocat.jomon.cache.management.CacheCreator" class="org.echocat.jomon.cache.management.CombinedCacheCreator"
+          p:delegates-ref="org.echocat.jomon.cache.management.CombinedCacheCreator.delegates" />
+
+    <!--suppress SpringModelInspection -->
+    <bean id="org.echocat.jomon.cache.management.CacheRepository" class="org.echocat.jomon.cache.management.DefaultCacheRepository"
+          c:cacheCreator-ref="org.echocat.jomon.cache.management.CacheCreator"
+          p:listeners-ref="org.echocat.jomon.cache.management.CacheRepository.listeners" />
+    <alias name="org.echocat.jomon.cache.management.CacheRepository" alias="org.echocat.jomon.cache.management.CacheProvider" />
+
+</beans>

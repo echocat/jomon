@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ **** BEGIN LICENSE BLOCK *****
+  ~
+  ~ Version: MPL 2.0
+  ~
+  ~ echocat Jomon, Copyright (c) 2012 echocat
+  ~
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~
+  ~ **** END LICENSE BLOCK *****
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <import resource="classpath:/org/echocat/jomon/cache/management/baseBeans.xml" />
+
+    <bean id="org.echocat.jomon.net.cluster.channel.MulticastClusterChannel" class="org.echocat.jomon.net.cluster.channel.multicast.MulticastClusterChannel" lazy-init="true" init-method="init" destroy-method="close" />
+    <alias name="org.echocat.jomon.net.cluster.channel.MulticastClusterChannel" alias="org.echocat.jomon.net.cluster.channel.ClusterChannel" />
+
+    <bean id="org.echocat.jomon.net.cache.RemoveOverClusterListener" class="org.echocat.jomon.net.cluster.cache.RemoveOverClusterListener" lazy-init="true" init-method="init" destroy-method="close"
+          c:cacheRepository-ref="org.echocat.jomon.cache.management.CacheRepository"
+          c:clusterChannel-ref="org.echocat.jomon.net.cluster.channel.ClusterChannel" />
+
+    <bean id="org.echocat.jomon.net.cache.ClearOverClusterListener" class="org.echocat.jomon.net.cluster.cache.ClearOverClusterListener" lazy-init="true" init-method="init" destroy-method="close"
+          c:cacheRepository-ref="org.echocat.jomon.cache.management.CacheRepository"
+          c:clusterChannel-ref="org.echocat.jomon.net.cluster.channel.ClusterChannel" />
+
+</beans>
