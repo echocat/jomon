@@ -86,13 +86,12 @@ h1. Links
 
 h1. Use with Maven
 
-bc.. <repositories>
+bc. <repositories>
     <repository>
         <id>echocat</id>
         <url>http://repo.echocat.org/all</url>
     </repository>
 </repositories>
-
 <dependencies>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
@@ -146,8 +145,8 @@ bc.. <repositories>
     </dependency>
 </dependencies>
 
-"Find out what are the possible versions or what is the latest version.":http://repo.echocat.org/echocat/org/echocat/jomon/
 
+"Find out what are the possible versions or what is the latest version.":http://repo.echocat.org/echocat/org/echocat/jomon/
 
 h1. Want to help?
 
