@@ -17,9 +17,9 @@ There are extensions (of this interface) that adds some more features to the bas
 Currently there are basic implementations available:
 | @org.echocat.jomon.cache.CombinedCache@ | which makes it possible to stack multiple Cache |
 | @org.echocat.jomon.cache.ServletRequestBasedCache@ | which provides caching based on a ServletRequest |
-| @org.echocat.jomon.cache.LfuCache@ | |
-| @org.echocat.jomon.cache.LruCache@ | |
-| @org.echocat.jomon.cache.FifoCache@ | |
+| @org.echocat.jomon.cache.LfuCache@ |  |
+| @org.echocat.jomon.cache.LruCache@ |  |
+| @org.echocat.jomon.cache.FifoCache@ |  |
 
 Retrieve an instance of a Cache?
 
