@@ -8,6 +8,7 @@
 /.idea/scopes
 
 /target
+/bundle/target
 /cache/target
 
 /demo/target
