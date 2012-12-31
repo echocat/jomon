@@ -148,6 +148,10 @@ bc. <repositories>
 
 "Find out what are the possible versions or what is the latest version.":http://repo.echocat.org/echocat/org/echocat/jomon/
 
+h1. License
+
+echocat Velma is licensed under "MPL 2.0":http://mozilla.org/MPL/2.0/.
+
 h1. Want to help?
 
 You are welcome. Fork or "contact us":mailto:contact@echocat.org.
