@@ -25,14 +25,15 @@
     <url>https://jomon.echocat.org</url>
 
     <modules>
+        <module>bundle</module>
         <module>cache</module>
         <module>demo</module>
+        <module>format</module>
         <module>net</module>
         <module>process</module>
         <module>resources</module>
         <module>runtime</module>
         <module>testing</module>
-        <module>bundle</module>
     </modules>
 
     <licenses>

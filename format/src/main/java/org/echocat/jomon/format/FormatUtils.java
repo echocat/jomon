@@ -12,7 +12,7 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.format;
+package org.echocat.jomon.format;
 
 import net.htmlparser.jericho.MasonTagTypes;
 import net.htmlparser.jericho.MicrosoftConditionalCommentTagTypes;
@@ -44,7 +44,6 @@ public class FormatUtils {
         return writer.toString();
     }
 
-    private FormatUtils() {
-    }
+    private FormatUtils() {}
 
 }

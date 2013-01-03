@@ -12,12 +12,14 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.format;
+package org.echocat.jomon.format;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.Writer;
 
-import static org.echocat.jomon.runtime.format.Target.Format.plain;
+import static org.echocat.jomon.format.Target.Format.textPlain;
 
 public class Target {
 
@@ -28,7 +30,7 @@ public class Target {
 
     @Nonnull
     public static Target targetOf(@Nonnull Writer writer) {
-        return targetOf(plain, writer);
+        return targetOf(textPlain, writer);
     }
 
     private final Format _format;
@@ -76,29 +78,19 @@ public class Target {
     }
 
     @SuppressWarnings("ConstantNamingConvention")
-    public static interface Format {
+    public static interface Format extends org.echocat.jomon.format.Format {
 
-        public static final Format plain = new Impl("plain");
+        public static final Format textPlain = new Impl("textPlain");
         public static final Format html = new Impl("html");
 
-        @Nonnull
-        public String getName();
-
-        public static class Impl extends FormatSupport implements Format {
+        @Immutable
+        @ThreadSafe
+        public static class Impl extends org.echocat.jomon.format.Format.Impl implements Format {
 
             public Impl(@Nonnull String name) {
-                super(name);
+                super(name, Format.class);
             }
 
-            @Override
-            protected boolean isOfRequiredType(@Nonnull Object o) {
-                return o instanceof Format;
-            }
-
-            @Override
-            protected String getNameOf(@Nonnull Object o) {
-                return ((Format)o).getName();
-            }
         }
     }
 

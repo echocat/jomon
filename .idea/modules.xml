@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/demo/org.echocat.jomon.demo.iml" filepath="$PROJECT_DIR$/demo/org.echocat.jomon.demo.iml" group="org.echocat.jomon.demo and modules" />
       <module fileurl="file://$PROJECT_DIR$/demo/generator/org.echocat.jomon.demo.generator.iml" filepath="$PROJECT_DIR$/demo/generator/org.echocat.jomon.demo.generator.iml" group="org.echocat.jomon.demo and modules" />
       <module fileurl="file://$PROJECT_DIR$/demo/repository/org.echocat.jomon.demo.repository.iml" filepath="$PROJECT_DIR$/demo/repository/org.echocat.jomon.demo.repository.iml" group="org.echocat.jomon.demo and modules" />
+      <module fileurl="file://$PROJECT_DIR$/format/org.echocat.jomon.format.iml" filepath="$PROJECT_DIR$/format/org.echocat.jomon.format.iml" />
       <module fileurl="file://$PROJECT_DIR$/net/org.echocat.jomon.net.iml" filepath="$PROJECT_DIR$/net/org.echocat.jomon.net.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" filepath="$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" filepath="$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" group="org.echocat.jomon.net and modules" />

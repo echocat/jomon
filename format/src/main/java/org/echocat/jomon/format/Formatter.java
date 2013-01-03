@@ -12,7 +12,7 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.format;
+package org.echocat.jomon.format;
 
 import org.echocat.jomon.runtime.util.Hints;
 
@@ -32,4 +32,7 @@ public interface Formatter {
     @Nonnull
     public String format(@Nonnull Source.Format sourceFormat, @Nonnull String source, @Nonnull Target.Format targetFormat, @Nullable Hints hints) throws IllegalArgumentException, IOException;
 
+    public boolean canHandle(@Nonnull Source source, @Nonnull Target target);
+
+    public boolean canHandle(@Nonnull Source source, @Nonnull Target target, @Nullable Hints hints);
 }

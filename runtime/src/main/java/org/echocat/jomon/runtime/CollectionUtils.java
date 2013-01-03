@@ -93,6 +93,53 @@ public class CollectionUtils {
         return map == null || map.isEmpty();
     }
 
+    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable T[] elements) {
+        if (elements != null) {
+            Collections.addAll(to, elements);
+        }
+    }
+
+    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable Iterable<T> elements) {
+        if (elements != null) {
+            addAll(to, elements.iterator());
+        }
+    }
+
+    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable Iterator<T> elements) {
+        if (elements != null) {
+            while (elements.hasNext()) {
+                to.add(elements.next());
+            }
+        }
+    }
+
+    /**
+     * Returns a {@link List} containing the given <code>objects</code>,
+     * returns an empty List, if <code>objects</code> is null.
+     */
+    @Nonnull
+    public static <T> List<T> asList(@Nullable T... objects) {
+        final List<T> result;
+        if (objects == null) {
+            result = new ArrayList<>();
+        } else {
+            final int initialCapacity = Math.max(16, ((objects.length + 2) / 3) * 4);
+            result = new ArrayList<>(initialCapacity);
+            result.addAll(new ArrayWrapper<>(objects));
+        }
+        return result;
+    }
+
+    /**
+     * Returns an unmodifiable {@link List} containing the given <code>objects</code>,
+     * returns an empty List, if <code>objects</code> is null.
+     */
+    @Nonnull
+    public static <T> List<T> asImmutableList(@Nullable T... objects) {
+        return unmodifiableList(asList(objects));
+    }
+
+
     @Nonnull
     public static <T> List<T> asList(@Nullable Iterator<T> iterator) {
         final List<T> result = new ArrayList<>();
@@ -120,11 +167,11 @@ public class CollectionUtils {
         final List<T> result;
         if (in instanceof List) {
             result = (List<T>) in;
+        } else if (in instanceof Collection) {
+            result = new ArrayList<>((Collection<T>) in);
         } else {
             result = new ArrayList<>();
-            for (T t : result) {
-                result.add(t);
-            }
+            addAll(result, in);
         }
         return result;
     }
@@ -156,8 +203,50 @@ public class CollectionUtils {
      * returns an empty Set, if <code>objects</code> is null.
      */
     @Nonnull
-    public static <T> Set<T> asUnmodifiableSet(@Nullable T... objects) {
+    public static <T> Set<T> asImmutableSet(@Nullable T... objects) {
         return unmodifiableSet(asSet(objects));
+    }
+
+
+    @Nonnull
+    public static <T> Set<T> asSet(@Nullable Iterator<T> iterator) {
+        final Set<T> result = new LinkedHashSet<>();
+        try {
+            if (iterator != null) {
+                while (iterator.hasNext()) {
+                    result.add(iterator.next());
+                }
+            }
+        } finally {
+            if (iterator instanceof AutoCloseable) {
+                closeQuietly((AutoCloseable) iterator);
+            }
+        }
+        return result;
+    }
+
+    @Nonnull
+    public static <T> Set<T> asImmutableSet(@Nullable Iterator<T> iterator) {
+        return unmodifiableSet(asSet(iterator));
+    }
+
+    @Nonnull
+    public static <T> Set<T> asSet(@Nullable Iterable<T> in) {
+        final Set<T> result;
+        if (in instanceof Set) {
+            result = (Set<T>) in;
+        } else if (in instanceof Collection) {
+            result = new LinkedHashSet<>((Collection<T>) in);
+        } else {
+            result = new LinkedHashSet<>();
+            addAll(result, in);
+        }
+        return result;
+    }
+
+    @Nonnull
+    public static <T> Set<T> asImmutableSet(@Nullable Iterable<T> in) {
+        return unmodifiableSet(asSet(in));
     }
 
     @Nonnull

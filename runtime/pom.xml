@@ -66,33 +66,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Format -->
-        <dependency>
-            <groupId>org.eclipse.mylyn.wikitext</groupId>
-            <artifactId>wikitext</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.mylyn.wikitext</groupId>
-            <artifactId>wikitext.confluence</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.mylyn.wikitext</groupId>
-            <artifactId>wikitext.mediawiki</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.mylyn.wikitext</groupId>
-            <artifactId>wikitext.textile</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.htmlparser.jericho</groupId>
-            <artifactId>jericho-html</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- Other -->
         <dependency>
             <groupId>javax.mail</groupId>

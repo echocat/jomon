@@ -1,0 +1,3 @@
+confluence=org.eclipse.mylyn.wikitext.confluence.core.ConfluenceLanguage
+mediaWiki=org.eclipse.mylyn.wikitext.mediawiki.core.MediaWikiLanguage
+textile=org.eclipse.mylyn.wikitext.textile.core.TextileLanguage

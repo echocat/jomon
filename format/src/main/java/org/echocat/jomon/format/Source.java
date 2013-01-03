@@ -12,13 +12,15 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.format;
+package org.echocat.jomon.format;
 
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.Reader;
 import java.io.StringReader;
 
-import static org.echocat.jomon.runtime.format.Source.Format.plain;
+import static org.echocat.jomon.format.Source.Format.textPlain;
 
 public class Source {
 
@@ -29,7 +31,7 @@ public class Source {
 
     @Nonnull
     public static Source sourceOf(@Nonnull Reader reader) {
-        return sourceOf(plain, reader);
+        return sourceOf(textPlain, reader);
     }
 
     @Nonnull
@@ -39,7 +41,7 @@ public class Source {
 
     @Nonnull
     public static Source sourceOf(@Nonnull String content) {
-        return sourceOf(plain, content);
+        return sourceOf(textPlain, content);
     }
 
     private final Format _format;
@@ -88,32 +90,19 @@ public class Source {
 
 
     @SuppressWarnings("ConstantNamingConvention")
-    public static interface Format {
+    public static interface Format extends org.echocat.jomon.format.Format {
 
-        public static final Format plain = new Impl("plain");
+        public static final Format textPlain = new Impl("textPlain");
         public static final Format html = new Impl("html");
-        public static final Format confluence = new Impl("confluence");
-        public static final Format mediaWiki = new Impl("mediaWiki");
-        public static final Format textile = new Impl("textile");
 
-        @Nonnull
-        public String getName();
-
-        public static class Impl extends FormatSupport implements Format {
+        @Immutable
+        @ThreadSafe
+        public static class Impl extends org.echocat.jomon.format.Format.Impl implements Format {
 
             public Impl(@Nonnull String name) {
-                super(name);
+                super(name, Format.class);
             }
 
-            @Override
-            protected boolean isOfRequiredType(@Nonnull Object o) {
-                return o instanceof Format;
-            }
-
-            @Override
-            protected String getNameOf(@Nonnull Object o) {
-                return ((Format)o).getName();
-            }
         }
     }
 

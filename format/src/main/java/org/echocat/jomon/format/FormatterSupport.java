@@ -12,7 +12,7 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.format;
+package org.echocat.jomon.format;
 
 import org.echocat.jomon.runtime.util.Hints;
 
@@ -21,21 +21,21 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import static org.echocat.jomon.runtime.format.Source.sourceOf;
-import static org.echocat.jomon.runtime.format.Target.targetOf;
+import static org.echocat.jomon.format.Source.sourceOf;
+import static org.echocat.jomon.format.Target.targetOf;
+import static org.echocat.jomon.runtime.util.Hints.EMPTY_HINTS;
 
 public abstract class FormatterSupport implements Formatter {
 
     @Override
-
     public void format(@Nonnull Source source, @Nonnull Target target) throws IllegalArgumentException, IOException {
-        format(source, target, Hints.EMPTY_HINTS);
+        format(source, target, EMPTY_HINTS);
     }
 
     @Override
     @Nonnull
     public String format(@Nonnull Source.Format sourceFormat, @Nonnull String source, @Nonnull Target.Format targetFormat) throws IllegalArgumentException, IOException {
-        return format(sourceFormat, source, targetFormat, Hints.EMPTY_HINTS);
+        return format(sourceFormat, source, targetFormat, EMPTY_HINTS);
     }
 
     @Override
@@ -46,4 +46,8 @@ public abstract class FormatterSupport implements Formatter {
         return writer.toString();
     }
 
+    @Override
+    public boolean canHandle(@Nonnull Source source, @Nonnull Target target) {
+        return canHandle(source, target, EMPTY_HINTS);
+    }
 }
