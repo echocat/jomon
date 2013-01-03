@@ -99,6 +99,11 @@ bc. <repositories>
         <version>-- version --</version>
     </dependency>
     <dependency>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>format</artifactId>
+        <version>-- version --</version>
+    </dependency>
+    <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>cluster</artifactId>
         <version>-- version --</version>
