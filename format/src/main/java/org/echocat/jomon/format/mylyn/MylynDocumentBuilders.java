@@ -16,6 +16,7 @@ package org.echocat.jomon.format.mylyn;
 
 import org.echocat.jomon.format.Target;
 import org.echocat.jomon.format.Target.Format;
+import org.echocat.jomon.runtime.util.Hints;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,5 +54,10 @@ public class MylynDocumentBuilders extends MylynAssignmentsSupport<Target.Format
             result = null;
         }
         return result;
+    }
+
+    @Override
+    public Format findTargetFormatBy(@Nonnull String name, @Nullable Hints hints) {
+        return findFormatFor(name);
     }
 }

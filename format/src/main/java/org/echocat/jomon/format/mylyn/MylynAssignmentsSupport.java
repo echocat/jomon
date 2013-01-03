@@ -71,6 +71,11 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
         return _formatToType.get(format);
     }
 
+    @Nullable
+    protected F findFormatFor(@Nonnull String name) {
+        return _nameToFormat.get(name);
+    }
+
     @Nonnull
     public static <F extends Format> Map<F, Class<?>> loadFormatToDocumentBuilderType(@Nullable ClassLoader preferredClassLoader, @Nonnull Class<F> formatType, @Nonnull String basicTypeName) {
         final ClassLoader classLoader = preferredClassLoader != null ? preferredClassLoader : currentThread().getContextClassLoader();

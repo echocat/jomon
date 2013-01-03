@@ -15,6 +15,8 @@
 package org.echocat.jomon.format.mylyn;
 
 import org.echocat.jomon.format.Source;
+import org.echocat.jomon.format.Source.Format;
+import org.echocat.jomon.runtime.util.Hints;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -54,4 +56,8 @@ public class MylynMarkupLanguages extends MylynAssignmentsSupport<Source.Format>
         return result;
     }
 
+    @Override
+    public Format findSourceFormatBy(@Nonnull String name, @Nullable Hints hints) {
+        return findFormatFor(name);
+    }
 }
