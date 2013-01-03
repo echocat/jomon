@@ -21,7 +21,7 @@
     <groupId>org.echocat</groupId>
     <artifactId>jomon</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <url>https://jomon.echocat.org</url>
 
     <modules>

@@ -21,6 +21,8 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.6" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.libphonenumber:libphonenumber:4.9" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.16.1-GA" level="project" />
+    <orderEntry type="module" module-name="org.echocat.jomon.format" />
+    <orderEntry type="library" name="Maven: net.htmlparser.jericho:jericho-html:3.3" level="project" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.cluster" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.service" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.common" />
