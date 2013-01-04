@@ -17,6 +17,7 @@ package org.echocat.jomon.runtime.util;
 import org.echocat.jomon.runtime.annotations.Excluding;
 import org.echocat.jomon.runtime.annotations.Including;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -39,10 +40,20 @@ public abstract class RangeSupport<V> implements Range<V> {
         return _from;
     }
 
+    @Nonnull
+    public V getFrom(@Nonnull V defValue) {
+        return _from != null ? _from : defValue;
+    }
+
     @Override
     @Nullable
     public V getTo() {
         return _to;
+    }
+
+    @Nonnull
+    public V getTo(@Nonnull V defValue) {
+        return _to != null ? _to : defValue;
     }
 
     @Override

@@ -31,6 +31,9 @@ public abstract class NumberRange<N extends Number> extends RangeSupport<N> impl
 
     protected NumberRange(@Nullable @Including N from, @Nullable @Excluding N to) {
         super(from, to);
+        if (from != null && to != null && isGreaterThan(from, to)) {
+            throw new IllegalArgumentException("From value (" + from + ") is greater than to value (" + to + ")");
+        }
     }
 
     @Override
