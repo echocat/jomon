@@ -59,7 +59,7 @@ public class RetryForSpecifiedTimeStrategy<T> extends BaseRetryingStrategy<T, Re
 
     @Override
     public boolean isRetryRequiredForException(@Nonnull Throwable e, @Nonnull RetryingStatus status) {
-        return isExceptionThatForceRetry(e) && _maximumWaitTime.isLessThanOrEqualTo(status.getDurationSinceStart());
+        return isExceptionThatForceRetry(e) && _maximumWaitTime.isGreaterThan(status.getDurationSinceStart());
     }
 
     @Override
