@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,7 +37,7 @@ import java.util.concurrent.locks.Lock;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.unmodifiableSet;
 import static org.echocat.jomon.net.cluster.channel.Node.ADDRESS_BASED_COMPARATOR;
-import static org.echocat.jomon.net.cluster.channel.ThreadUtils.stop;
+import static org.echocat.jomon.runtime.concurrent.ThreadUtils.stop;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
 @ThreadSafe

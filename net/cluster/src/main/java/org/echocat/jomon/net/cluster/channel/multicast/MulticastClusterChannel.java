@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,7 +36,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.echocat.jomon.net.cluster.channel.ByteUtils.getLong;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelConstants.pingCommand;
-import static org.echocat.jomon.net.cluster.channel.ThreadUtils.stop;
+import static org.echocat.jomon.runtime.concurrent.ThreadUtils.stop;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
 public class MulticastClusterChannel extends NetBasedClusterChannel<Short, MulticastNode> implements AddressEnabledClusterChannel<Short, MulticastNode>, SendingQueueEnabledClusterChannel<Short, MulticastNode> {

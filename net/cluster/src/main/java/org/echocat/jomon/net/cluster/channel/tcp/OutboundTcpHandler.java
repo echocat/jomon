@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,7 +38,7 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.net.Protocol.tcp;
 import static org.echocat.jomon.net.cluster.channel.ByteUtils.*;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelConstants.pingCommand;
-import static org.echocat.jomon.net.cluster.channel.ThreadUtils.stop;
+import static org.echocat.jomon.runtime.concurrent.ThreadUtils.stop;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
 @ThreadSafe
