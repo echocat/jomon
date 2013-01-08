@@ -1,5 +1,7 @@
 h1. echocat Jomon
 
+"!https://secure.travis-ci.org/echocat/jemoni.png!":https://travis-ci.org/echocat/jemoni
+
 ...is a library comparable with "Apache Commons":http://commons.apache.org and it extends also Apache Commons but it contains a lot of other useful tools for Java.
 
 h1. Highlights
