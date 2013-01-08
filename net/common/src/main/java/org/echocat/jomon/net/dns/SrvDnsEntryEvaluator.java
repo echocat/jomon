@@ -16,6 +16,7 @@ package org.echocat.jomon.net.dns;
 
 import org.echocat.jomon.net.HostService;
 import org.echocat.jomon.net.Protocol;
+import org.echocat.jomon.runtime.util.ServiceTemporaryUnavailableException;
 import org.xbill.DNS.*;
 
 import javax.annotation.Nonnegative;
@@ -133,7 +134,7 @@ public class SrvDnsEntryEvaluator {
         } else if (result == TYPE_NOT_FOUND) {
             throw new UnknownHostException("Could not find the host that should contain the srv entry for query '" + query + "' on remote " + toStringOfResolver(lookup) + ".");
         } else if (result == TRY_AGAIN) {
-            throw new SocketException("Could not get information from remote " + toStringOfResolver(lookup) + ".");
+            throw new ServiceTemporaryUnavailableException("Could not get information from remote " + toStringOfResolver(lookup) + ".");
         } else if (result != 0) {
             throw new RuntimeException("Could not get information from remote " + toStringOfResolver(lookup) + ". Got: " + lookup.getErrorString());
         }

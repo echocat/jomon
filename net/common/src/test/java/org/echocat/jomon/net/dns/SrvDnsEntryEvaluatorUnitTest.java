@@ -17,6 +17,9 @@ package org.echocat.jomon.net.dns;
 import org.echocat.jomon.net.HostService;
 import org.echocat.jomon.net.Protocol;
 import org.echocat.jomon.net.dns.SrvDnsEntryEvaluator.NoSuchSrvRecordException;
+import org.echocat.jomon.runtime.concurrent.RetryForSpecifiedCountStrategy;
+import org.echocat.jomon.runtime.concurrent.RetryingStrategy;
+import org.echocat.jomon.runtime.util.ServiceTemporaryUnavailableException;
 import org.echocat.jomon.testing.environments.LogEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,9 +29,9 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import static org.echocat.jomon.net.HostService.hostService;
 import static org.echocat.jomon.net.Protocol.tcp;
@@ -36,6 +39,7 @@ import static org.echocat.jomon.net.dns.AddressUtils.toInetAddress;
 import static org.echocat.jomon.net.dns.RecordUtils.a;
 import static org.echocat.jomon.net.dns.RecordUtils.srv;
 import static org.echocat.jomon.net.dns.ZoneUtils.zone;
+import static org.echocat.jomon.runtime.concurrent.Retryer.executeWithRetry;
 import static org.echocat.jomon.testing.BaseMatchers.is;
 import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
 import static org.junit.Assert.assertThat;
@@ -48,6 +52,7 @@ public class SrvDnsEntryEvaluatorUnitTest {
     protected static final String SERVICE1_HOST = "service1." + DOMAIN;
 
     protected static final String SERVICE_NAME = "my-service";
+    protected static final RetryingStrategy<List<HostService>> RETRY_STRATEGY = RetryForSpecifiedCountStrategy.<List<HostService>>retryForSpecifiedCountOf(10).withExceptionsThatForceRetry(ServiceTemporaryUnavailableException.class).asUnmodifiable();
 
     @Rule
     public final LogEnvironment _logEnvironment = new LogEnvironment();
@@ -82,7 +87,7 @@ public class SrvDnsEntryEvaluatorUnitTest {
     public void testIllegalServerLookup() throws Exception {
         try {
             createEvaluator(new InetSocketAddress(InetAddress.getLocalHost(), 6666)).lookup(SERVICE_NAME, tcp, DOMAIN);
-        } catch (SocketException expected) {}
+        } catch (ServiceTemporaryUnavailableException expected) {}
     }
 
     protected static void setupPrimaryZoneOf(@Nonnull DnsServer dnsServer) throws IOException {
@@ -97,8 +102,10 @@ public class SrvDnsEntryEvaluatorUnitTest {
     }
 
     @Nonnull
-    protected List<HostService> lookup(@Nonnull String service, @Nonnull Protocol protocol, @Nonnull String host) throws Exception {
-        return createEvaluator(_dnsServer.getAddress()).lookup(service, protocol, host);
+    protected List<HostService> lookup(@Nonnull final String service, @Nonnull final Protocol protocol, @Nonnull final String host) throws Exception {
+        return executeWithRetry(new Callable<List<HostService>>() { @Override public List<HostService> call() throws Exception {
+            return createEvaluator(_dnsServer.getAddress()).lookup(service, protocol, host);
+        }}, RETRY_STRATEGY, Exception.class);
     }
 
     @Nonnull
