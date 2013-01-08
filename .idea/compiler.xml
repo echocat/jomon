@@ -31,10 +31,54 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
     </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="format" />
+        <module name="org.echocat.jomon.bundle" />
+        <module name="org.echocat.jomon.cache" />
+        <module name="org.echocat.jomon.demo.generator" />
+        <module name="org.echocat.jomon.demo.repository" />
+        <module name="org.echocat.jomon.format" />
+        <module name="org.echocat.jomon.net.cluster" />
+        <module name="org.echocat.jomon.net.common" />
+        <module name="org.echocat.jomon.net.http" />
+        <module name="org.echocat.jomon.net.service" />
+        <module name="org.echocat.jomon.net.testing" />
+        <module name="org.echocat.jomon.process" />
+        <module name="org.echocat.jomon.resources" />
+        <module name="org.echocat.jomon.runtime" />
+        <module name="org.echocat.jomon.testing" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="format" target="1.7" />
+      <module name="org.echocat.jomon" target="1.7" />
+      <module name="org.echocat.jomon.bundle" target="1.7" />
+      <module name="org.echocat.jomon.cache" target="1.7" />
+      <module name="org.echocat.jomon.demo" target="1.7" />
+      <module name="org.echocat.jomon.demo.generator" target="1.7" />
+      <module name="org.echocat.jomon.demo.repository" target="1.7" />
+      <module name="org.echocat.jomon.format" target="1.7" />
+      <module name="org.echocat.jomon.net" target="1.7" />
+      <module name="org.echocat.jomon.net.cluster" target="1.7" />
+      <module name="org.echocat.jomon.net.common" target="1.7" />
+      <module name="org.echocat.jomon.net.http" target="1.7" />
+      <module name="org.echocat.jomon.net.service" target="1.7" />
+      <module name="org.echocat.jomon.net.testing" target="1.7" />
+      <module name="org.echocat.jomon.process" target="1.7" />
+      <module name="org.echocat.jomon.resources" target="1.7" />
+      <module name="org.echocat.jomon.runtime" target="1.7" />
+      <module name="org.echocat.jomon.testing" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.7" />
     <option name="MAXIMUM_HEAP_SIZE" value="256" />
   </component>
 </project>
