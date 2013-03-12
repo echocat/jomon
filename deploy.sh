@@ -23,7 +23,7 @@ if [ -z "$2" ]; then
 fi
 
 releaseVersion=${1}-MOTORTALK
-developmentVersion=${2}-SNAPHOT
+developmentVersion=${2}-SNAPSHOT
 
 echo "Are you sure you running this command not an a clone of the git branch you active developing on?"
 echo -n "If you proceed all files in current directory will be reverted to HEAD state of the git repository [y/N]? "
