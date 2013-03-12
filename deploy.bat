@@ -1,1 +1,0 @@
-@bash ./deploy.sh %1 %2
