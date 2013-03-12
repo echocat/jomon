@@ -40,7 +40,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="format" />
         <module name="org.echocat.jomon.bundle" />
         <module name="org.echocat.jomon.cache" />
         <module name="org.echocat.jomon.demo.generator" />
@@ -58,7 +57,6 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="format" target="1.7" />
       <module name="org.echocat.jomon" target="1.7" />
       <module name="org.echocat.jomon.bundle" target="1.7" />
       <module name="org.echocat.jomon.cache" target="1.7" />
