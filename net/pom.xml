@@ -20,7 +20,7 @@
     <parent>
         <artifactId>jomon</artifactId>
         <groupId>org.echocat</groupId>
-        <version>1.2.7-SNAPSHOT</version>
+        <version>1.2.6-MOTORTALK</version>
     </parent>
 
     <name>echocat Jomon NET</name>
