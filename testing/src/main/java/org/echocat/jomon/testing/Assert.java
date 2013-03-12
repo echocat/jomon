@@ -30,7 +30,8 @@ import static java.lang.Thread.currentThread;
 import static java.util.Arrays.asList;
 import static org.echocat.jomon.testing.BaseMatchers.is;
 
-public class Assert extends org.junit.Assert {
+@SuppressWarnings("UtilityClassWithoutPrivateConstructor")
+public class Assert {
 
     protected Assert() {}
 
@@ -109,10 +110,18 @@ public class Assert extends org.junit.Assert {
                 description.appendValue(actual);
             }
             description.appendText("\n");
-            final AssertionError error = new AssertionError(description.toString());
-            error.setStackTrace(getCleanStackTrace());
-            throw error;
+            fail(description.toString());
         }
+    }
+
+    public static void fail() {
+        fail(null);
+    }
+
+    public static void fail(@Nullable String message) {
+        final AssertionError error = message != null ? new AssertionError(message) : new AssertionError();
+        error.setStackTrace(getCleanStackTrace());
+        throw error;
     }
 
     @Nonnull

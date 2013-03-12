@@ -16,7 +16,7 @@ package org.echocat.jomon.testing;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;

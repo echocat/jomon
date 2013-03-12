@@ -14,6 +14,6 @@
 
 package org.echocat.jomon.testing;
 
-import org.junit.internal.matchers.TypeSafeMatcher;
+import org.hamcrest.TypeSafeMatcher;
 
 public abstract class TypeSafeMatcherWithActual<T> extends TypeSafeMatcher<T> implements SelfDescribingActual<T> {}

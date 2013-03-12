@@ -14,11 +14,19 @@
 
 package org.echocat.jomon.runtime;
 
+import org.echocat.jomon.runtime.util.Duration;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static java.lang.System.currentTimeMillis;
+
 public class DateTimeUtils {
+
+    public static final String ISO_PATTERN = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     @Nonnull
     public static Date now() {
@@ -26,8 +34,8 @@ public class DateTimeUtils {
     }
 
     @Nonnull
-    public static Date addHours(@Nonnull Date date, @Nonnegative int hours) {
-        return addMinutes(date, hours * 60);
+    public static Date addWeeks(@Nonnull Date date, @Nonnegative int weeks) {
+        return addDays(date, weeks * 7);
     }
 
     @Nonnull
@@ -36,18 +44,52 @@ public class DateTimeUtils {
     }
 
     @Nonnull
+    public static Date addHours(@Nonnull Date date, @Nonnegative int hours) {
+        return addMinutes(date, hours * 60);
+    }
+
+    @Nonnull
     public static Date addMinutes(@Nonnull Date date, @Nonnegative int minutes) {
-        return new Date(date.getTime() + minutes * 60 * 1000);
+        return addSeconds(date, minutes * 60);
     }
 
     @Nonnull
     public static Date addSeconds(@Nonnull Date date, @Nonnegative int seconds) {
-        return new Date(date.getTime() + seconds * 1000);
+        return addMilliseconds(date, seconds * 1000);
     }
 
     @Nonnull
     public static Date addMilliseconds(@Nonnull Date date, @Nonnegative int milliseconds) {
         return new Date(date.getTime() + milliseconds);
+    }
+
+    @Nonnull
+    public static Date nowBefore(@Nonnull String duration) {
+        return nowBefore(new Duration(duration));
+    }
+
+    @Nonnull
+    public static Date nowBefore(@Nonnull Duration duration) {
+        return new Date(currentTimeMillis() - duration.toMilliSeconds());
+    }
+
+    @Nonnull
+    public static Date nowIn(@Nonnull String duration) {
+        return nowIn(new Duration(duration));
+    }
+
+    @Nonnull
+    public static Date nowIn(@Nonnull Duration duration) {
+        return new Date(currentTimeMillis() + duration.toMilliSeconds());
+    }
+
+    @Nonnull
+    public static Date parseIsoDate(@Nonnull String asString) throws IllegalArgumentException {
+        try {
+            return new SimpleDateFormat(ISO_PATTERN).parse(asString);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Could not parse: " + asString + ", it does not match pattern: " + ISO_PATTERN, e);
+        }
     }
 
     private DateTimeUtils() {}

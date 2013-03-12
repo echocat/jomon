@@ -18,9 +18,9 @@ import org.echocat.jomon.runtime.util.Duration;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
-import org.junit.internal.matchers.TypeSafeMatcher;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -95,12 +95,12 @@ public class BaseMatchers {
     }
 
     @Nonnull
-    public static <T> Matcher<T> isNull() {
+    public static Matcher<Object> isNull() {
         return IsNull.nullValue();
     }
 
     @Nonnull
-    public static <T> Matcher<T> isNotNull() {
+    public static Matcher<Object> isNotNull() {
         return IsNull.notNullValue();
     }
     

@@ -16,10 +16,8 @@ package org.echocat.jomon.runtime.repository;
 
 import org.echocat.jomon.runtime.concurrent.RetryForSpecifiedCountStrategy;
 import org.echocat.jomon.runtime.concurrent.RetryingStrategy;
-import org.echocat.jomon.runtime.valuemodule.ValueModule;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
@@ -57,18 +55,6 @@ public class SafeUpdater {
             }
             using.modifyBeforeUpdate(value);
             on.updateSafe(value);
-        }}, _strategy != null ? _strategy : DEFAULT_STRATEGY);
-    }
-
-    public <V, ID, VM extends ValueModule, E extends ConcurrentModificationException, R extends ModularizedSafeUpdatingRepository<V, VM, E> & QueryableRepository<?, ID, V>>
-    void update(@Nonnull final ID id, @Nonnull final R on, @Nonnull final Modifier<V> using, @Nullable final VM... valueModules) throws E, NoSuchElementException {
-        executeWithRetry(new Runnable() { @Override public void run() {
-            final V value = on.findOneBy(id);
-            if (value == null) {
-                throw new NoSuchElementException("Could not find object #" + id);
-            }
-            using.modifyBeforeUpdate(value);
-            on.updateSafe(value, valueModules);
         }}, _strategy != null ? _strategy : DEFAULT_STRATEGY);
     }
 
