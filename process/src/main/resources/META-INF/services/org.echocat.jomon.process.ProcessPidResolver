@@ -1,0 +1,2 @@
+org.echocat.jomon.process.windows.WindowsProcessPidResolver
+org.echocat.jomon.process.unix.UnixProcessPidResolver
