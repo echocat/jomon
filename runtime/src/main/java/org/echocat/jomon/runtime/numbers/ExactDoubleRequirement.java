@@ -15,6 +15,7 @@
 package org.echocat.jomon.runtime.numbers;
 
 import org.echocat.jomon.runtime.generation.ExactValueRequirementSupport;
+import org.echocat.jomon.runtime.numbers.ExactDoubleRequirement.Adapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @ThreadSafe
 @Immutable
-@XmlJavaTypeAdapter(ExactDoubleRequirement.Adapter.class)
+@XmlJavaTypeAdapter(Adapter.class)
 public class ExactDoubleRequirement extends ExactValueRequirementSupport<Double> implements DoubleRequirement {
 
     public ExactDoubleRequirement(@Nullable Double value) {

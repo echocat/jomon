@@ -15,10 +15,7 @@
 package org.echocat.jomon.testing;
 
 import org.echocat.jomon.runtime.util.Duration;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.*;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 
@@ -156,10 +153,10 @@ public class BaseMatchers {
     }
     
     @Nonnull
-    public static <T> Matcher<T> hasItems() {
-        return new TypeSafeMatcher<T>() {
+    public static Matcher<Object> hasItems() {
+        return new BaseMatcher<Object>() {
             @Override
-            public boolean matchesSafely(Object item) {
+            public boolean matches(Object item) {
                 final boolean result;
                 if (item == null) {
                     result = false;
@@ -187,7 +184,7 @@ public class BaseMatchers {
     }
 
     @Nonnull
-    public static Matcher<?> isNotEmpty() {
+    public static Matcher<Object> isNotEmpty() {
         return hasItems();
     }
 
@@ -345,14 +342,14 @@ public class BaseMatchers {
 
     @Nonnull
     public static <T> Matcher<T> isInstanceOf(@Nonnull final Class<?> what) {
-        return new BaseMatcherWithActual<T>() {
+        return new BaseMatcher<T>() {
             @Override
             public boolean matches(Object o) {
                 return what.isInstance(o);
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable Object actual) {
+            public void describeMismatch(@Nullable Object actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.getClass().getName() : null);
             }
 

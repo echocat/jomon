@@ -12,7 +12,7 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.mail;
+package org.echocat.jomon.net.mail;
 
 import org.echocat.jomon.runtime.ImmutableMimeType;
 import org.echocat.jomon.runtime.StringUtils;

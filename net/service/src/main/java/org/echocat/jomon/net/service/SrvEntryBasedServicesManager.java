@@ -14,8 +14,8 @@
 
 package org.echocat.jomon.net.service;
 
-import org.echocat.jomon.net.Protocol;
 import org.echocat.jomon.net.HostService;
+import org.echocat.jomon.net.Protocol;
 import org.echocat.jomon.net.dns.SrvDnsEntryEvaluator;
 import org.echocat.jomon.net.dns.SrvDnsEntryEvaluator.NoSuchSrvRecordException;
 import org.echocat.jomon.runtime.CollectionUtils;
@@ -33,6 +33,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.util.Collections.*;
 import static org.echocat.jomon.net.service.SrvEntryBasedServicesManager.State.*;
@@ -51,6 +53,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
     }
 
     private final Random _random = new Random();
+    private final Lock _lock = new ReentrantLock();
 
     private final Protocol _protocol;
     private final String _service;
@@ -83,14 +86,18 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
         return _protocol;
     }
 
+    @SuppressWarnings("DuplicateThrows")
     @Override
-    protected void check(@Nonnull Collection<I> inputs) throws Exception {
+    protected void check(@Nonnull Collection<I> inputs) throws Exception, InterruptedException {
         final Containers<O> newContainers = new Containers<>();
         final Collection<HostService> oldHostServices;
         final Object[] oldOutputs;
-        synchronized (this) {
+        _lock.lockInterruptibly();
+        try {
             oldHostServices = _containers != null ? _containers.getCopyOfAllServices() : null;
             oldOutputs = _outputs;
+        } finally {
+            _lock.unlock();
         }
         final SrvDnsEntryEvaluator evaluator = new SrvDnsEntryEvaluator(_resolver);
         for (I input : inputs) {
@@ -100,10 +107,13 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             }
         }
         final Object[] newOutputs = rebuildOutputs(newContainers);
-        synchronized (this) {
+        _lock.lockInterruptibly();
+        try {
             onContainersSwitch(_containers, newContainers);
             _containers = newContainers;
             _outputs = newOutputs;
+        } finally {
+            _lock.unlock();
         }
         if ((oldOutputs == null || oldOutputs.length > 0) && newOutputs.length == 0) {
             reportNoServicesAvailable();
@@ -234,8 +244,11 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
     protected abstract O tryGetOutputFor(@Nonnull I input, @Nonnull InetSocketAddress address, @Nonnull State oldState) throws Exception;
 
     public boolean isAvailable() {
-        synchronized (this) {
+        _lock.lock();
+        try {
             return _outputs != null && _outputs.length > 0;
+        } finally {
+            _lock.unlock();
         }
     }
 
@@ -246,13 +259,14 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
     }
 
     @Override
-    public void markAsGone(@Nonnull O service) {
+    public void markAsGone(@Nonnull O service) throws InterruptedException {
         markAsGone(service, null);
     }
 
-    public void markAsGone(@Nonnull O service, @Nullable String cause) {
+    public void markAsGone(@Nonnull O service, @Nullable String cause) throws InterruptedException {
         final Container<O> container;
-        synchronized (this) {
+        _lock.lockInterruptibly();
+        try {
             final Containers<O> containers = _containers;
             if (containers == null) {
                 throw new IllegalStateException();
@@ -262,6 +276,8 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
                 containers.remove(container);
             }
             _outputs = rebuildOutputs(containers);
+        } finally {
+            _lock.unlock();
         }
         if (container != null) {
             reportGone(container.getService(), cause, available);
@@ -387,7 +403,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             if (containers != null) {
                 containers.remove(container);
             }
-            if (!CollectionUtils.isEmpty(containers)) {
+            if (CollectionUtils.isEmpty(containers)) {
                 _priorityToContainers.remove(priority);
             }
             _outputToContainer.remove(container.getOutput());

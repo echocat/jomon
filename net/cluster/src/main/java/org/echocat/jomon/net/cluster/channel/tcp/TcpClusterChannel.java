@@ -135,7 +135,11 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                 _remoteAddresses = remoteAddresses;
                 if (_outbound != null) {
                     _outbound.setInputs(remoteAddresses);
-                    _outbound.check();
+                    try {
+                        _outbound.check();
+                    } catch (InterruptedException ignored) {
+                        currentThread().interrupt();
+                    }
                 }
             }
             return null;

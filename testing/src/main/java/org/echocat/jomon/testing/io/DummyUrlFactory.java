@@ -24,9 +24,6 @@ import java.net.MalformedURLException;
 
 /**
  * This class provides a dummy instance of {@link URL} from wich can read via {@link URL#openStream()}.
- *
- * @author gregor.noczinski
- * @version 1.0 30.10.2007
  */
 public class DummyUrlFactory {
 

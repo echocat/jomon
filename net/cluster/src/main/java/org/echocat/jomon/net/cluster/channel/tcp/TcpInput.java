@@ -14,8 +14,8 @@
 
 package org.echocat.jomon.net.cluster.channel.tcp;
 
-import org.echocat.jomon.net.service.SrvEntryBasedServicesManager;
 import org.echocat.jomon.net.cluster.channel.Message;
+import org.echocat.jomon.net.service.SrvEntryBasedServicesManager;
 import org.echocat.jomon.runtime.util.Duration;
 import org.echocat.jomon.runtime.util.ServiceTemporaryUnavailableException;
 
@@ -27,6 +27,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.UUID;
 
+import static java.lang.Thread.currentThread;
 import static org.echocat.jomon.net.Protocol.tcp;
 import static org.echocat.jomon.net.cluster.channel.ByteUtils.putLong;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelConstants.pingCommand;
@@ -72,16 +73,19 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
         socket.connect(target, (int) _connectionTimeout.toMilliSeconds());
         boolean success = false;
         try {
-            final OutputStream os = socket.getOutputStream();
+            OutputStream os = socket.getOutputStream();
             try {
                 sendPing(os);
                 success = true;
-                return os;
+            } catch (InterruptedException ignored) {
+                currentThread().interrupt();
+                os = null;
             } finally {
                 if (!success) {
                     closeQuietly(os);
                 }
             }
+            return os;
         } finally {
             if (!success) {
                 closeQuietly(socket);
@@ -89,17 +93,23 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
         }
     }
 
-    public void send(@Nonnull Message message) throws Exception {
+    @SuppressWarnings("DuplicateThrows")
+    public void send(@Nonnull Message message) throws Exception, InterruptedException {
         for (Object output : getOutputs()) {
             send(message, (OutputStream) output);
         }
     }
 
     public void sendPing() throws Exception {
-        send(createPingMessage());
+        try {
+            send(createPingMessage());
+        } catch (InterruptedException ignored) {
+            currentThread().interrupt();
+        }
     }
 
-    protected void send(@Nonnull Message message, @Nonnull OutputStream to) throws Exception {
+    @SuppressWarnings("DuplicateThrows")
+    protected void send(@Nonnull Message message, @Nonnull OutputStream to) throws Exception, InterruptedException {
         boolean success = false;
         boolean errorHandled = false;
         try {
@@ -123,7 +133,8 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
         }
     }
 
-    protected void sendPing(@Nonnull OutputStream to) throws Exception {
+    @SuppressWarnings("DuplicateThrows")
+    protected void sendPing(@Nonnull OutputStream to) throws Exception, InterruptedException {
         send(createPingMessage(), to);
     }
 
@@ -136,7 +147,7 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
     }
 
     @Override
-    public void markAsGone(@Nonnull OutputStream service, @Nullable String cause) {
+    public void markAsGone(@Nonnull OutputStream service, @Nullable String cause) throws InterruptedException {
         try {
             super.markAsGone(service, cause);
         } finally {

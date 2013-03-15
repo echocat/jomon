@@ -40,6 +40,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="mail" />
         <module name="org.echocat.jomon.bundle" />
         <module name="org.echocat.jomon.cache" />
         <module name="org.echocat.jomon.demo.generator" />
@@ -54,9 +55,11 @@
         <module name="org.echocat.jomon.resources" />
         <module name="org.echocat.jomon.runtime" />
         <module name="org.echocat.jomon.testing" />
+        <module name="org.echocat.net.mail" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="mail" target="1.7" />
       <module name="org.echocat.jomon" target="1.7" />
       <module name="org.echocat.jomon.bundle" target="1.7" />
       <module name="org.echocat.jomon.cache" target="1.7" />
@@ -74,6 +77,7 @@
       <module name="org.echocat.jomon.resources" target="1.7" />
       <module name="org.echocat.jomon.runtime" target="1.7" />
       <module name="org.echocat.jomon.testing" target="1.7" />
+      <module name="org.echocat.net.mail" target="1.7" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
 
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
-    private StringUtils() {}
+    protected StringUtils() {}
 
     /**
      * Count the number of occurrences of sub in s

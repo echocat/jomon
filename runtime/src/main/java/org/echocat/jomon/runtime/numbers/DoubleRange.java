@@ -16,6 +16,7 @@ package org.echocat.jomon.runtime.numbers;
 
 import org.echocat.jomon.runtime.annotations.Excluding;
 import org.echocat.jomon.runtime.annotations.Including;
+import org.echocat.jomon.runtime.numbers.DoubleRange.Adapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @ThreadSafe
 @Immutable
-@XmlJavaTypeAdapter(DoubleRange.Adapter.class)
+@XmlJavaTypeAdapter(Adapter.class)
 public class DoubleRange extends NumberRange<Double> {
 
     public DoubleRange(@Nullable @Including Double from, @Nullable @Excluding Double to) {

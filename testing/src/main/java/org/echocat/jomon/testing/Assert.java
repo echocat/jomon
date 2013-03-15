@@ -102,13 +102,9 @@ public class Assert {
             }
             description.appendText("\nExpected: ");
             description.appendDescriptionOf(matcher);
-            description.appendText("\n     got: ");
-            if (matcher instanceof SelfDescribingActual) {
-                // noinspection unchecked
-                ((SelfDescribingActual<T>)matcher).describeExpectedTo(description, actual);
-            } else {
-                description.appendValue(actual);
-            }
+            description.appendText("\n     but: ");
+            matcher.describeMismatch(actual, description);
+
             description.appendText("\n");
             fail(description.toString());
         }

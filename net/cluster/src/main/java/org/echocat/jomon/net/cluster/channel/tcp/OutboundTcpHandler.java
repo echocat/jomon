@@ -34,6 +34,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.System.currentTimeMillis;
+import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.net.Protocol.tcp;
 import static org.echocat.jomon.net.cluster.channel.ByteUtils.*;
@@ -252,6 +253,8 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
     public void sendPing() {
         try {
             check();
+        } catch (InterruptedException ignored) {
+            currentThread().interrupt();
         } catch (Exception e) {
             throw new RuntimeException("It was not possible to send a ping to all nodes.", e);
         }
@@ -263,7 +266,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
         return super.getOutputs();
     }
 
-    protected void send(@Nonnull Message message, @Nonnull OutboundTcpNode to) throws IOException {
+    protected void send(@Nonnull Message message, @Nonnull OutboundTcpNode to) throws IOException, InterruptedException {
         boolean success = false;
         boolean errorHandled = false;
         try {
@@ -302,7 +305,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
     }
 
     @Override
-    public void markAsGone(@Nonnull OutboundTcpNode node, @Nullable String cause) {
+    public void markAsGone(@Nonnull OutboundTcpNode node, @Nullable String cause) throws InterruptedException {
         try {
             super.markAsGone(node, cause);
         } finally {
@@ -448,6 +451,8 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
                 if (!_done) {
                     try {
                         send(_message, _to);
+                    } catch (InterruptedException e) {
+                        throw e;
                     } catch (Throwable e) {
                         _exception = e;
                     } finally {

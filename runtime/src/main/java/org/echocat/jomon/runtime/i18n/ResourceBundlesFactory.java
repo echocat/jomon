@@ -14,7 +14,10 @@
 
 package org.echocat.jomon.runtime.i18n;
 
+import org.echocat.jomon.runtime.system.DynamicClassLoader;
+
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 
@@ -43,18 +46,36 @@ public class ResourceBundlesFactory {
 
     @Nonnull
     public ResourceBundles getFor(@Nonnull Class<?> type) {
-        synchronized (this) {
-            ResourceBundles resourceBundles = _typeToBundleCache.get(type);
-            if (resourceBundles == null) {
-                resourceBundles = new ResourceBundles();
-                for (Locale locale : _locales) {
-                    final ResourceBundle resourceBundle = _recursiveResourceBundleFactory.getFor(type, locale);
-                    resourceBundles.putBundle(locale, resourceBundle);
+        return getFor(type, null);
+    }
+
+    @Nonnull
+    public ResourceBundles getFor(@Nonnull Class<?> type, @Nullable ClassLoader classLoader) {
+        final ClassLoader targetClassLoader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+        ResourceBundles resourceBundles;
+        if (targetClassLoader instanceof DynamicClassLoader && ((DynamicClassLoader) targetClassLoader).isDynamic()) {
+            resourceBundles = loadResourceBundles(type, targetClassLoader);
+        } else {
+            synchronized (this) {
+                resourceBundles = _typeToBundleCache.get(type);
+                if (resourceBundles == null) {
+                    resourceBundles = loadResourceBundles(type, targetClassLoader);
+                    _typeToBundleCache.put(type, resourceBundles);
                 }
-                _typeToBundleCache.put(type, resourceBundles);
             }
-            return resourceBundles;
         }
+        return resourceBundles;
+    }
+
+    @Nonnull
+    protected ResourceBundles loadResourceBundles(@Nonnull Class<?> type, @Nonnull ClassLoader classLoader) {
+        final ResourceBundles resourceBundles;
+        resourceBundles = new ResourceBundles();
+        for (Locale locale : _locales) {
+            final ResourceBundle resourceBundle = _recursiveResourceBundleFactory.getFor(type, classLoader, locale);
+            resourceBundles.putBundle(locale, resourceBundle);
+        }
+        return resourceBundles;
     }
 
     @Nonnull

@@ -160,6 +160,7 @@ public class EncodedSerialGenerator implements SerialGenerator<String> {
         return encoded;
     }
 
+    @Nonnull
     protected long asLong(byte[] b) {
         return ((b[7] & 0xFFL)      ) +
                ((b[6] & 0xFFL) <<  8) +

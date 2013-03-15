@@ -12,9 +12,9 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.runtime.mail;
+package org.echocat.jomon.net.mail;
 
-import org.echocat.jomon.runtime.Sender;
+import org.echocat.jomon.net.Sender;
 
 import javax.annotation.Nonnull;
 

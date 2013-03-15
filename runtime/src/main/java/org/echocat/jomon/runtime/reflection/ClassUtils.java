@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -28,13 +29,17 @@ import static java.lang.reflect.Modifier.*;
 
 public class ClassUtils {
 
-    @Nonnull
-    public static Class<?> toClass(@Nonnull Type type) {
+    @Nullable
+    public static Class<?> toClass(@Nullable Type type) {
         final Class<?> result;
-        if (type instanceof Class<?>) {
+        if (type == null) {
+            result = null;
+        } else if (type instanceof Class<?>) {
             result = (Class<?>) type;
         } else if (type instanceof ParameterizedType) {
             result = toClass(((ParameterizedType) type).getRawType());
+        } else if (type instanceof TypeVariable) {
+            result = toClass(((TypeVariable) type).getBounds()[0]);
         } else {
             throw new IllegalArgumentException("Could not handle: " + type);
         }
@@ -48,6 +53,8 @@ public class ClassUtils {
             final Class<?> aClass = (Class<?>) type;
             if (!Iterable.class.isAssignableFrom(aClass) && !Iterator.class.isAssignableFrom(aClass) && !aClass.isArray()) {
                 result = null;
+            } else if (aClass.isArray()) {
+                result = aClass.getComponentType();
             } else {
                 result = Object.class;
             }
@@ -58,6 +65,14 @@ public class ClassUtils {
                 result = null;
             } else {
                 result = parameterizedType.getActualTypeArguments()[0];
+            }
+        } else if (type instanceof TypeVariable) {
+            final TypeVariable<?> typeVariable = (TypeVariable) type;
+            final Class<?> aClass = toClass(typeVariable.getBounds()[0]);
+            if (!Iterable.class.isAssignableFrom(aClass) && !Iterator.class.isAssignableFrom(aClass) && !aClass.isArray()) {
+                result = null;
+            } else {
+                result = typeVariable.getBounds()[0];
             }
         } else {
             throw new IllegalArgumentException("Could not handle: " + type);
@@ -153,9 +168,6 @@ public class ClassUtils {
             }
             if (!isPublic(modifiers)) {
                 throw new IllegalArgumentException(method + " is not public.");
-            }
-            if (isAbstract(modifiers)) {
-                throw new IllegalArgumentException(method + " is abstract.");
             }
             if (!returnType.equals(method.getReturnType())) {
                 throw new IllegalArgumentException(method + " does not return " + returnType.getName() + ".");

@@ -63,7 +63,7 @@ public class MapMatchers {
 
     @Nonnull
     public static Matcher<Map<?, ?>> hasSize(@Nonnegative final int size) {
-        return new TypeSafeMatcherWithActual<Map<?, ?>>() {
+        return new TypeSafeMatcher<Map<?, ?>>() {
 
             @Override
             public boolean matchesSafely(@Nullable Map<?, ?> item) {
@@ -76,7 +76,7 @@ public class MapMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable Map<?, ?> actual) {
+            protected void describeMismatchSafely(@Nullable Map<?, ?> actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
         };
@@ -84,7 +84,7 @@ public class MapMatchers {
 
     @Nonnull
     public static Matcher<Map<?, ?>> hasSameSizeAs(@Nullable final Object what) {
-        return new TypeSafeMatcherWithActual<Map<?, ?>>() {
+        return new TypeSafeMatcher<Map<?, ?>>() {
 
             @Override
             public boolean matchesSafely(@Nullable Map<?, ?> item) {
@@ -97,7 +97,7 @@ public class MapMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable Map<?, ?> actual) {
+            protected void describeMismatchSafely(@Nullable Map<?, ?> actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
 

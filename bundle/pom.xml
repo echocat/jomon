@@ -55,6 +55,11 @@
         </dependency>
         <dependency>
             <groupId>org.echocat.jomon.net</groupId>
+            <artifactId>mail</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.echocat.jomon.net</groupId>
             <artifactId>service</artifactId>
             <version>${project.version}</version>
         </dependency>

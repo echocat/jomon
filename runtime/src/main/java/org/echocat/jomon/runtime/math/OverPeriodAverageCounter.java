@@ -18,9 +18,13 @@ import org.echocat.jomon.runtime.util.Duration;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
 import static java.lang.System.currentTimeMillis;
 
+@ThreadSafe
+@Immutable
 public abstract class OverPeriodAverageCounter<T> {
 
     protected static final int MAX_NUMBER_OF_MEASURE_POINTS = 10000;
@@ -76,7 +80,7 @@ public abstract class OverPeriodAverageCounter<T> {
         long sumOfMeasuredValueCounts = 0;
         synchronized (this) {
             for (int i = 0; i < _measuredCounts.length; i++) {
-                if (_measuredBaseTimes[i] != null && _measuredBaseTimes[i] + _measurePeriod >= currentTime) {
+                if (_measuredBaseTimes[i] != null && _measuredBaseTimes[i] + _measurePeriod >= currentTime && _measuredCounts[i] > 0) {
                     // noinspection unchecked
                     sumOfMeasuredValues = add((T) _measuredValues[i], sumOfMeasuredValues);
                     sumOfMeasuredValueCounts += _measuredCounts[i];

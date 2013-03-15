@@ -32,7 +32,6 @@ import static org.apache.commons.lang3.ArrayUtils.contains;
 
 public class ArrayMatchers {
 
-
     @SafeVarargs
     @Nonnull
     public static <T> Matcher<T[]> isEqualTo(@Nullable T... expectedItems) {
@@ -140,7 +139,7 @@ public class ArrayMatchers {
 
     @Nonnull
     public static <T> Matcher<T[]> hasSize(@Nonnegative final int size) {
-        return new TypeSafeMatcherWithActual<T[]>() {
+        return new TypeSafeMatcher<T[]>() {
 
             @Override
             public boolean matchesSafely(@Nullable T[] item) {
@@ -153,7 +152,7 @@ public class ArrayMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable T[] actual) {
+            protected void describeMismatchSafely(@Nullable T[] actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.length : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
         };
@@ -161,7 +160,7 @@ public class ArrayMatchers {
 
     @Nonnull
     public static <T> Matcher<T[]> hasSameSizeAs(@Nullable final Object what) {
-        return new TypeSafeMatcherWithActual<T[]>() {
+        return new TypeSafeMatcher<T[]>() {
 
             @Override
             public boolean matchesSafely(@Nullable T[] item) {
@@ -174,7 +173,7 @@ public class ArrayMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable T[] actual) {
+            protected void describeMismatchSafely(@Nullable T[] actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.length : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
 

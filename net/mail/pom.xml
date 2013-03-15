@@ -18,23 +18,35 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>jomon</artifactId>
-        <groupId>org.echocat</groupId>
+        <groupId>org.echocat.jomon</groupId>
+        <artifactId>net</artifactId>
         <version>1.2.9-SNAPSHOT</version>
     </parent>
 
-    <name>echocat Jomon NET</name>
-    <groupId>org.echocat.jomon</groupId>
-    <artifactId>net</artifactId>
-    <packaging>pom</packaging>
+    <name>echocat Jomon NET-Mail</name>
+    <groupId>org.echocat.jomon.net</groupId>
+    <artifactId>mail</artifactId>
 
-    <modules>
-        <module>common</module>
-        <module>testing</module>
-        <module>http</module>
-        <module>mail</module>
-        <module>service</module>
-        <module>cluster</module>
-    </modules>
+    <dependencies>
+        <!-- Project dependencies -->
+        <dependency>
+            <groupId>org.echocat.jomon.net</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.echocat.jomon</groupId>
+            <artifactId>testing</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+		</dependency>
+
+		<!-- Common -->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 </project>

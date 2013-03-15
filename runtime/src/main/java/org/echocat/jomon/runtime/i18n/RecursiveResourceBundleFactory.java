@@ -14,6 +14,8 @@
 
 package org.echocat.jomon.runtime.i18n;
 
+import org.echocat.jomon.runtime.system.DynamicClassLoader;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
@@ -70,25 +72,30 @@ public class RecursiveResourceBundleFactory {
     
     @Nonnull
     public ResourceBundle getFor(@Nonnull Class<?> type, @Nullable Locale locale) {
+        return getFor(type, null, locale);
+    }
+
+    @Nonnull
+    public ResourceBundle getFor(@Nonnull Class<?> type, @Nullable ClassLoader classLoader, @Nullable Locale locale) {
         final List<ResourceBundle> bundles = new ArrayList<>();
         Class<?> current = type;
         while (type != null && !Object.class.equals(current)) {
-            bundles.addAll(getAllRecursivelyWithNoInheritanceFor(current, locale));
+            bundles.addAll(getAllRecursivelyWithNoInheritanceFor(current, classLoader, locale));
             current = current.getSuperclass();
         }
         return new CombinedResourceBundle(bundles);
     }
 
     @Nonnull
-    protected List<ResourceBundle> getAllRecursivelyWithNoInheritanceFor(@Nonnull Class<?> type, @Nullable Locale locale) {
-        final ClassLoader classLoader = type.getClassLoader();
+    protected List<ResourceBundle> getAllRecursivelyWithNoInheritanceFor(@Nonnull Class<?> type, @Nullable ClassLoader classLoader, @Nullable Locale locale) {
+        final ClassLoader targetClassLoader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
         final List<ResourceBundle> bundles = new ArrayList<>();
-        if (classLoader != null) {
-            final ResourceBundle bundleForType = tryFindFor(type, locale, classLoader);
+        if (targetClassLoader != null) {
+            final ResourceBundle bundleForType = tryFindFor(type, locale, targetClassLoader);
             if (bundleForType != null) {
                 bundles.add(bundleForType);
             }
-            bundles.addAll(getAllRecursivelyFor(type.getPackage(), locale, classLoader));
+            bundles.addAll(getAllRecursivelyFor(type.getPackage(), locale, targetClassLoader));
         }
         return bundles;
     }
@@ -96,21 +103,25 @@ public class RecursiveResourceBundleFactory {
     @Nullable
     protected ResourceBundle tryFindFor(@Nonnull Class<?> type, @Nullable Locale forLocale, @Nonnull ClassLoader withClassLoader) {
         final String fileName = buildMessagePropertiesFileNameFor(type, forLocale);
-        synchronized (this) {
-            Map<Locale, ResourceBundle> localeToResourceBundleCache = _typeToNotRecursiveBundleCache.get(type);
-            if (localeToResourceBundleCache == null) {
-                localeToResourceBundleCache = new HashMap<>();
-                _typeToNotRecursiveBundleCache.put(type, localeToResourceBundleCache);
+        final ResourceBundle bundle;
+        if (withClassLoader instanceof DynamicClassLoader && ((DynamicClassLoader) withClassLoader).isDynamic()) {
+            bundle = loadBundles(fileName, withClassLoader);
+        } else {
+            synchronized (this) {
+                Map<Locale, ResourceBundle> localeToResourceBundleCache = _typeToNotRecursiveBundleCache.get(type);
+                if (localeToResourceBundleCache == null) {
+                    localeToResourceBundleCache = new HashMap<>();
+                    _typeToNotRecursiveBundleCache.put(type, localeToResourceBundleCache);
+                }
+                if (localeToResourceBundleCache.containsKey(forLocale)) {
+                    bundle = localeToResourceBundleCache.get(forLocale);
+                } else {
+                    bundle = loadBundles(fileName, withClassLoader);
+                    localeToResourceBundleCache.put(forLocale, bundle);
+                }
             }
-            final ResourceBundle bundle;
-            if (localeToResourceBundleCache.containsKey(forLocale)) {
-                bundle = localeToResourceBundleCache.get(forLocale);
-            } else {
-                bundle = loadBundles(fileName, withClassLoader);
-                localeToResourceBundleCache.put(forLocale, bundle);
-            }
-            return bundle;
         }
+        return bundle;
     }
 
     @Nonnull
@@ -137,26 +148,30 @@ public class RecursiveResourceBundleFactory {
     @Nullable
     protected ResourceBundle tryFindFor(@Nonnull String aPackageName, @Nullable Locale forLocale, @Nonnull ClassLoader withClassLoader) {
         final String fileName = buildMessagePropertiesFileNameFor(aPackageName, forLocale);
-        synchronized (this) {
-            Map<String, Map<Locale, ResourceBundle>> packageNameToBundle = _classLoaderToPackageNameAndNotRecursiveBundleCache.get(withClassLoader);
-            if (packageNameToBundle == null) {
-                packageNameToBundle = new HashMap<>();
-                _classLoaderToPackageNameAndNotRecursiveBundleCache.put(withClassLoader, packageNameToBundle);
+        final ResourceBundle bundle;
+        if (withClassLoader instanceof DynamicClassLoader && ((DynamicClassLoader) withClassLoader).isDynamic()) {
+            bundle = loadBundles(fileName, withClassLoader);
+        } else {
+            synchronized (this) {
+                Map<String, Map<Locale, ResourceBundle>> packageNameToBundle = _classLoaderToPackageNameAndNotRecursiveBundleCache.get(withClassLoader);
+                if (packageNameToBundle == null) {
+                    packageNameToBundle = new HashMap<>();
+                    _classLoaderToPackageNameAndNotRecursiveBundleCache.put(withClassLoader, packageNameToBundle);
+                }
+                Map<Locale, ResourceBundle> localeToResourceBundle = packageNameToBundle.get(aPackageName);
+                if (localeToResourceBundle == null) {
+                    localeToResourceBundle = new HashMap<>();
+                    packageNameToBundle.put(aPackageName, localeToResourceBundle);
+                }
+                if (localeToResourceBundle.containsKey(forLocale)) {
+                    bundle = localeToResourceBundle.get(forLocale);
+                } else {
+                    bundle = loadBundles(fileName, withClassLoader);
+                    localeToResourceBundle.put(forLocale, bundle);
+                }
             }
-            Map<Locale, ResourceBundle> localeToResourceBundle = packageNameToBundle.get(aPackageName);
-            if (localeToResourceBundle == null) {
-                localeToResourceBundle = new HashMap<>();
-                packageNameToBundle.put(aPackageName, localeToResourceBundle);
-            }
-            final ResourceBundle bundle;
-            if (localeToResourceBundle.containsKey(forLocale)) {
-                bundle = localeToResourceBundle.get(forLocale);
-            } else {
-                bundle = loadBundles(fileName, withClassLoader);
-                localeToResourceBundle.put(forLocale, bundle);
-            }
-            return bundle;
         }
+        return bundle;
     }
 
     @Nullable

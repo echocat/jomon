@@ -49,6 +49,11 @@ public abstract class ServicesManager<I, O> implements AutoCloseable {
         _checkThread.start();
     }
 
+    protected ServicesManager(Duration checkInterval) {
+        this();
+        setCheckInterval(checkInterval);
+    }
+
     public Collection<I> getInputs() {
         return _inputs;
     }
@@ -70,7 +75,8 @@ public abstract class ServicesManager<I, O> implements AutoCloseable {
         _checkThread.setName(threadName);
     }
 
-    public void check() throws Exception {
+    @SuppressWarnings("DuplicateThrows")
+    public void check() throws Exception, InterruptedException {
         final Collection<I> inputs = _inputs;
         check(inputs != null ? inputs : Collections.<I>emptySet());
     }
@@ -81,14 +87,16 @@ public abstract class ServicesManager<I, O> implements AutoCloseable {
     @Nullable
     protected abstract O tryTake();
 
-    public abstract void markAsGone(@Nonnull O service);
+    public abstract void markAsGone(@Nonnull O service) throws InterruptedException;
 
     @Nonnull
-    public O take() {
+    public O take() throws InterruptedException {
         O output = tryTake();
         if (output == null) {
             try {
                 check();
+            } catch (InterruptedException e) {
+                throw e;
             } catch (Exception e) {
                 throw new RuntimeException("Could not take next connection.", e);
             }
@@ -118,20 +126,22 @@ public abstract class ServicesManager<I, O> implements AutoCloseable {
     protected class Checker implements Runnable { @Override public void run() {
         long lastError = 0;
         while (!currentThread().isInterrupted()) {
-            try {
-                check();
-            } catch (Exception e) {
-                final long now = currentTimeMillis();
-                if (lastError + MINUTES.toMillis(10) < now) {
-                    LOG.error("While the check of the service inputs we got an error. This could be temporary but normally this is an serious error. The application tries to continue working with the old service inputs but it could be that this inputs are out of date. You will see this message max. every 10 minutes.", e);
-                    lastError = now;
-                }
-            }
             if (!currentThread().isInterrupted()) {
                 try {
                     sleep(_checkInterval.toMilliSeconds());
                 } catch (InterruptedException ignored) {
                     currentThread().interrupt();
+                }
+            }
+            try {
+                check();
+            } catch (InterruptedException ignored) {
+                currentThread().interrupt();
+            } catch (Exception e) {
+                final long now = currentTimeMillis();
+                if (lastError + MINUTES.toMillis(10) < now) {
+                    LOG.error("While the check of the service inputs we got an error. This could be temporary but normally this is an serious error. The application tries to continue working with the old service inputs but it could be that this inputs are out of date. You will see this message max. every 10 minutes.", e);
+                    lastError = now;
                 }
             }
         }

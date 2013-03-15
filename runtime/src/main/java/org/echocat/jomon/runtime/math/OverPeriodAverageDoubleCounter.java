@@ -18,7 +18,11 @@ import org.echocat.jomon.runtime.util.Duration;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.ThreadSafe;
 
+@ThreadSafe
+@Immutable
 public class OverPeriodAverageDoubleCounter extends OverPeriodAverageCounter<Double> {
 
     public OverPeriodAverageDoubleCounter(@Nonnull Duration measurePeriod, @Nonnull Duration resolution) {

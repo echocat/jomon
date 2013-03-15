@@ -12,16 +12,12 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.testing;
-
-import org.hamcrest.Description;
-import org.hamcrest.SelfDescribing;
+package org.echocat.jomon.net;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public interface SelfDescribingActual<T> extends SelfDescribing {
+public interface Sender<T> {
 
-    public void describeExpectedTo(@Nonnull Description description, @Nullable T actual);
+    public void send(@Nonnull T item);
 
 }

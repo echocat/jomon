@@ -138,7 +138,7 @@ public class CollectionMatchers {
 
     @Nonnull
     public static Matcher<Collection<?>> hasSize(@Nonnegative final int size) {
-        return new TypeSafeMatcherWithActual<Collection<?>>() {
+        return new TypeSafeMatcher<Collection<?>>() {
 
             @Override
             public boolean matchesSafely(@Nullable Collection<?> item) {
@@ -151,7 +151,7 @@ public class CollectionMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable Collection<?> actual) {
+            protected void describeMismatchSafely(@Nullable Collection<?> actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
         };
@@ -159,7 +159,7 @@ public class CollectionMatchers {
 
     @Nonnull
     public static Matcher<Collection<?>> hasSameSizeAs(@Nullable final Object what) {
-        return new TypeSafeMatcherWithActual<Collection<?>>() {
+        return new TypeSafeMatcher<Collection<?>>() {
 
             @Override
             public boolean matchesSafely(@Nullable Collection<?> item) {
@@ -172,7 +172,7 @@ public class CollectionMatchers {
             }
 
             @Override
-            public void describeExpectedTo(@Nonnull Description description, @Nullable Collection<?> actual) {
+            protected void describeMismatchSafely(@Nullable Collection<?> actual, @Nonnull Description description) {
                 description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
             }
 

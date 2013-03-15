@@ -17,7 +17,7 @@ package org.echocat.jomon.runtime.numbers;
 import org.echocat.jomon.runtime.annotations.Excluding;
 import org.echocat.jomon.runtime.annotations.Including;
 import org.echocat.jomon.runtime.generation.RangeRequirementSupport;
-import org.echocat.jomon.runtime.numbers.LongRangeRequirement.Adapter;
+import org.echocat.jomon.runtime.numbers.DoubleRangeRequirement.Adapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
