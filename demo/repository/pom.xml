@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>demo</artifactId>
-        <version>1.2.9</version>
+        <version>1.2.10-SNAPSHOT</version>
     </parent>
 
     <name>echocat Jomon Demo Repository</name>
