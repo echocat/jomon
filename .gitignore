@@ -15,12 +15,14 @@
 /demo/generator/target
 /demo/repository/target
 
+/format/target
+
 /net/target
 /net/cluster/target
 /net/common/target
 /net/http/target
 /net/service/target
-/net/ssh/target
+/net/mail/target
 /net/testing/target
 
 /process/target
