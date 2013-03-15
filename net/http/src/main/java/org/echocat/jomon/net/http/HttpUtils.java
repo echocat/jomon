@@ -15,26 +15,33 @@
 package org.echocat.jomon.net.http;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.echocat.jomon.runtime.CollectionUtils;
 
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import static java.net.URI.create;
+import static java.net.URLEncoder.encode;
 import static java.nio.charset.Charset.forName;
 
 public class HttpUtils {
@@ -84,8 +91,8 @@ public class HttpUtils {
         final HttpUriRequest httpUriRequest = new HttpGet(url.toExternalForm());
         return CLIENT.execute(httpUriRequest);
     }
-    
-    
+
+
     @Nonnull
     public static HttpGet makeGetRequestFor(@Nonnull URL url) throws IOException {
         return new HttpGet(url.toExternalForm());
@@ -96,7 +103,7 @@ public class HttpUtils {
         final boolean result;
         if (statusLine != null) {
             final int statusCode = statusLine.getStatusCode();
-            result = statusCode < 400; 
+            result = statusCode < 400;
         } else {
             result = false;
         }
@@ -121,7 +128,7 @@ public class HttpUtils {
         }
         return new HttpResponseException(statusCode, statusMessage, body);
     }
-    
+
     @Nonnull
     public static Reader createBodyReaderFor(@Nonnull HttpEntity entity) throws IOException {
         Charset charset = findCharSetOf(entity);
@@ -138,6 +145,22 @@ public class HttpUtils {
 
     @Nullable
     public static Charset findCharSetOf(@Nonnull HttpEntity entity) throws IOException {
+        final MimeType mimeType = findMimeTypeOf(entity);
+        return findCharSetOf(mimeType);
+    }
+
+    @Nullable
+    public static Charset findCharSetOf(@Nullable MimeType mimeType) throws IOException {
+        final String charsetName = mimeType != null ? mimeType.getParameter("charset") : null;
+        try {
+            return charsetName != null ? forName(charsetName) : null;
+        } catch (UnsupportedCharsetException e) {
+            throw new IOException("In contentType '" + mimeType + "' was an unsupported charset provided.", e);
+        }
+    }
+
+    @Nullable
+    public static MimeType findMimeTypeOf(@Nonnull HttpEntity entity) throws IOException {
         final MimeType mimeType;
         final Header contentTypeHeader = entity.getContentType();
         final String contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : null;
@@ -146,12 +169,7 @@ public class HttpUtils {
         } catch (MimeTypeParseException e) {
             throw new IOException("Illegal contentType: " + contentType, e);
         }
-        final String charsetName = mimeType != null ? mimeType.getParameter("charset") : null;
-        try {
-            return charsetName != null ? forName(charsetName) : null;
-        } catch (UnsupportedCharsetException e) {
-            throw new IOException("In contentType '" + mimeType + "' was an unsupported charset provided.", e);
-        }
+        return mimeType;
     }
 
     @Nonnull
@@ -167,11 +185,57 @@ public class HttpUtils {
     @Nonnull
     public static String encodeUrl(@Nonnull String s) {
         try {
-            return URLEncoder.encode(s, "UTF-8");
+            return encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             // Should never happen.
             throw new RuntimeException("UTF-8 not supported.", e);
         }
+    }
+
+    @Nonnull
+    public static HttpPost postFor(@Nonnull URI uri, @Nonnull Charset charset, @Nullable String... parameters) throws UnsupportedEncodingException {
+        return postFor(uri, charset, parameters != null ? CollectionUtils.<String, String>asMap(parameters) : null);
+    }
+
+    @Nonnull
+    public static HttpPost postFor(@Nonnull URI uri, @Nonnull Charset charset, @Nullable Map<String, String> parameters) throws UnsupportedEncodingException {
+        final HttpPost httpPost = new HttpPost(uri);
+        final List<NameValuePair> pairs = new ArrayList<>(parameters != null ? parameters.size() : 0);
+        if (parameters != null) {
+            for (Entry<String, String> keyToValue : parameters.entrySet()) {
+                pairs.add(new BasicNameValuePair(keyToValue.getKey(), keyToValue.getValue()));
+            }
+        }
+        httpPost.setEntity(new UrlEncodedFormEntity(pairs, charset));
+        return httpPost;
+    }
+
+    @Nonnull
+    public static HttpGet getFor(@Nonnull URI uri, @Nonnull Charset charset, @Nullable String... parameters) throws UnsupportedEncodingException {
+        return getFor(uri, charset, parameters != null ? CollectionUtils.<String, String>asMap(parameters) : null);
+    }
+
+    @Nonnull
+    public static HttpGet getFor(@Nonnull URI uri, @Nonnull Charset charset, @Nullable Map<String, String> parameters) throws UnsupportedEncodingException {
+        final HttpGet httpGet;
+        if (parameters != null && !parameters.isEmpty()) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(uri);
+            boolean questionMarkAdded = uri.getQuery() != null;
+            for (Entry<String, String> keyToValue : parameters.entrySet()) {
+                if (questionMarkAdded) {
+                    sb.append('&');
+                } else {
+                    sb.append('?');
+                    questionMarkAdded = true;
+                }
+                sb.append(encode(keyToValue.getKey(), charset.name())).append('=').append(encode(keyToValue.getValue(), charset.name()));
+            }
+            httpGet = new HttpGet(create(sb.toString()));
+        } else {
+            httpGet = new HttpGet(uri);
+        }
+        return httpGet;
     }
 
     private HttpUtils() {}
