@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" version="4">
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -9,6 +9,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.mail:mail:1.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.common" />
     <orderEntry type="module" module-name="org.echocat.jomon.runtime" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />

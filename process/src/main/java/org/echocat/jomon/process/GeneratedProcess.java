@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.*;
 
 @ThreadSafe
 public interface GeneratedProcess extends Process {
@@ -37,7 +36,9 @@ public interface GeneratedProcess extends Process {
     public int waitFor() throws InterruptedException;
 
     @Nonnegative
-    public int exitValue();
+    public int exitValue() throws IllegalStateException;
+
+    public boolean isAlive();
 
     public void shutdown();
 

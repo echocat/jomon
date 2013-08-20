@@ -12,29 +12,28 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.net.service;
+package org.echocat.jomon.process.daemon;
 
 import org.apache.commons.io.FileUtils;
-import org.echocat.jomon.net.FreeTcpPortDetector;
 import org.echocat.jomon.process.GeneratedProcess;
 import org.echocat.jomon.process.ProcessRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.List;
 
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static org.echocat.jomon.net.service.ApplicationDaemon.SubPath.inBaseDirectory;
+import static java.lang.Thread.currentThread;
+import static org.echocat.jomon.process.daemon.ApplicationDaemon.SubPath.inBaseDirectory;
+import static org.echocat.jomon.process.daemon.StreamType.stderr;
+import static org.echocat.jomon.process.daemon.StreamType.stdout;
+import static org.echocat.jomon.runtime.CollectionUtils.asImmutableList;
+import static org.echocat.jomon.runtime.concurrent.ThreadUtils.stop;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
-public abstract class ApplicationDaemon implements Closeable {
+public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?>> implements Closeable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationDaemon.class);
 
@@ -54,35 +53,75 @@ public abstract class ApplicationDaemon implements Closeable {
         }
     }
 
+    @Nonnull
+    private final R _requirement;
+    @Nonnull
     private final GeneratedProcess _process;
-    private final ProcessMonitor _errorMonitor;
-    private final ProcessMonitor _monitor;
+    @Nonnull
+    private final List<OutputMonitor> _monitors;
 
     private File _temporaryDirectory;
 
-    protected ApplicationDaemon() throws CouldNotStartProcessException {
-        this(ProcessRepository.getInstance());
+    protected ApplicationDaemon(@Nonnull R requirement) throws CouldNotStartProcessException {
+        this(ProcessRepository.getInstance(), requirement);
     }
 
-    protected ApplicationDaemon(@Nonnull ProcessRepository processRepository) throws CouldNotStartProcessException {
+    protected ApplicationDaemon(@Nonnull ProcessRepository processRepository, @Nonnull R requirement) throws CouldNotStartProcessException {
+        _requirement = requirement;
         try {
-            _process = createProcess(processRepository);
+            _process = generateProcess(processRepository, requirement);
         } catch (Exception e) {
             throw new RuntimeException("Could not create process.", e);
         }
-        _errorMonitor = new ProcessMonitor(_process.getErrorStream(), true);
-        _errorMonitor.start();
-        _monitor = new ProcessMonitor(_process.getInputStream(), false);
-        _monitor.start();
-        if (!_monitor.waitForSuccessfulStart()) {
-            throw new CouldNotStartProcessException("Could not successful start process.\nOutput while waiting:\n" + _monitor.getContentWhileWaiting());
+        requirement.getStartupListener().notifyProcessStarted(_process);
+        requirement.getStreamListener().notifyProcessStarted(_process);
+        _monitors = asImmutableList(
+            new OutputMonitor(_process.getErrorStream(), stderr),
+            new OutputMonitor(_process.getInputStream(), stdout)
+        );
+        for (OutputMonitor monitor : _monitors) {
+            monitor.start();
+        }
+        waitForSuccessfulStart(requirement);
+    }
+
+    protected void waitForSuccessfulStart(@Nonnull R requirement) {
+        try {
+            final StartupListener startupListener = requirement.getStartupListener();
+            if (!startupListener.waitForSuccessfulStart()) {
+                shutdownImmediatelyAfterStart(requirement);
+                Throwable e = startupListener.getStartupProblem();
+                if (e == null) {
+                    e = new CouldNotStartProcessException("Could not successful start process. Output while waiting:\n" + startupListener.getRecordedContentWhileWaiting());
+                }
+                if (e instanceof CouldNotStartProcessException) {
+                    throw (CouldNotStartProcessException) e;
+                } else if (e instanceof Error) {
+                    throw (Error) e;
+                } else {
+                    throw new CouldNotStartProcessException("Could not successful start process. Output while waiting:\n" + startupListener.getRecordedContentWhileWaiting(), e);
+                }
+            }
+        } catch (InterruptedException ignored) {
+            currentThread().interrupt();
+            shutdownImmediatelyAfterStart(requirement);
+        }
+    }
+
+    protected void shutdownImmediatelyAfterStart(@Nonnull R requirement) {
+        try {
+            try {
+                requirement.getStreamListener().notifyProcessTerminated(_process);
+            } finally {
+                requirement.getStartupListener().notifyProcessTerminated(_process);
+            }
+        } finally {
+            closeQuietly(this);
         }
     }
 
     @Nonnull
-    protected abstract GeneratedProcess createProcess(@Nonnull ProcessRepository repository) throws Exception;
-    @Nonnull
-    protected abstract String getReadyMessage() throws Exception;
+    protected abstract GeneratedProcess generateProcess(@Nonnull ProcessRepository repository, @Nonnull R requirement) throws Exception;
 
     @Override
     public void close() {
@@ -91,13 +130,13 @@ public abstract class ApplicationDaemon implements Closeable {
                 _process.shutdown();
                 _process.waitFor();
             } catch (Exception e) {
+                // noinspection InstanceofCatchParameter
                 if (e instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
+                    currentThread().interrupt();
                 }
-                LOG.warn("Could not stop the mongod process. The process will still be on this computer. You have to stop it manually.", e);
+                LOG.warn("Could not stop the process. The process will still be on this computer. You have to stop it manually.", e);
             } finally {
-                _errorMonitor.interrupt();
-                _monitor.interrupt();
+                stop(_monitors);
             }
         } finally {
             try {
@@ -105,11 +144,39 @@ public abstract class ApplicationDaemon implements Closeable {
                     FileUtils.deleteDirectory(_temporaryDirectory);
                 }
             } catch (Exception e) {
-                LOG.warn("Could not delete the temporary directory '" + _temporaryDirectory + "' with the data values of the mongod process. The files will remain on the disk and still will use disk space. You have to delete it manually.", e);
+                LOG.warn("Could not delete the temporary directory '" + _temporaryDirectory + "' with the data values of the process. The files will remain on the disk and still will use disk space. You have to delete it manually.", e);
             } finally {
                 _temporaryDirectory = null;
             }
         }
+    }
+
+    @Nonnull
+    public File getExecutable() {
+        return _process.getExecutable();
+    }
+
+    public long getPid() {
+        return _process.getId();
+    }
+
+    @Nonnull
+    public String[] getCommandLine() {
+        return _process.getCommandLine();
+    }
+
+    public boolean isAlive() {
+        return getProcess().isAlive();
+    }
+
+    @Nonnull
+    protected GeneratedProcess getProcess() {
+        return _process;
+    }
+
+    @Nonnull
+    protected R getRequirement() {
+        return _requirement;
     }
 
     @Nonnull
@@ -149,21 +216,14 @@ public abstract class ApplicationDaemon implements Closeable {
     @Nonnull
     protected File getBinaryOfEnvironmentVariable(@Nonnull String environmentVariableName, @Nonnull SubPath subPath, @Nonnull String binaryFileName) throws IOException {
         final File directory = getDirectoryOfEnvironmentVariable(environmentVariableName, subPath);
-        File mongodBinary = new File(directory, binaryFileName);
-        if (!mongodBinary.canExecute()) {
-            mongodBinary = new File(directory, binaryFileName + ".exe");
-            if (!mongodBinary.canExecute()) {
+        File binary = new File(directory, binaryFileName);
+        if (!binary.canExecute()) {
+            binary = new File(directory, binaryFileName + ".exe");
+            if (!binary.canExecute()) {
                 throw new IllegalStateException("In the current environment points the " + environmentVariableName + " environment variable to " + directory + " with no " + binaryFileName + " executable in it.");
             }
         }
-        return mongodBinary;
-    }
-
-    @Nonnegative
-    protected int findFreePort() throws UnknownHostException {
-        final InetAddress localhost = InetAddress.getByName("localhost");
-        final FreeTcpPortDetector freeTcpPortDetector = new FreeTcpPortDetector(localhost, 10000, 45000);
-        return freeTcpPortDetector.detect();
+        return binary;
     }
 
     @Nonnull
@@ -181,107 +241,51 @@ public abstract class ApplicationDaemon implements Closeable {
         return result;
     }
 
-    private class ProcessMonitor extends Thread {
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "{pid=" + getPid() + ", alive=" + isAlive() + "}";
+    }
+
+    private class OutputMonitor extends Thread {
 
         private final InputStream _stream;
-        private final boolean _errorStream;
-        private final StringBuilder _contentWhileWaiting = new StringBuilder();
+        private final StreamType _streamType;
 
-        private final Lock _lock = new ReentrantLock();
-        private final Condition _condition = _lock.newCondition();
-
-        private volatile boolean _waitingForConnectionsSeen;
-        private volatile Boolean _alive;
-
-        private ProcessMonitor(@Nonnull InputStream stream, boolean errorStream) {
-            super("ProcessMonitor");
+        private OutputMonitor(@Nonnull InputStream stream, @Nonnull StreamType streamType) {
+            super("OutputMonitor:" + streamType);
             setDaemon(true);
             _stream = stream;
-            _errorStream = errorStream;
+            _streamType = streamType;
         }
 
         @Override
         public void run() {
+            final StreamListener streamListener = _requirement.getStreamListener();
+            final StartupListener startupListener = _requirement.getStartupListener();
             final InputStreamReader reader = new InputStreamReader(_stream);
             final BufferedReader bufferedReader = new BufferedReader(reader);
             try {
-                _alive = true;
                 String line = bufferedReader.readLine();
                 while (!Thread.currentThread().isInterrupted() && line != null) {
-                    if (line.contains(getReadyMessage())) {
-                        _lock.lock();
-                        try {
-                            _waitingForConnectionsSeen = true;
-                            _condition.signalAll();
-                        } finally {
-                            _lock.unlock();
-                        }
-                    }
-                    if (!_waitingForConnectionsSeen) {
-                        if (_contentWhileWaiting.length() > 0) {
-                            _contentWhileWaiting.append('\n');
-                        }
-                        _contentWhileWaiting.append(line);
-                    }
-                    if (_errorStream) {
-                        LOG.warn(line);
-                    } else {
-                        LOG.info(line);
-                    }
+                    startupListener.notifyLineOutput(_process, line, _streamType);
+                    streamListener.notifyLineOutput(_process, line, _streamType);
                     line = bufferedReader.readLine();
                 }
             } catch (InterruptedIOException ignored) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
+                // noinspection InstanceofCatchParameter
                 if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
                     LOG.warn("Could not read from " + _stream + ".", e);
                 }
             } finally {
-                _lock.lock();
-                try {
-                    _alive = false;
-                    _condition.signalAll();
-                } finally {
-                    _lock.unlock();
+                if (!_process.isAlive()) {
+                    streamListener.notifyProcessTerminated(_process);
+                    startupListener.notifyProcessTerminated(_process);
                 }
             }
         }
 
-        private boolean waitForSuccessfulStart() {
-            while ((_alive == null || _alive) && !_waitingForConnectionsSeen) {
-                _lock.lock();
-                try {
-                    _condition.await(1, MINUTES);
-                } catch (InterruptedException ignored) {
-                    Thread.currentThread().interrupt();
-                } finally {
-                    _lock.unlock();
-                }
-            }
-            return _waitingForConnectionsSeen;
-        }
-
-        @Nonnull
-        public String getContentWhileWaiting() {
-            return _contentWhileWaiting.toString();
-        }
-    }
-
-    public static class CouldNotStartProcessException extends RuntimeException {
-
-        public CouldNotStartProcessException() {}
-
-        public CouldNotStartProcessException(String message) {
-            super(message);
-        }
-
-        public CouldNotStartProcessException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public CouldNotStartProcessException(Throwable cause) {
-            super(cause);
-        }
     }
 
 }

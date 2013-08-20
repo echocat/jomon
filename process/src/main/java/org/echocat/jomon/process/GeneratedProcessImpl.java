@@ -80,7 +80,22 @@ public class GeneratedProcessImpl implements GeneratedProcess {
 
     @Override
     public int exitValue() {
-        return _original.exitValue();
+        try {
+            return _original.exitValue();
+        } catch (IllegalThreadStateException e) {
+            throw new IllegalStateException("Process is still running.", e);
+        }
+    }
+
+    @Override
+    public boolean isAlive() {
+        boolean result;
+        try {
+            result = _original.exitValue() >= 0;
+        } catch (IllegalThreadStateException ignored) {
+            result = false;
+        }
+        return result;
     }
 
     @Override

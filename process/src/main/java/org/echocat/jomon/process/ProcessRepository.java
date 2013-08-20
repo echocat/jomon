@@ -39,6 +39,11 @@ public abstract class ProcessRepository implements QueryableRepository<ProcessQu
         return INSTANCE;
     }
 
+    @Nonnull
+    public static ProcessRepository processRepository() {
+        return getInstance();
+    }
+
     @Nullable
     public Process findOneBy(@Nonnull java.lang.Process process) {
         return findOneBy(getIdOf(process));
