@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>net</artifactId>
-        <version>1.2.12-SNAPSHOT</version>
+        <version>1.2.12</version>
     </parent>
 
     <name>echocat Jomon NET-Common</name>
