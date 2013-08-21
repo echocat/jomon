@@ -1,6 +1,8 @@
-package org.echocat.jomon.process.daemon;
+package org.echocat.jomon.process.daemon.listeners.startup;
 
 import org.echocat.jomon.process.GeneratedProcess;
+import org.echocat.jomon.process.daemon.StreamType;
+import org.echocat.jomon.process.daemon.listeners.stream.StreamListener;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

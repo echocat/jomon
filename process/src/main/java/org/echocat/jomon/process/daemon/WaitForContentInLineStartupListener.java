@@ -1,6 +1,7 @@
 package org.echocat.jomon.process.daemon;
 
 import org.echocat.jomon.process.GeneratedProcess;
+import org.echocat.jomon.process.daemon.listeners.startup.StartupListenerSupport;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

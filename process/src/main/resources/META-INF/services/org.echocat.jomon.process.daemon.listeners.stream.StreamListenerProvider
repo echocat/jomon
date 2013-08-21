@@ -1,0 +1,3 @@
+org.echocat.jomon.process.daemon.listeners.stream.RedirectToFileStreamListener$Provider
+org.echocat.jomon.process.daemon.listeners.stream.RedirectToLoggerStreamListener$Provider
+org.echocat.jomon.process.daemon.listeners.stream.RedirectToConsoleStreamListener$Provider

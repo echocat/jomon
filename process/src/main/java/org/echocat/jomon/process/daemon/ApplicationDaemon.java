@@ -17,6 +17,8 @@ package org.echocat.jomon.process.daemon;
 import org.apache.commons.io.FileUtils;
 import org.echocat.jomon.process.GeneratedProcess;
 import org.echocat.jomon.process.ProcessRepository;
+import org.echocat.jomon.process.daemon.listeners.startup.StartupListener;
+import org.echocat.jomon.process.daemon.listeners.stream.StreamListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,7 @@ public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?
     @Nonnull
     private final GeneratedProcess _process;
     @Nonnull
-    private final List<OutputMonitor> _monitors;
+    private final List<Thread> _monitors;
 
     private File _temporaryDirectory;
 
@@ -76,13 +78,36 @@ public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?
         requirement.getStartupListener().notifyProcessStarted(_process);
         requirement.getStreamListener().notifyProcessStarted(_process);
         _monitors = asImmutableList(
-            new OutputMonitor(_process.getErrorStream(), stderr),
-            new OutputMonitor(_process.getInputStream(), stdout)
+            createOutputMonitorThreadFor(requirement, _process, _process.getErrorStream(), stderr),
+            createOutputMonitorThreadFor(requirement, _process, _process.getInputStream(), stdout),
+            createProcessMonitorThreadFor(requirement, _process)
         );
-        for (OutputMonitor monitor : _monitors) {
+        for (Thread monitor : _monitors) {
             monitor.start();
         }
         waitForSuccessfulStart(requirement);
+    }
+
+    @Nonnull
+    protected Thread createOutputMonitorThreadFor(@Nonnull R requirement, @Nonnull GeneratedProcess process, @Nonnull InputStream is, @Nonnull StreamType streamType) {
+        final OutputMonitor<R> monitor = createOutputMonitorFor(requirement, process, is, streamType);
+        return new Thread(monitor, "OutputMonitor:" + process.getId() + ":" + streamType);
+    }
+
+    @Nonnull
+    protected OutputMonitor<R> createOutputMonitorFor(@Nonnull R requirement, @Nonnull GeneratedProcess process, @Nonnull InputStream is, @Nonnull StreamType streamType) {
+        return new OutputMonitor<>(requirement, process, is, streamType);
+    }
+
+    @Nonnull
+    protected Thread createProcessMonitorThreadFor(@Nonnull R requirement, @Nonnull GeneratedProcess process) {
+        final ProcessMonitor<R> monitor = new ProcessMonitor<>(requirement, process);
+        return new Thread(monitor, "ProcessMonitor:" + process.getId());
+    }
+
+    @Nonnull
+    protected ProcessMonitor<R> createProcessMonitorFor(@Nonnull R requirement, @Nonnull GeneratedProcess process) {
+        return new ProcessMonitor<>(requirement, process);
     }
 
     protected void waitForSuccessfulStart(@Nonnull R requirement) {
@@ -140,13 +165,21 @@ public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?
             }
         } finally {
             try {
-                if (_temporaryDirectory != null) {
-                    FileUtils.deleteDirectory(_temporaryDirectory);
+                try {
+                    if (_temporaryDirectory != null) {
+                        FileUtils.deleteDirectory(_temporaryDirectory);
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Could not delete the temporary directory '" + _temporaryDirectory + "' with the data values of the process. The files will remain on the disk and still will use disk space. You have to delete it manually.", e);
+                } finally {
+                    _temporaryDirectory = null;
                 }
-            } catch (Exception e) {
-                LOG.warn("Could not delete the temporary directory '" + _temporaryDirectory + "' with the data values of the process. The files will remain on the disk and still will use disk space. You have to delete it manually.", e);
             } finally {
-                _temporaryDirectory = null;
+                try {
+                    closeQuietly(_requirement.getStartupListener());
+                } finally {
+                    closeQuietly(_requirement.getStreamListener());
+                }
             }
         }
     }
@@ -246,14 +279,51 @@ public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?
         return getClass().getSimpleName() + "{pid=" + getPid() + ", alive=" + isAlive() + "}";
     }
 
-    private class OutputMonitor extends Thread {
+    public static class ProcessMonitor<R extends ApplicationDaemonRequirement<?>> implements Runnable {
 
+        @Nonnull
+        private final R _requirement;
+        @Nonnull
+        private final GeneratedProcess _process;
+
+        public ProcessMonitor(@Nonnull R requirement, @Nonnull GeneratedProcess process) {
+            _requirement = requirement;
+            _process = process;
+        }
+
+        @Override
+        public void run() {
+            try {
+                _process.waitFor();
+                _requirement.getStartupListener().notifyProcessTerminated(_process);
+                _requirement.getStreamListener().notifyProcessTerminated(_process);
+            } catch (InterruptedException ignored) {
+                currentThread().interrupt();
+                try {
+                    _process.shutdown();
+                    LOG.info("I was interrupted while waiting for " + _process + ". This process was successful terminated now.");
+                } catch (Exception e) {
+                    LOG.info("I was interrupted while waiting for " + _process + ". While I try to terminate this process there was an error produced. In normal case this means, that the process is still running. Now you have to check manually for this zombie process.", e);
+                }
+            }
+        }
+
+    }
+
+    public static class OutputMonitor<R extends ApplicationDaemonRequirement<?>> implements Runnable {
+
+        @Nonnull
+        private final GeneratedProcess _process;
+        @Nonnull
+        private final R _requirement;
+        @Nonnull
         private final InputStream _stream;
+        @Nonnull
         private final StreamType _streamType;
 
-        private OutputMonitor(@Nonnull InputStream stream, @Nonnull StreamType streamType) {
-            super("OutputMonitor:" + streamType);
-            setDaemon(true);
+        public OutputMonitor(@Nonnull R requirement, @Nonnull GeneratedProcess process, @Nonnull InputStream stream, @Nonnull StreamType streamType) {
+            _requirement = requirement;
+            _process = process;
             _stream = stream;
             _streamType = streamType;
         }
@@ -277,11 +347,6 @@ public abstract class ApplicationDaemon<R extends ApplicationDaemonRequirement<?
                 // noinspection InstanceofCatchParameter
                 if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
                     LOG.warn("Could not read from " + _stream + ".", e);
-                }
-            } finally {
-                if (!_process.isAlive()) {
-                    streamListener.notifyProcessTerminated(_process);
-                    startupListener.notifyProcessTerminated(_process);
                 }
             }
         }

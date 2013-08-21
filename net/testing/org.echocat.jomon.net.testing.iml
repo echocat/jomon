@@ -9,16 +9,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty.orbit:javax.servlet:3.0.0.v201112011016" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-io:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-util:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-webapp:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-xml:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-servlet:8.1.7.v20120910" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-security:8.1.7.v20120910" level="project" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.common" />
     <orderEntry type="module" module-name="org.echocat.jomon.runtime" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />

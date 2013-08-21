@@ -1,11 +1,13 @@
 package org.echocat.jomon.process.daemon;
 
+import org.echocat.jomon.process.daemon.listeners.startup.StartupListener;
+import org.echocat.jomon.process.daemon.listeners.stream.StreamListener;
+import org.echocat.jomon.process.daemon.listeners.stream.StreamListeners;
 import org.echocat.jomon.runtime.generation.Requirement;
 
 import javax.annotation.Nonnull;
 
-import static org.echocat.jomon.process.daemon.StartupListener.noop;
-import static org.echocat.jomon.process.daemon.StreamListener.redirectToLogger;
+import static org.echocat.jomon.process.daemon.listeners.startup.StartupListener.noop;
 
 public interface ApplicationDaemonRequirement<T extends ApplicationDaemon<?>> extends Requirement {
 
@@ -25,7 +27,7 @@ public interface ApplicationDaemonRequirement<T extends ApplicationDaemon<?>> ex
         @Nonnull
         private StartupListener _startupListener = noop;
         @Nonnull
-        private StreamListener _streamListener = redirectToLogger;
+        private StreamListener _streamListener = StreamListeners.redirectToLogger;
 
         public Base(@Nonnull Class<T> type) {
             _type = type;
