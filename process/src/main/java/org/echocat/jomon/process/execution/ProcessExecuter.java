@@ -20,6 +20,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import static java.lang.Boolean.TRUE;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.regex.Pattern.compile;
 import static org.echocat.jomon.process.ProcessRepository.processRepository;
 import static org.echocat.jomon.process.daemon.StreamType.stderr;
@@ -146,6 +147,8 @@ public class ProcessExecuter {
         private final Lock _lock = new ReentrantLock();
         private final Condition _condition = _lock.newCondition();
 
+        private boolean _alive = true;
+
 
         public OutputMonitor(@Nonnull GeneratedProcess process, @Nonnull StreamType streamType) {
             super("OutputMonitor:" + process.getId() + ":" + streamType);
@@ -156,28 +159,37 @@ public class ProcessExecuter {
 
         @Override
         public void run() {
-            final InputStreamReader reader = new InputStreamReader(_stream);
             try {
-                final char[] buf = new char[_readSize];
-                int read = reader.read(buf);
-                while (!currentThread().isInterrupted() && read >= 0) {
-                    _buffer.append(buf, 0, read);
-                    read = reader.read(buf);
-                }
-            } catch (InterruptedIOException ignored) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                // noinspection InstanceofCatchParameter
-                if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
-                    LOG.warn("Could not read from " + _stream + ".", e);
-                }
-            } finally {
-                _lock.lock();
+                _lock.lockInterruptibly();
                 try {
-                    _condition.signalAll();
+                    final InputStreamReader reader = new InputStreamReader(_stream);
+                    try {
+                        final char[] buf = new char[_readSize];
+                        int read = reader.read(buf);
+                        while (!currentThread().isInterrupted() && read >= 0) {
+                            _buffer.append(buf, 0, read);
+                            read = reader.read(buf);
+                        }
+                    } catch (InterruptedIOException ignored) {
+                        currentThread().interrupt();
+                    } catch (Exception e) {
+                        // noinspection InstanceofCatchParameter
+                        if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
+                            LOG.warn("Could not read from " + _stream + ".", e);
+                        }
+                    }
                 } finally {
-                    _lock.unlock();
+                    try {
+                        _alive = false;
+                        _condition.signalAll();
+                    } finally {
+                        _lock.unlock();
+                    }
                 }
+            } catch (InterruptedException ignored) {
+                currentThread().interrupt();
+            } finally {
+                closeQuietly(_stream);
             }
         }
 
@@ -191,8 +203,9 @@ public class ProcessExecuter {
         public void waitFor() throws InterruptedException {
             _lock.lockInterruptibly();
             try {
-                if (isAlive()) {
-                    _condition.await();
+                while (_alive) {
+                    // Prevent deadlock on some JVMs
+                    _condition.await(500, MILLISECONDS);
                 }
             } finally {
                 _lock.unlock();
