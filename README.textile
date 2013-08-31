@@ -88,7 +88,7 @@ h1. Links
 
 h1. Use with Maven
 
-bc.<properties>
+bc. <properties>
     <versions.org.echocat.jomon>--fill here latest version in--</versions.org.echocat.jomon>
 </properties>
 <repositories>
