@@ -21,7 +21,7 @@
     <groupId>org.echocat</groupId>
     <artifactId>jomon</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.15-SNAPSHOT</version>
+    <version>1.3.0</version>
     <url>https://jomon.echocat.org</url>
 
     <modules>
@@ -433,6 +433,7 @@
         <connection>scm:git://github.com/echocat/jomon.git</connection>
         <developerConnection>scm:git:git@github.com:echocat/jomon.git</developerConnection>
         <url>https://github.com/echocat/jomon</url>
-    </scm>
+      <tag>version-1.3.0</tag>
+  </scm>
 
 </project>
