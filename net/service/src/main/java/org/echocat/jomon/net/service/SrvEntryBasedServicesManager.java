@@ -31,6 +31,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -192,6 +193,8 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             } else {
                 services = emptyList();
             }
+        } catch (UnknownHostException ignored) {
+            services = emptyList();
         }
         return services;
     }
