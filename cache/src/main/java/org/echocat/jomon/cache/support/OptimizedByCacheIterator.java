@@ -1,3 +1,17 @@
+/*****************************************************************************************
+ * *** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 2.0
+ *
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * *** END LICENSE BLOCK *****
+ ****************************************************************************************/
+
 package org.echocat.jomon.cache.support;
 
 import org.echocat.jomon.cache.Cache;
@@ -70,9 +84,7 @@ public abstract class OptimizedByCacheIterator<K, T extends IdEnabled<K>> implem
 
     @Override
     public void close() {
-        if (_delegate instanceof AutoCloseable) {
-            closeQuietly((AutoCloseable) _delegate);
-        }
+        closeQuietly(_delegate);
     }
 
     @Override public void remove() { throw new UnsupportedOperationException(); }

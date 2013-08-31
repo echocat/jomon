@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,6 @@ import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -193,8 +192,6 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             } else {
                 services = emptyList();
             }
-        } catch (UnknownHostException ignored) {
-            services = emptyList();
         }
         return services;
     }
@@ -223,9 +220,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
                     success = true;
                 } finally {
                     if (!success) {
-                        if (output instanceof AutoCloseable) {
-                            closeQuietly((AutoCloseable) output);
-                        }
+                        closeQuietly(output);
                     }
                 }
             } else {

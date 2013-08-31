@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -150,9 +150,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            if (iterator instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) iterator);
-            }
+            closeQuietly(iterator);
         }
         return result;
     }
@@ -218,9 +216,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            if (iterator instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) iterator);
-            }
+            closeQuietly(iterator);
         }
         return result;
     }
@@ -363,9 +359,7 @@ public class CollectionUtils {
                     result = predicate.apply(elements.next());
                 }
             } finally {
-                if (elements instanceof AutoCloseable) {
-                    closeQuietly((AutoCloseable) elements);
-                }
+                closeQuietly(elements);
             }
         }
         return result;
@@ -399,9 +393,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            if (iterator instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) iterator);
-            }
+            closeQuietly(iterator);
         }
         return count;
     }
@@ -419,9 +411,7 @@ public class CollectionUtils {
                 firstElement = iterator.next();
             }
         } finally {
-            if (iterator instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) iterator);
-            }
+            closeQuietly(iterator);
         }
         return firstElement;
     }
@@ -455,9 +445,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            if (iterator instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) iterator);
-            }
+            closeQuietly(iterator);
         }
         return removed;
     }

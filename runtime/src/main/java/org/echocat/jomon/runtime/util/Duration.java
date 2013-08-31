@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -266,6 +266,14 @@ public class Duration implements Comparable<Duration>, Serializable {
     @Nonnull
     public Map<TimeUnit, Long> toUnitToValue() {
         return toUnitToValue(toMilliSeconds());
+    }
+
+    public boolean isEmpty() {
+        return toMilliSeconds() <= 0;
+    }
+
+    public boolean hasContent() {
+        return toMilliSeconds() > 0;
     }
 
     public boolean isLessThan(@Nullable String other) {

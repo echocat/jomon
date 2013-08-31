@@ -1,0 +1,3 @@
+This files are here for distribution building because GIT does not
+stores empty directories. But in the created *.tar.gz will this
+files be deleted.
