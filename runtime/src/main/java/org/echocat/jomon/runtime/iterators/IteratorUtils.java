@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,9 +73,7 @@ public class IteratorUtils {
         return new CloseableIterator<T>() {
             @Override
             public void close() {
-                if (original instanceof AutoCloseable) {
-                    closeQuietly((AutoCloseable) original);
-                }
+                closeQuietly(original);
             }
 
             @Override

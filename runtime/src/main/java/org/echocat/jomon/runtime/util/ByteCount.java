@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,8 @@
  ****************************************************************************************/
 
 package org.echocat.jomon.runtime.util;
+
+import org.echocat.jomon.runtime.StringUtils;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -30,7 +32,6 @@ import static java.util.Locale.US;
 import static java.util.regex.Pattern.CASE_INSENSITIVE;
 import static java.util.regex.Pattern.compile;
 import static org.echocat.jomon.runtime.util.ByteUnit.BYTE;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @ThreadSafe
 @Immutable
@@ -69,7 +70,7 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
         Long partValue = null;
         for (int i = 0; i < BYTE_UNITS.length; i++) {
             final String group = matcher.group(i + 1);
-            if (!isEmpty(group)) {
+            if (!StringUtils.isEmpty(group)) {
                 partValue = BYTE_UNITS[i].toBytes(Long.parseLong(group));
             }
         }
@@ -219,17 +220,17 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
     }
 
     @Nonnull
-    public ByteCount plus(long byteCount) {
+    public ByteCount plus(@Nonnegative long byteCount) {
         return new ByteCount(_count + byteCount);
     }
 
     @Nonnull
-    public ByteCount plus(@Nonnull ByteCount byteCount) {
-        return plus(byteCount._count);
+    public ByteCount plus(@Nullable ByteCount byteCount) {
+        return plus(byteCount != null ? byteCount._count : 0);
     }
 
     @Nonnull
-    public ByteCount plus(long byteCount, @Nonnull ByteUnit unit) {
+    public ByteCount plus(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
         final long countToTransform = byteCount >= 0 ? byteCount : (byteCount * -1);
         final long transformedCount = unit.toBytes(countToTransform);
         final long correctedCount = byteCount >= 0 ? transformedCount : (transformedCount * -1);
@@ -237,26 +238,59 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
     }
 
     @Nonnull
-    public ByteCount minus(@Nonnull ByteCount byteCount) {
-        return minus(byteCount._count);
+    public ByteCount plus(@Nullable String byteCount) {
+        return plus(byteCount != null ? new ByteCount(byteCount) : null);
     }
 
     @Nonnull
-    public ByteCount minus(long byteCount) {
+    public ByteCount minus(@Nullable ByteCount byteCount) {
+        return minus(byteCount != null ? byteCount._count : 0);
+    }
+
+    @Nonnull
+    public ByteCount minus(@Nonnegative long byteCount) {
         return new ByteCount(_count - byteCount);
     }
 
     @Nonnull
-    public ByteCount minus(long byteCount, @Nonnull ByteUnit unit) {
+    public ByteCount minus(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
         final long countToTransform = byteCount >= 0 ? byteCount : (byteCount * -1);
         final long transformedCount = unit.toBytes(countToTransform);
         final long correctedCount = byteCount >= 0 ? transformedCount : (transformedCount * -1);
         return minus(correctedCount);
     }
 
+    @Nonnull
+    public ByteCount multiplyBy(double what) {
+        return new ByteCount(Math.round(toByteCount() * what));
+    }
+
+    @Nonnull
+    public ByteCount dividedBy(double what) {
+        return new ByteCount(Math.round(toByteCount() / what));
+    }
+
+    @Nonnull
+    public ByteCount multiplyBy(long what) {
+        return new ByteCount(Math.round(toByteCount() * what));
+    }
+
+    @Nonnull
+    public ByteCount dividedBy(long what) {
+        return new ByteCount(Math.round(toByteCount() / what));
+    }
+
     @Nonnegative
     public double getProcessInRelationTo(@Nonnull ByteCount current) {
         return ((double) current._count) / ((double) _count);
+    }
+
+    public boolean isEmpty() {
+        return toByteCount() <= 0;
+    }
+
+    public boolean hasContent() {
+        return toByteCount() > 0;
     }
 
     public boolean isLessThan(@Nonnull ByteCount other) {

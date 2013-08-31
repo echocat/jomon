@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,9 +37,7 @@ public class IteratorMatchers {
                 try {
                     return iterator != null && !iterator.hasNext();
                 } finally {
-                    if (iterator instanceof AutoCloseable) {
-                        closeQuietly((AutoCloseable)iterator);
-                    }
+                    closeQuietly(iterator);
                 }
             }
 
@@ -79,9 +77,7 @@ public class IteratorMatchers {
                     }
                     return result;
                 } finally {
-                    if (itemsIterator instanceof AutoCloseable) {
-                        closeQuietly((AutoCloseable)itemsIterator);
-                    }
+                    closeQuietly(itemsIterator);
                 }
             }
 
@@ -121,9 +117,7 @@ public class IteratorMatchers {
                     }
                     return result;
                 } finally {
-                    if (itemsIterator instanceof AutoCloseable) {
-                        closeQuietly((AutoCloseable)itemsIterator);
-                    }
+                    closeQuietly(itemsIterator);
                 }
             }
 

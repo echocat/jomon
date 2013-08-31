@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -87,8 +87,6 @@ public abstract class BatchConvertingIterator<S, T> implements CloseableIterator
 
     @Override
     public void close() {
-        if (_input instanceof AutoCloseable) {
-            closeQuietly((AutoCloseable) _input);
-        }
+        closeQuietly(_input);
     }
 }
