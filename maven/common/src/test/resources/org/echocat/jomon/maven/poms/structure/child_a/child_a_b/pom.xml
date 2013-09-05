@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ **** BEGIN LICENSE BLOCK *****
+  ~
+  ~ Version: MPL 2.0
+  ~
+  ~ echocat Jomon, Copyright (c) 2012-2013 echocat
+  ~
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~
+  ~ **** END LICENSE BLOCK *****
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.echocat.jomon.maven.structure.test</groupId>
+        <!--suppress MavenModelInspection -->
+        <artifactId>child_a</artifactId>
+        <!--suppress MavenModelInspection -->
+        <version>667</version>
+    </parent>
+
+    <name>Child_a_b Test</name>
+    <!--suppress MavenRedundantGroupId -->
+    <groupId>org.echocat.jomon.maven.structure.test</groupId>
+    <artifactId>child_a_b</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.echocat.jomon.maven.structure.test</groupId>
+            <!--suppress MavenModelInspection -->
+            <artifactId>child_a</artifactId>
+            <!--suppress MavenModelInspection -->
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.echocat.jomon.maven.structure.test</groupId>
+            <!--suppress MavenModelInspection -->
+            <artifactId>child_a_a</artifactId>
+            <!--suppress MavenModelInspection -->
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

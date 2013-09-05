@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -167,9 +167,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
                 final Cache<?, ?> cache = entry.getValue();
                 try {
                     if (beforeDestroy(id, cache)) {
-                        if (cache instanceof AutoCloseable) {
-                            closeQuietly((AutoCloseable) cache);
-                        }
+                        closeQuietly(cache);
                         i.remove();
                         afterDestroy(id, cache);
                     } else {

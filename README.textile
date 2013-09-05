@@ -36,13 +36,13 @@ h2. Generator
 
 We created a pattern to simple generate objects. This pattern defines that there is an singleton of a generator and this generator will generator an object instance for a given requirement.
 
-See the @net.motortalk.demo.generator.EmployeeGeneratorUnitTest@ to see how it works.
+See the @org.echocat.jomon.demo.generator.EmployeeGeneratorUnitTest@ to see how it works.
 
 h2. Repository
 
 ...is "another pattern":http://msdn.microsoft.com/en-us/library/ff649690.aspx. It is another way to receive elements, create, update and delete it instead of using the "DAO-Pattern":http://en.wikipedia.org/wiki/Data_access_object. Our interface structure is a simple presentation of this pattern.
 
-See the @net.motortalk.demo.repository.EmployeeRepositoryUnitTest@ to see how it works.
+See the @org.echocat.jomon.demo.repository.EmployeeRepositoryUnitTest@ to see how it works.
 
 h2. Simple Cluster
 
@@ -88,7 +88,10 @@ h1. Links
 
 h1. Use with Maven
 
-bc. <repositories>
+bc. <properties>
+    <versions.org.echocat.jomon>--fill here latest version in--</versions.org.echocat.jomon>
+</properties>
+<repositories>
     <repository>
         <id>echocat</id>
         <url>http://repo.echocat.org/echocat</url>
@@ -98,57 +101,77 @@ bc. <repositories>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>cache</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>format</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.maven</groupId>
+        <artifactId>common</artifactId>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>cluster</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>common</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>http</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.net</groupId>
+        <artifactId>mail</artifactId>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>service</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon.net</groupId>
         <artifactId>testing</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>process</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>resources</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>runtime</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.spring</groupId>
+        <artifactId>common</artifactId>
+        <version>${versions.org.echocat.jomon}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.echocat.jomon.spring</groupId>
+        <artifactId>testing</artifactId>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
     <dependency>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>testing</artifactId>
-        <version>-- version --</version>
+        <version>${versions.org.echocat.jomon}</version>
     </dependency>
 </dependencies>
 

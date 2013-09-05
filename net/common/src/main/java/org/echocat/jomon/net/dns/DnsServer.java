@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,7 @@ import static org.apache.commons.io.IOUtils.closeQuietly;
  * @author Brian Wellington &lt;bwelling@xbill.org&gt;
  */
 
-@SuppressWarnings({"ContinueStatement", "OverlyLongMethod", "MethodWithMultipleReturnPoints", "AssignmentToMethodParameter", "InfiniteLoopStatement"})
+@SuppressWarnings({"ContinueStatement", "OverlyLongMethod", "MethodWithMultipleReturnPoints", "AssignmentToMethodParameter", "InfiniteLoopStatement", "StatementWithEmptyBody"})
 public class DnsServer implements AutoCloseable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DnsServer.class);

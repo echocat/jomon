@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012 echocat
+ * echocat Jomon, Copyright (c) 2012-2013 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -223,9 +223,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
                     success = true;
                 } finally {
                     if (!success) {
-                        if (output instanceof AutoCloseable) {
-                            closeQuietly((AutoCloseable) output);
-                        }
+                        closeQuietly(output);
                     }
                 }
             } else {
