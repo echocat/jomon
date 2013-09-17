@@ -23,6 +23,7 @@
     <packaging>pom</packaging>
     <version>1.3.2-SNAPSHOT</version>
     <url>https://jomon.echocat.org</url>
+    <description>Collection of many useful tools for Java. Could be compared with apache-commons.</description>
 
     <modules>
         <module>bundle</module>
@@ -49,6 +50,14 @@
         <url>https://echocat.org/</url>
         <name>echocat</name>
     </organization>
+
+    <developers>
+        <developer>
+            <id>gregor.noczinski</id>
+            <name>Gregor Noczinski</name>
+            <email>gregor@noczinski.eu</email>
+        </developer>
+    </developers>
 
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssZ</maven.build.timestamp.format>
@@ -256,6 +265,14 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.4</version>
+                    <configuration>
+                        <keyname>echocat</keyname>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <!--suppress MavenModelInspection -->
                     <version>2.5</version>
@@ -345,6 +362,31 @@
             </plugins>
         </pluginManagement>
         <plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!--suppress MavenModelInspection -->
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -394,8 +436,8 @@
 
     <distributionManagement>
         <repository>
-            <id>echocat-jomon-releases</id>
-            <url>dav:https://repo.echocat.org/jomon-releases</url>
+            <id>oss-sonartype-releases</id>
+            <url>dav:https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
         <snapshotRepository>
             <id>echocat-jomon-snapshots</id>
@@ -407,12 +449,6 @@
         <repository>
             <id>echocat</id>
             <url>http://repo.echocat.org/all</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </repository>
     </repositories>
 
@@ -420,12 +456,6 @@
         <pluginRepository>
             <id>echocat</id>
             <url>http://repo.echocat.org/all</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
@@ -433,7 +463,7 @@
         <connection>scm:git://github.com/echocat/jomon.git</connection>
         <developerConnection>scm:git:git@github.com:echocat/jomon.git</developerConnection>
         <url>https://github.com/echocat/jomon</url>
-      <tag>HEAD</tag>
+        <tag>HEAD</tag>
   </scm>
 
 </project>
