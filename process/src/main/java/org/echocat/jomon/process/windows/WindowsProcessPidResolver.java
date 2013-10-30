@@ -17,7 +17,7 @@ package org.echocat.jomon.process.windows;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import org.echocat.jomon.process.ProcessPidResolver;
+import org.echocat.jomon.process.local.ProcessPidResolver;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;

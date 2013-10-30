@@ -14,11 +14,13 @@
 
 package org.echocat.jomon.testing;
 
+import com.google.common.base.Predicate;
 import org.echocat.jomon.runtime.util.Duration;
 import org.hamcrest.*;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -250,7 +252,7 @@ public class BaseMatchers {
                 } else if (what instanceof Date) {
                     result = ((Date)value).after((Date)what) || value.equals(what);
                 } else if (what instanceof Duration) {
-                    result = ((Duration)value).isGreaterThanOrEqualTo((Duration)what);
+                    result = ((Duration)value).isGreaterThanOrEqualTo((Duration) what);
                 } else {
                     result = false;
                 }
@@ -360,6 +362,110 @@ public class BaseMatchers {
         };
     }
 
+    @Nonnull
+    public static <T> Matcher<T> hasSize(@Nonnegative final int size) {
+        return new BaseMatcher<T>() {
+
+            @Override
+            public boolean matches(@Nullable Object item) {
+                final boolean result;
+                if (item != null) {
+                    result = size == getSizeOf(item);
+                } else {
+                    result = false;
+                }
+                return result;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("has size of ").appendValue(size);
+            }
+
+            @Override
+            public void describeMismatch(@Nullable Object actual, @Nonnull Description description) {
+                handleDiscribeSizeMismatch(actual, description);
+            }
+
+        };
+    }
+
+    @Nonnull
+    public static <T> Matcher<T> hasSameSizeAs(@Nullable final Object what) {
+        return new BaseMatcher<T>() {
+
+            @Override
+            public boolean matches(@Nullable Object item) {
+                final int size = what != null ? getSizeOf(what) : 0;
+                return size == 0 ? (item == null || getSizeOf(item) == 0) : (item != null && getSizeOf(item) == size);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                final int size = what != null ? getSizeOf(what) : 0;
+                description.appendText("has size of ").appendValue(size);
+            }
+
+            @Override
+            public void describeMismatch(@Nullable Object actual, @Nonnull Description description) {
+                handleDiscribeSizeMismatch(actual, description);
+            }
+
+        };
+    }
+
+    @Nonnull
+    public static <T> Matcher<T> applies(@Nonnull final Predicate<T> predicate) {
+        return new BaseMatcher<T>() {
+
+            @Override
+            public boolean matches(@Nullable Object item) {
+                // noinspection unchecked
+                return predicate.apply((T) item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("applies ").appendValue(predicate);
+            }
+
+        };
+    }
+
+    @Nonnegative
+    protected static int getSizeOf(@Nullable Object what) {
+        final int result;
+        if (what == null) {
+            result = 0;
+        } else if (what instanceof Collection) {
+            result = ((Collection) what).size();
+        } else if (what instanceof Map) {
+            result = ((Map) what).size();
+        } else if (what instanceof Object[]) {
+            result = ((Object[]) what).length;
+        } else if (what instanceof CharSequence) {
+            result = ((CharSequence) what).length();
+        } else {
+            throw new IllegalArgumentException("Could not get size of " + what + ".");
+        }
+        return result;
+    }
+
+    protected static void handleDiscribeSizeMismatch(@Nullable Object actual, @Nonnull Description description) {
+        description.appendText("was ");
+        if (actual != null) {
+            description.appendValue(null);
+        } else {
+            description.appendValue(getSizeOf(actual));
+            if (actual instanceof Map || actual instanceof Collection) {
+                description.appendText(" (Values: ").appendValue(actual).appendText(")");
+            } else if (actual instanceof Object[]) {
+                description.appendText(" (Values: ").appendValue(Arrays.toString((Object[]) actual)).appendText(")");
+            } else if (actual instanceof CharSequence) {
+                description.appendText(" (Content: ").appendValue(actual).appendText(")");
+            }
+        }
+    }
 
     private BaseMatchers() {}
 }

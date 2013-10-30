@@ -16,6 +16,7 @@ package org.echocat.jomon.net.cluster.channel;
 
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 
 public interface AddressEnabledClusterChannel<ID, N extends Node<ID>> extends ClusterChannel<ID, N> {
 
@@ -23,5 +24,12 @@ public interface AddressEnabledClusterChannel<ID, N extends Node<ID>> extends Cl
     public InetSocketAddress getAddress();
 
     public void setAddress(@Nullable InetSocketAddress address);
+
+    public void setAddress(@Nullable InetSocketAddress address, @Nullable NetworkInterface networkInterface);
+
+    @Nullable
+    public NetworkInterface getInterface();
+
+    public void setInterface(@Nullable NetworkInterface networkInterface);
 
 }

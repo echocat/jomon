@@ -115,7 +115,7 @@ public class LazyEntry<K, V> extends Entry.BaseImpl<K, V> implements WritableEnt
         }
     }
 
-    static enum ValueState {
+    public static enum ValueState {
         notProducedYet,
         producing,
         produced,

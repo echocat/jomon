@@ -14,12 +14,9 @@
 
 package org.echocat.jomon.cache;
 
-import org.echocat.jomon.cache.Value.Fixed;
 import org.echocat.jomon.runtime.iterators.CloseableIterator;
-import org.echocat.jomon.runtime.util.Duration;
-import org.echocat.jomon.runtime.util.ProducingType;
-import org.echocat.jomon.runtime.util.ValueProducer;
-import org.echocat.jomon.runtime.util.ValueProducingFailedException;
+import org.echocat.jomon.runtime.util.*;
+import org.echocat.jomon.runtime.util.Value.Fixed;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -216,7 +213,7 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
                 handleRemove(outdatedCacheEntry);
             }
             final Value<V> valueHolder = cacheEntry == null ? null : cacheEntry.getValue();
-            value = valueHolder != null ? valueHolder.get() : null;
+            value = valueHolder != null ? valueHolder.getValue() : null;
             _listenerInvoker.afterGet(this, key, valueHolder);
         } else {
             value = null;
@@ -259,7 +256,7 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
                 handleRemove(outdatedCacheEntry);
             }
             final Value<V> valueHolder = cacheEntry != null ? cacheEntry.getValue() : null;
-            value = valueHolder != null ? valueHolder.get() : null;
+            value = valueHolder != null ? valueHolder.getValue() : null;
             checkValueAfterProducing(value);
             _listenerInvoker.afterGet(this, key, valueHolder);
         } else {

@@ -212,7 +212,7 @@ public class LruCacheUnitTest extends CacheUnitTestSupport<LruCache<Object, Obje
             @Override
             protected void handleRemove(CacheEntry<Integer, Integer> value) {
                 super.handleRemove(value);
-                handled.add(value.getValue().get());
+                handled.add(value.getValue().getValue());
             }
         };
         cache.setCapacity(3L);

@@ -52,6 +52,7 @@
         <module name="org.echocat.jomon.net.common" />
         <module name="org.echocat.jomon.net.http" />
         <module name="org.echocat.jomon.net.service" />
+        <module name="org.echocat.jomon.net.ssh" />
         <module name="org.echocat.jomon.net.testing" />
         <module name="org.echocat.jomon.process" />
         <module name="org.echocat.jomon.resources" />
@@ -78,6 +79,7 @@
       <module name="org.echocat.jomon.net.common" target="1.7" />
       <module name="org.echocat.jomon.net.http" target="1.7" />
       <module name="org.echocat.jomon.net.service" target="1.7" />
+      <module name="org.echocat.jomon.net.ssh" target="1.7" />
       <module name="org.echocat.jomon.net.testing" target="1.7" />
       <module name="org.echocat.jomon.process" target="1.7" />
       <module name="org.echocat.jomon.resources" target="1.7" />

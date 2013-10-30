@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 @XmlTransient
-public abstract class ValueWithKey<T> extends Value<T> implements Entry<String, T> {
+public abstract class ValueWithKey<T> implements Value<T>, Entry<String, T> {
 
     @SuppressWarnings("ClassReferencesSubclass")
     public static final Set<Class<? extends Value<?>>> ALL_DEFAULT_VALUE_WITH_KEY_TYPES = Sets.<Class<? extends Value<?>>>newHashSet(

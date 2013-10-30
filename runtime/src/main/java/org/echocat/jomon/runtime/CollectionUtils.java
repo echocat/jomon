@@ -25,21 +25,20 @@ import javax.annotation.WillClose;
 import java.util.*;
 
 import static com.google.common.base.Predicates.equalTo;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static java.util.Collections.*;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class CollectionUtils {
 
 
     /**
-     * Returns a {@link LinkedHashMap}
+     * Returns a the given map enriched
      * with the mappings <code>a[0] => a[1], a[2] => a[3], ...</code>.
      * @param a the elements to construct a {@link Map} from.
      * @return a {@link Map} constructed of the specified elements.
      */
-    public static <K, V> Map<K, V> asMap(Object... a) {
-        final Map<K, V> result = new LinkedHashMap<>();
+    @Nonnull
+    public static <K, V> Map<K, V> putAll(@Nonnull Map<K, V> original, @Nullable Object... a) {
         if (a != null) {
             final int length = a.length;
             if (length % 2 == 1) {
@@ -47,10 +46,56 @@ public class CollectionUtils {
             }
             for (int i = 0; i < length; i += 2) {
                 // noinspection unchecked
-                result.put((K) a[i], (V) a[i + 1]);
+                original.put((K) a[i], (V) a[i + 1]);
             }
         }
-        return result;
+        return original;
+    }
+
+    @Nonnull
+    public static <K, V> Map<K, V> putAll(@Nonnull Map<K, V> original, @Nullable Map<K, V> other) {
+        if (other != null) {
+            original.putAll(other);
+        }
+        return original;
+    }
+
+    /**
+     * Returns a {@link LinkedHashMap}
+     * with the mappings <code>a[0] => a[1], a[2] => a[3], ...</code>.
+     * @param a the elements to construct a {@link Map} from.
+     * @return a {@link Map} constructed of the specified elements.
+     */
+    @Nonnull
+    public static <K, V> Map<K, V> asMap(@Nullable Object... a) {
+        return putAll(new LinkedHashMap<K, V>(), a);
+    }
+
+    /**
+     * Returns a the given map enriched
+     * with the mappings <code>a[0] => a[1], a[2] => a[3], ...</code>.
+     * @param a the elements to construct a {@link Map} from.
+     * @return a immutable {@link Map} constructed of the specified elements.
+     */
+    @Nonnull
+    public static <K, V> Map<K, V> putAllAndMakeImmutable(@Nonnull Map<K, V> original, @Nullable Object... a) {
+        return asImmutableMap(CollectionUtils.<K, V>putAll(original, a));
+    }
+
+    /**
+     * Returns a {@link LinkedHashMap}
+     * with the mappings <code>a[0] => a[1], a[2] => a[3], ...</code>.
+     * @param a the elements to construct a {@link Map} from.
+     * @return a immutable {@link Map} constructed of the specified elements.
+     */
+    @Nonnull
+    public static <K, V> Map<K, V> asImmutableMap(@Nullable Object... a) {
+        return putAllAndMakeImmutable(new LinkedHashMap<K, V>(), a);
+    }
+
+    @Nonnull
+    public static <K, V> Map<K, V> asImmutableMap(@Nullable Map<K, V> map) {
+        return map != null ? unmodifiableMap(map) : Collections.<K, V>emptyMap();
     }
 
     public static boolean isNotEmpty(@Nullable Collection<?> collection) {
@@ -93,24 +138,38 @@ public class CollectionUtils {
         return map == null || map.isEmpty();
     }
 
-    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable T[] elements) {
+    @Nonnull
+    public static <T, C extends Collection<T>> C addAll(@Nonnull C to, @Nullable T... elements) {
         if (elements != null) {
             Collections.addAll(to, elements);
         }
+        return to;
     }
 
-    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable Iterable<T> elements) {
+    @Nonnull
+    public static <T, C extends Collection<T>> C addAll(@Nonnull C to, @Nullable Iterable<T> elements) {
         if (elements != null) {
-            addAll(to, elements.iterator());
-        }
-    }
-
-    public static <T> void addAll(@Nonnull Collection<T> to, @Nullable Iterator<T> elements) {
-        if (elements != null) {
-            while (elements.hasNext()) {
-                to.add(elements.next());
+            try {
+                addAll(to, elements.iterator());
+            } finally {
+                closeQuietlyIfAutoCloseable(elements);
             }
         }
+        return to;
+    }
+
+    @Nonnull
+    public static <T, C extends Collection<T>> C addAll(@Nonnull C to, @Nullable Iterator<T> elements) {
+        if (elements != null) {
+            try {
+                while (elements.hasNext()) {
+                    to.add(elements.next());
+                }
+            } finally {
+                closeQuietlyIfAutoCloseable(elements);
+            }
+        }
+        return to;
     }
 
     /**
@@ -139,6 +198,10 @@ public class CollectionUtils {
         return unmodifiableList(asList(objects));
     }
 
+    @Nonnull
+    public static <T> List<T> addAllAndMakeImmutable(@Nonnull List<T> original, @Nullable T... objects) {
+        return unmodifiableList(addAll(original, objects));
+    }
 
     @Nonnull
     public static <T> List<T> asList(@Nullable Iterator<T> iterator) {
@@ -150,7 +213,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            closeQuietly(iterator);
+            closeQuietlyIfAutoCloseable(iterator);
         }
         return result;
     }
@@ -158,6 +221,11 @@ public class CollectionUtils {
     @Nonnull
     public static <T> List<T> asImmutableList(@Nullable Iterator<T> iterator) {
         return unmodifiableList(asList(iterator));
+    }
+
+    @Nonnull
+    public static <T> List<T> addAllAndMakeImmutable(@Nonnull List<T> original, @Nullable Iterator<T> iterator) {
+        return unmodifiableList(addAll(original, iterator));
     }
 
     @Nonnull
@@ -177,6 +245,11 @@ public class CollectionUtils {
     @Nonnull
     public static <T> List<T> asImmutableList(@Nullable Iterable<T> in) {
         return unmodifiableList(asList(in));
+    }
+
+    @Nonnull
+    public static <T> List<T> addAllAndMakeImmutable(@Nonnull List<T> original, @Nullable Iterable<T> in) {
+        return unmodifiableList(addAll(original, in));
     }
 
     /**
@@ -202,28 +275,31 @@ public class CollectionUtils {
      */
     @Nonnull
     public static <T> Set<T> asImmutableSet(@Nullable T... objects) {
-        return unmodifiableSet(asSet(objects));
+        return addAllAndMakeImmutable(new HashSet<T>(), objects);
+    }
+
+    /**
+     * Returns an unmodifiable {@link Set} containing the given <code>objects</code>.
+     */
+    @Nonnull
+    public static <T> Set<T> addAllAndMakeImmutable(@Nonnull Set<T> original, @Nullable T... objects) {
+        return unmodifiableSet(addAll(original, objects));
     }
 
 
     @Nonnull
     public static <T> Set<T> asSet(@Nullable Iterator<T> iterator) {
-        final Set<T> result = new LinkedHashSet<>();
-        try {
-            if (iterator != null) {
-                while (iterator.hasNext()) {
-                    result.add(iterator.next());
-                }
-            }
-        } finally {
-            closeQuietly(iterator);
-        }
-        return result;
+        return addAll(new LinkedHashSet<T>(), iterator);
     }
 
     @Nonnull
     public static <T> Set<T> asImmutableSet(@Nullable Iterator<T> iterator) {
         return unmodifiableSet(asSet(iterator));
+    }
+
+    @Nonnull
+    public static <T> Set<T> addAllAndMakeImmutable(@Nonnull Set<T> original, @Nullable Iterator<T> iterator) {
+        return unmodifiableSet(addAll(original, iterator));
     }
 
     @Nonnull
@@ -234,8 +310,7 @@ public class CollectionUtils {
         } else if (in instanceof Collection) {
             result = new LinkedHashSet<>((Collection<T>) in);
         } else {
-            result = new LinkedHashSet<>();
-            addAll(result, in);
+            result = addAll(new LinkedHashSet<T>(), in);
         }
         return result;
     }
@@ -243,6 +318,11 @@ public class CollectionUtils {
     @Nonnull
     public static <T> Set<T> asImmutableSet(@Nullable Iterable<T> in) {
         return unmodifiableSet(asSet(in));
+    }
+
+    @Nonnull
+    public static <T> Set<T> addAllAndMakeImmutable(@Nonnull Set<T> original, @Nullable Iterable<T> in) {
+        return unmodifiableSet(addAll(original, in));
     }
 
     @Nonnull
@@ -359,7 +439,7 @@ public class CollectionUtils {
                     result = predicate.apply(elements.next());
                 }
             } finally {
-                closeQuietly(elements);
+                closeQuietlyIfAutoCloseable(elements);
             }
         }
         return result;
@@ -393,7 +473,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            closeQuietly(iterator);
+            closeQuietlyIfAutoCloseable(iterator);
         }
         return count;
     }
@@ -411,7 +491,7 @@ public class CollectionUtils {
                 firstElement = iterator.next();
             }
         } finally {
-            closeQuietly(iterator);
+            closeQuietlyIfAutoCloseable(iterator);
         }
         return firstElement;
     }
@@ -445,7 +525,7 @@ public class CollectionUtils {
                 }
             }
         } finally {
-            closeQuietly(iterator);
+            closeQuietlyIfAutoCloseable(iterator);
         }
         return removed;
     }

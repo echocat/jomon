@@ -76,7 +76,7 @@ public abstract class CacheUnitTestSupport<T extends LimitedCache<Object, Object
         for (Object key : expected.keySet()) {
             final CacheEntry<?, ?> entry = cache.getEntries().get(key);
             assertNotNull("Entry for key '" + key + "' is null!", entry);
-            assertEquals("key '" + key + "'", expected.get(key), entry.getValue().get());
+            assertEquals("key '" + key + "'", expected.get(key), entry.getValue().getValue());
         }
     }
 
@@ -116,7 +116,7 @@ public abstract class CacheUnitTestSupport<T extends LimitedCache<Object, Object
         cache.put(o, o);
         assertEquals(2, (long)cache.size());
         // Remove entry with null as key ...
-        assertSame(o, cache.remove(null).get());
+        assertSame(o, cache.remove(null).getValue());
         assertEquals(1, (long)cache.size());
         assertFalse(cache.contains(null));
         assertNull(cache.get(null));
@@ -140,7 +140,7 @@ public abstract class CacheUnitTestSupport<T extends LimitedCache<Object, Object
         assertTrue(cache.contains(o));
         assertNull(cache.get(o));
         // Remove entry with null as value ...
-        assertNull(cache.remove(o).get());
+        assertNull(cache.remove(o).getValue());
         assertEquals(0, (long)cache.size());
         assertFalse(cache.contains(o));
         assertNull(cache.get(o));
@@ -166,7 +166,7 @@ public abstract class CacheUnitTestSupport<T extends LimitedCache<Object, Object
         cache.put(new Object(), new Object());
         assertEquals(2, (long)cache.size());
         // Remove entry with null as key ...
-        assertNull(cache.remove(null).get());
+        assertNull(cache.remove(null).getValue());
         assertEquals(1, (long)cache.size());
         assertFalse(cache.contains(null));
         assertNull(cache.get(null));

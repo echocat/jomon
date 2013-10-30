@@ -14,7 +14,7 @@
 
 package org.echocat.jomon.process.unix;
 
-import org.echocat.jomon.process.ProcessPidResolver;
+import org.echocat.jomon.process.local.ProcessPidResolver;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;

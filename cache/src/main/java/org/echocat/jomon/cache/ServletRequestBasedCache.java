@@ -14,7 +14,8 @@
 
 package org.echocat.jomon.cache;
 
-import org.echocat.jomon.cache.Value.Lazy;
+import org.echocat.jomon.runtime.util.Value;
+import org.echocat.jomon.runtime.util.Value.Lazy;
 import org.echocat.jomon.cache.management.CacheCreator;
 import org.echocat.jomon.cache.management.CacheDefinition;
 import org.echocat.jomon.runtime.util.Duration;
@@ -73,14 +74,14 @@ public class ServletRequestBasedCache<K, V> extends CacheSupport<K, V> implement
     @Nullable
     public V get(@Nullable K key, @Nullable ValueProducer<K, V> cacheValueProducer, @Nullable Duration expireAfter) {
         final Cache<K, V> cache = findRequestBasedCache();
-        return cache != null ? cache.get(key, cacheValueProducer, expireAfter) : new Lazy<>(key, cacheValueProducer, ProducingType.blocking).get();
+        return cache != null ? cache.get(key, cacheValueProducer, expireAfter) : new Lazy<>(key, cacheValueProducer, ProducingType.blocking).getValue();
     }
 
     @Override
     @Nullable
     public V get(@Nullable K key, @Nullable ValueProducer<K, V> cacheValueProducer) {
         final Cache<K, V> cache = findRequestBasedCache();
-        return cache != null ? cache.get(key, cacheValueProducer) : new Lazy<>(key, cacheValueProducer, ProducingType.blocking).get();
+        return cache != null ? cache.get(key, cacheValueProducer) : new Lazy<>(key, cacheValueProducer, ProducingType.blocking).getValue();
     }
 
     @Override

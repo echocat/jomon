@@ -14,33 +14,88 @@
 
 package org.echocat.jomon.process;
 
+import org.echocat.jomon.runtime.io.ChunkAwareSerializer;
+import org.echocat.jomon.runtime.iterators.ConvertingIterator;
+import org.echocat.jomon.runtime.util.ByteCount;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.*;
 import java.util.*;
 
+import static java.io.File.separator;
 import static java.lang.System.getProperty;
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.unmodifiableSet;
+import static org.echocat.jomon.runtime.CollectionUtils.asIterator;
+import static org.echocat.jomon.runtime.io.Serializers.getChunkAwareSerializerOf;
+import static org.echocat.jomon.runtime.io.StreamUtils.writeZeros;
+import static org.echocat.jomon.runtime.util.ByteCount.byteCountOf;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
 @ThreadSafe
-public class GeneratedProcessRegistry implements AutoCloseable {
+public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> implements AutoCloseable {
 
-    private static final String DEFAULT_IDS_FILE_DIRECTORY_PATH = getProperty("user.home", File.separator) + File.separator + ".parentProcessRegistry";
+    @Nonnull
+    protected static final String DEFAULT_IDS_FILE_DIRECTORY_PATH_PREFIX = getProperty("user.home", ".") + separator + ".parentProcessRegistry";
 
-    public static final File IDS_FILE_DIRECTORY = getIdsFileDirectory();
-
-    private final Map<Long, Long> _processIdToFilePosition = new HashMap<>();
+    @Nonnull
+    private final Map<ID, Long> _processIdToFilePosition = new HashMap<>();
+    @Nonnull
     private final Set<Long> _freeFilePositions = new HashSet<>();
+    @Nonnull
     private final File _file;
+    @Nonnull
     private final RandomAccessFile _access;
+    private final long _parentLocalProcessId;
+    @Nonnull
+    private final String _type;
+    @Nonnull
+    private final ChunkAwareSerializer<ID> _idSerializer;
+    @Nonnull
+    private final Class<ID> _idType;
 
-    public GeneratedProcessRegistry(long parentProcessId) {
-        _file = getIdsFileFor(parentProcessId);
+    public GeneratedProcessRegistry(long parentLocalProcessId, @Nonnull String type, @Nonnull Class<ID> idType) {
+        _parentLocalProcessId = parentLocalProcessId;
+        _type = type;
+        _idType = idType;
+        final File idsFileDirectory = getIdsFileDirectoryFor(_type);
+        _file = getIdsFileFor(idsFileDirectory, parentLocalProcessId);
         _access = openIdsFile(_file);
+        _idSerializer = getChunkAwareSerializerOf(idType);
+    }
+
+    @Nonnull
+    protected ByteCount getChunkSizeFor(@Nonnull Class<ID> idType, @Nullable ChunkAwareSerializer<ID> idSerializer) {
+        final long byteCount;
+        if (idType == Long.class) {
+            byteCount = 8;
+        } else if (idType == Integer.class) {
+            byteCount = 4;
+        } else if (idType == Short.class) {
+            byteCount = 2;
+        } else if (idType == Byte.class) {
+            byteCount = 1;
+        } else {
+            if (idSerializer != null) {
+                byteCount = idSerializer.getChunkSize();
+            } else {
+                throw new UnsupportedOperationException("This class does not support an idType '" + idType.getName() + "'.");
+            }
+        }
+        return byteCountOf(byteCount);
+    }
+
+    @Nonnull
+    public String getType() {
+        return _type;
+    }
+
+    public long getParentLocalProcessId() {
+        return _parentLocalProcessId;
     }
 
     @Nonnull
@@ -52,30 +107,32 @@ public class GeneratedProcessRegistry implements AutoCloseable {
         }
     }
 
-    public void register(@Nonnull GeneratedProcess process) {
+    public void register(@Nonnull P process) {
         if (process.isDaemon()) {
-            final long id = process.getId();
-            synchronized (this) {
-                if (!_processIdToFilePosition.containsKey(id)) {
-                    registerUnknownProcessWith(id);
-                    startAutomaticDeRegistrationFor(process);
+            final ID id = process.getId();
+            if (id != null) {
+                synchronized (this) {
+                    if (!_processIdToFilePosition.containsKey(id)) {
+                        registerUnknownProcessWith(id);
+                        startAutomaticDeRegistrationFor(process);
+                    }
                 }
             }
         }
     }
 
-    protected void startAutomaticDeRegistrationFor(@Nonnull GeneratedProcess process) {
+    protected void startAutomaticDeRegistrationFor(@Nonnull P process) {
         final Thread waiter = new Thread(new WaitForEnd(process), "Wait for end of " + process);
         waiter.setDaemon(true);
         waiter.start();
     }
 
     @GuardedBy("this")
-    protected void registerUnknownProcessWith(long id) {
+    protected void registerUnknownProcessWith(@Nonnull ID id) {
         final long position = getFreePosition();
         try {
             _access.seek(position);
-            _access.writeLong(id);
+            writeIdToChunk(id);
         } catch (IOException e) {
             throw new RuntimeException("Could not write id " + id + " at position " + position + " in " + _access + ".", e);
         }
@@ -83,30 +140,34 @@ public class GeneratedProcessRegistry implements AutoCloseable {
         _freeFilePositions.remove(position);
     }
 
-    public void unregister(@Nonnull GeneratedProcess process) {
+    protected void writeIdToChunk(@Nonnull ID id) throws IOException {
+        _idSerializer.write(id, _access);
+    }
+
+    public void unregister(@Nonnull P process) {
         if (process.isDaemon()) {
-            final long id = process.getId();
-            synchronized (this) {
-                if (_processIdToFilePosition.containsKey(id)) {
-                    unregisterKnownProcessWith(id);
+            final ID id = process.getId();
+            if (id != null) {
+                synchronized (this) {
+                    if (_processIdToFilePosition.containsKey(id)) {
+                        unregisterKnownProcessWith(id);
+                    }
                 }
             }
         }
     }
 
     @Nonnull
-    public Set<Long> getAllIds() {
+    public Set<ID> getAllIds() {
         synchronized (this) {
             try {
-                final Set<Long> result = new HashSet<>((int) (_access.length() / 8));
+                final Set<ID> result = new HashSet<>((int) (_access.length() / _idSerializer.getChunkSize()));
                 _access.seek(0);
                 boolean hasNext;
                 do {
                     try {
-                        final long id = _access.readLong();
-                        if (id != 0) {
-                            result.add(id);
-                        }
+                        final ID id = readIdFromChunk();
+                        result.add(id);
                         hasNext = true;
                     } catch (EOFException ignored) {
                         hasNext = false;
@@ -119,13 +180,19 @@ public class GeneratedProcessRegistry implements AutoCloseable {
         }
     }
 
+    @Nonnull
+    protected ID readIdFromChunk() throws IOException {
+        return _idSerializer.read(_access);
+    }
+
+
     @GuardedBy("this")
-    protected void unregisterKnownProcessWith(long id) {
+    protected void unregisterKnownProcessWith(@Nonnull ID id) {
         final Long position = _processIdToFilePosition.get(id);
         if (position != null) {
             try {
                 _access.seek(position);
-                _access.writeLong(0);
+                writeZeros(_idSerializer.getChunkSize(), _access);
             } catch (IOException e) {
                 throw new RuntimeException("Could not delete id " + id + " at position " + position + " from " + _access + ".", e);
             }
@@ -151,28 +218,51 @@ public class GeneratedProcessRegistry implements AutoCloseable {
         return result;
     }
 
-    @Nonnull
-    public static File getIdsFileFor(@Nonnegative long parentProcessId) {
-        return new File(IDS_FILE_DIRECTORY, Long.toString(parentProcessId));
+    public void clear() throws IOException {
+        synchronized(this) {
+            _access.setLength(0);
+        }
     }
 
     @Nonnull
-    public static long[] getParentProcessIds() {
-        final String[] plainIds = IDS_FILE_DIRECTORY.list(new FilenameFilter() { @Override public boolean accept(File dir, String name) {
-            boolean result;
-            try {
-                Long.valueOf(name);
-                result = true;
-            } catch (NumberFormatException ignored) {
-                result = false;
+    protected static File getIdsFileFor(@Nonnull File idsFileDirectory, @Nonnegative long parentLocalProcessId) {
+        return new File(idsFileDirectory, Long.toString(parentLocalProcessId));
+    }
+
+    @Nonnull
+    public Iterable<GeneratedProcessRegistry<ID, P>> getKnownInstances() {
+        return getKnownInstancesFor(_type, _idType);
+    }
+
+    @Nonnull
+    public static <ID, P extends GeneratedProcess<?, ID>> Iterable<GeneratedProcessRegistry<ID, P>> getKnownInstancesFor(@Nonnull final String type, @Nonnull final Class<ID> idType) {
+        final File idsFileDirectory = getIdsFileDirectoryFor(type);
+        return new Iterable<GeneratedProcessRegistry<ID, P>>() {
+            @Override
+            public Iterator<GeneratedProcessRegistry<ID, P>> iterator() {
+                final String[] plainIds = idsFileDirectory.list(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        boolean result;
+                        try {
+                            Long.valueOf(name);
+                            result = true;
+                        } catch (NumberFormatException ignored) {
+                            result = false;
+                        }
+                        return result;
+                    }
+                });
+                final Iterator<String> ids = asIterator(plainIds);
+                return new ConvertingIterator<String, GeneratedProcessRegistry<ID, P>>(ids) {
+                    @Override
+                    protected GeneratedProcessRegistry<ID, P> convert(String plainId) {
+                        final long id = Long.valueOf(plainId);
+                        return new GeneratedProcessRegistry<>(id, type, idType);
+                    }
+                };
             }
-            return result;
-        }});
-        final long[] ids = new long[plainIds.length];
-        for (int i = 0; i < ids.length; i++) {
-            ids[i] = Long.valueOf(plainIds[i]);
-        }
-        return ids;
+        };
     }
 
     @Override
@@ -196,8 +286,8 @@ public class GeneratedProcessRegistry implements AutoCloseable {
     }
 
     @Nonnull
-    private static File getIdsFileDirectory() {
-        final String idsFileDirectoryPath = getProperty(GeneratedProcessRegistry.class + ".idsFileDirectory", DEFAULT_IDS_FILE_DIRECTORY_PATH);
+    protected static File getIdsFileDirectoryFor(@Nonnull String type) {
+        final String idsFileDirectoryPath = getProperty(GeneratedProcessRegistry.class + ".idsFileDirectory." + type, DEFAULT_IDS_FILE_DIRECTORY_PATH_PREFIX + "/" + type);
         final File idsFileDirectory = new File(idsFileDirectoryPath);
         idsFileDirectory.mkdirs();
         if (!idsFileDirectory.isDirectory()) {
@@ -208,9 +298,9 @@ public class GeneratedProcessRegistry implements AutoCloseable {
 
     protected class WaitForEnd implements Runnable {
 
-        private final GeneratedProcess _process;
+        private final P _process;
 
-        public WaitForEnd(@Nonnull GeneratedProcess process) {
+        public WaitForEnd(@Nonnull P process) {
             _process = process;
         }
 

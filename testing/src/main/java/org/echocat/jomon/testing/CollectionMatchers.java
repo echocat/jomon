@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 
@@ -138,62 +137,12 @@ public class CollectionMatchers {
 
     @Nonnull
     public static Matcher<Collection<?>> hasSize(@Nonnegative final int size) {
-        return new TypeSafeMatcher<Collection<?>>() {
-
-            @Override
-            public boolean matchesSafely(@Nullable Collection<?> item) {
-                return size == 0 ? (item == null || item.isEmpty()) : (item != null && size == item.size());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("has size ").appendValue(size);
-            }
-
-            @Override
-            protected void describeMismatchSafely(@Nullable Collection<?> actual, @Nonnull Description description) {
-                description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
-            }
-        };
+        return BaseMatchers.hasSize(size);
     }
 
     @Nonnull
     public static Matcher<Collection<?>> hasSameSizeAs(@Nullable final Object what) {
-        return new TypeSafeMatcher<Collection<?>>() {
-
-            @Override
-            public boolean matchesSafely(@Nullable Collection<?> item) {
-                return getSizeOf(what) == 0 ? (item == null || item.isEmpty()) : (item != null && getSizeOf(what) == item.size());
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("has size ").appendValue(what != null ? getSizeOf(what) : 0).appendText(" (Same as: ").appendValue(what).appendText(")");
-            }
-
-            @Override
-            protected void describeMismatchSafely(@Nullable Collection<?> actual, @Nonnull Description description) {
-                description.appendValue(actual != null ? actual.size() : 0).appendText(" (Values: ").appendValue(actual).appendText(")");
-            }
-
-            private int getSizeOf(@Nullable Object what) {
-                final int result;
-                if (what == null) {
-                    result = 0;
-                } else if (what instanceof Collection) {
-                    result = ((Collection) what).size();
-                } else if (what instanceof Map) {
-                    result = ((Map) what).size();
-                } else if (what instanceof Object[]) {
-                    result = ((Object[]) what).length;
-                } else if (what instanceof CharSequence) {
-                    result = ((CharSequence) what).length();
-                } else {
-                    throw new IllegalArgumentException("Could not get size of " + what + ".");
-                }
-                return result;
-            }
-        };
+        return BaseMatchers.hasSameSizeAs(what);
     }
 
     private CollectionMatchers() {}

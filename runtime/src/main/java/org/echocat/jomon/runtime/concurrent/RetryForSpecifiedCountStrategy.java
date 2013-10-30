@@ -22,6 +22,7 @@ import org.echocat.jomon.runtime.util.DurationRangeRequirement;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import static java.lang.Thread.currentThread;
@@ -68,6 +69,11 @@ public class RetryForSpecifiedCountStrategy<T> extends BaseRetryingStrategy<T, R
     @Override
     public boolean isRetryRequiredForException(@Nonnull Throwable e, @Nonnull RetryingStatus status) {
         return isExceptionThatForceRetry(e) && status.getCurrentTry() < _maxNumberOfRetries;
+    }
+
+    @Override
+    public boolean isRetryRequiredForResult(@Nullable T result, @Nonnull RetryingStatus status) {
+        return isResultThatForceRetry(result) && status.getCurrentTry() < _maxNumberOfRetries;
     }
 
     @Override

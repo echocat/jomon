@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.net.cluster.channel.tcp;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.echocat.jomon.net.FreeTcpPortDetector;
 import org.echocat.jomon.net.cluster.channel.ClusterChannelTestSupport;
 import org.echocat.jomon.net.cluster.channel.ReceivedMessage;
@@ -22,7 +23,6 @@ import org.echocat.jomon.runtime.concurrent.StopWatch;
 import org.echocat.jomon.runtime.math.OverPeriodCounter;
 import org.echocat.jomon.runtime.util.Duration;
 import org.echocat.jomon.testing.concurrent.ParallelTestRunner.Worker;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +30,14 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.net.InetAddress.getLoopbackAddress;
+import static org.echocat.jomon.net.NetworkInterfaceQuery.networkInterface;
+import static org.echocat.jomon.net.NetworkInterfaceRepository.networkInterfaceRepository;
+import static org.echocat.jomon.net.NetworkInterfaceType.loopBack;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelUtils.formatNodesStatusOf;
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.*;
@@ -143,8 +146,11 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
     @Nonnull
     protected TcpClusterChannel channel(@Nonnull UUID uuid) throws Exception {
         final TcpClusterChannel channel = new TcpClusterChannel(uuid);
-        final int port = new FreeTcpPortDetector(getLoopbackAddress(), 10000, 50000).detect();
-        channel.setAddress(new InetSocketAddress(getLoopbackAddress(), port));
+        final NetworkInterface loopBackInterface = networkInterfaceRepository().findOneBy(
+            networkInterface().whichIsOfType(loopBack)
+        );
+        final int port = new FreeTcpPortDetector(loopBackInterface, 10000, 50000).detect();
+        channel.setAddress(new InetSocketAddress(port), loopBackInterface);
         channel.register(getMessageHandler());
         channel.register(getStateHandler());
         channel.setName(uuid.getLeastSignificantBits() + "");

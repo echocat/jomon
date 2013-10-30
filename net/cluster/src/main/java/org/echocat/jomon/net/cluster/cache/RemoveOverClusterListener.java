@@ -21,6 +21,7 @@ import org.echocat.jomon.net.cluster.channel.HandlerEnabledClusterChannel.Messag
 import org.echocat.jomon.net.cluster.channel.Message;
 import org.echocat.jomon.net.cluster.channel.Node;
 import org.echocat.jomon.net.cluster.channel.ReceivedMessage;
+import org.echocat.jomon.runtime.util.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

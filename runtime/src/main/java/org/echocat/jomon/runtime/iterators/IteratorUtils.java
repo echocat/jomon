@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 
 import static com.google.common.collect.Iterators.forArray;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class IteratorUtils {
 
@@ -73,7 +74,7 @@ public class IteratorUtils {
         return new CloseableIterator<T>() {
             @Override
             public void close() {
-                closeQuietly(original);
+                closeQuietlyIfAutoCloseable(original);
             }
 
             @Override

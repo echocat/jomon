@@ -53,14 +53,24 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
     private final Writer _writer = new Writer();
     private final Pinger _pinger = new Pinger();
 
+    @Nullable
     private volatile InetSocketAddress _address;
+    @Nullable
+    private volatile NetworkInterface _networkInterface;
+    @Nonnull
     private Duration _ttl = new Duration("10s");
+    @Nonnegative
     private double _pingIntervalToTimeoutRatio = 2.5;
 
+    @Nullable
     private Thread _writingThread;
+    @Nullable
     private Thread _readingThread;
+    @Nullable
     private Thread _pingingThread;
+    @Nullable
     private volatile MulticastSocket _out;
+    @Nullable
     private volatile MulticastSocket _in;
     private volatile short _id;
 
@@ -80,8 +90,36 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
 
     @Override
     public void setAddress(@Nullable final InetSocketAddress address) {
+        doSafeAndReinetIfNeeded(new Callable<Void>() {
+            @Override
+            public Void call() {
+                _address = address;
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public void setAddress(@Nullable final InetSocketAddress address, @Nullable final NetworkInterface networkInterface) {
+        doSafeAndReinetIfNeeded(new Callable<Void>() {
+            @Override
+            public Void call() {
+                _address = address;
+                _networkInterface = networkInterface;
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public NetworkInterface getInterface() {
+        return _networkInterface;
+    }
+
+    @Override
+    public void setInterface(@Nullable final NetworkInterface networkInterface) {
         doSafeAndReinetIfNeeded(new Callable<Void>() { @Override public Void call() {
-            _address = address;
+            _networkInterface = networkInterface;
             return null;
         }});
     }
@@ -186,9 +224,10 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
         try {
             try {
                 final InetSocketAddress address = _address;
+                final NetworkInterface networkInterface = _networkInterface;
                 if (address != null) {
                     try {
-                        _in.leaveGroup(address.getAddress());
+                        _in.leaveGroup(address, networkInterface);
                     } catch (Exception ignored) {}
                 }
             } finally {
@@ -228,9 +267,10 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
         try {
             if (_in == null) {
                 final InetSocketAddress address = _address;
+                final NetworkInterface networkInterface = _networkInterface;
                 if (address != null) {
                     _in = new MulticastSocket(address.getPort());
-                    _in.joinGroup(address.getAddress());
+                    _in.joinGroup(address, networkInterface);
                     _in.setTimeToLive((int) _ttl.in(SECONDS));
                     _in.setSoTimeout((int) getSoTimeout().in(MILLISECONDS));
                 } else {
@@ -530,7 +570,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                         final short id = getId(false);
                         sendInternal(id, message);
                     } catch (IOException e) {
-                        LOG.warn("Could not write message '" + message + "' to " + _address + ". This message is lost.", e);
+                        LOG.warn("Could not write message '" + message + "' to " + _address + getNetworkInterfaceSuffix() + ". This message is lost.", e);
                     }
                 }
             } catch (InterruptedException ignored) {
@@ -552,13 +592,19 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                             sleep(1000);
                         }
                     } catch (IOException e) {
-                        LOG.warn("Could not read message from " + _address + ".", e);
+                        LOG.warn("Could not read message from " + _address + getNetworkInterfaceSuffix() + ".", e);
                     }
                 }
             } catch (InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }
+    }
+
+    @Nullable
+    protected String getNetworkInterfaceSuffix() {
+        final NetworkInterface networkInterface = _networkInterface;
+        return networkInterface != null ? "@" + networkInterface.getName() : "";
     }
 
     @Override
@@ -569,7 +615,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
             result = name;
         } else {
             final InetSocketAddress address = _address;
-            result = address != null ? address.toString() : "<offline>";
+            result = address != null ? address + getNetworkInterfaceSuffix() : "<offline>";
         }
         return result;
     }

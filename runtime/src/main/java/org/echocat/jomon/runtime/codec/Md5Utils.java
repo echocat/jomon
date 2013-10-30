@@ -30,6 +30,7 @@ public class Md5Utils {
     public static final String TYPE_PROPERTY_NAME = Md5Utils.class.getPackage().getName() + ".type";
     public static final Class<? extends Md5> DEFAULT_TYPE = retrieveDefaultType();
     public static final Constructor<? extends Md5> DEFAULT_CONSTRUCTOR = retrieveDefaultConstructorFor(DEFAULT_TYPE);
+    public static final char[] MD5_CHARACTERS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     @Nonnull
     public static Md5 md5() {
@@ -101,6 +102,24 @@ public class Md5Utils {
         }
         constructor.setAccessible(true);
         return constructor;
+    }
+
+    @Nonnull
+    public static char[] asHexCharacters(@Nonnull byte[] bytes) {
+        final int length = bytes.length;
+        final char[] out = new char[length << 1];
+        int j = 0;
+        for (int i = 0; i < length; i++) {
+            final byte b = bytes[i];
+            out[j++] = MD5_CHARACTERS[(240 & b) >>> 4];
+            out[j++] = MD5_CHARACTERS[15 & b];
+        }
+        return out;
+    }
+
+    @Nonnull
+    public static String asHexString(@Nonnull byte[] bytes) {
+        return new String(asHexCharacters(bytes));
     }
 
     private Md5Utils() {}

@@ -14,20 +14,19 @@
 
 package org.echocat.jomon.process;
 
+import org.echocat.jomon.runtime.util.IdEnabled;
+
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
-import java.io.File;
+import java.util.List;
 
 @ThreadSafe
-public interface Process {
-
-    public long getId();
+public interface Process<E, ID> extends IdEnabled<ID> {
 
     @Nullable
-    public File getExecutable();
+    public E getExecutable();
 
     @Nullable
-    public String[] getCommandLine();
+    public List<String> getArguments();
 
-    public boolean isPathCaseSensitive();
 }

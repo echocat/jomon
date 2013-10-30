@@ -15,22 +15,11 @@
 package org.echocat.jomon.process;
 
 import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 
 @ThreadSafe
-public interface GeneratedProcess extends Process {
-
-    @Nonnull
-    public OutputStream getOutputStream();
-
-    @Nonnull
-    public InputStream getInputStream();
-
-    @Nonnull
-    public InputStream getErrorStream();
+public interface GeneratedProcess<E, ID> extends Process<E, ID>, Streams {
 
     @Nonnegative
     public int waitFor() throws InterruptedException;
@@ -40,7 +29,14 @@ public interface GeneratedProcess extends Process {
 
     public boolean isAlive();
 
-    public void shutdown();
-
     public boolean isDaemon();
+
+    public void kill() throws IOException;
+
+    /**
+     * This method will try to shutdown the process regularly. If this will not work implicit {@link #kill()} is called.
+     */
+    @Override
+    public void close() throws IOException;
+
 }
