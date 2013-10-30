@@ -14,6 +14,8 @@
 
 package org.echocat.jomon.process;
 
+import org.echocat.jomon.process.local.LocalProcess;
+import org.echocat.jomon.process.local.LocalProcessRepository;
 import org.echocat.jomon.runtime.iterators.CloseableIterator;
 import org.echocat.jomon.testing.environments.LogEnvironment;
 import org.junit.Rule;
@@ -21,7 +23,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.echocat.jomon.process.ProcessQuery.query;
+import static org.echocat.jomon.process.local.LocalProcessQuery.query;
 
 public class ProcessRepositoryUnitTest {
 
@@ -30,10 +32,10 @@ public class ProcessRepositoryUnitTest {
 
     @Test
     public void testGetInstance() throws Exception {
-        final ProcessRepository repository = ProcessRepository.getInstance();
-        try (final CloseableIterator<Process> i = repository.findBy(query())) {
+        final LocalProcessRepository repository = LocalProcessRepository.getInstance();
+        try (final CloseableIterator<LocalProcess> i = repository.findBy(query())) {
             while (i.hasNext()) {
-                final Process process = i.next();
+                final LocalProcess process = i.next();
                 final File executable = process.getExecutable();
                 if (executable != null) {
                     executable.getCanonicalPath();

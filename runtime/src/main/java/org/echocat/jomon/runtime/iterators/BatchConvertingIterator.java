@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 /**
  * Uses a given input iterator to fetch results once hasNext is called.
@@ -87,6 +87,6 @@ public abstract class BatchConvertingIterator<S, T> implements CloseableIterator
 
     @Override
     public void close() {
-        closeQuietly(_input);
+        closeQuietlyIfAutoCloseable(_input);
     }
 }

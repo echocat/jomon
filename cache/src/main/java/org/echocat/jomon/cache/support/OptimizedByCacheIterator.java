@@ -26,7 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public abstract class OptimizedByCacheIterator<K, T extends IdEnabled<K>> implements CloseableIterator<T> {
 
@@ -84,7 +84,7 @@ public abstract class OptimizedByCacheIterator<K, T extends IdEnabled<K>> implem
 
     @Override
     public void close() {
-        closeQuietly(_delegate);
+        closeQuietlyIfAutoCloseable(_delegate);
     }
 
     @Override public void remove() { throw new UnsupportedOperationException(); }

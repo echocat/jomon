@@ -17,6 +17,7 @@
       <module fileurl="file://$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" filepath="$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/http/org.echocat.jomon.net.http.iml" filepath="$PROJECT_DIR$/net/http/org.echocat.jomon.net.http.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/service/org.echocat.jomon.net.service.iml" filepath="$PROJECT_DIR$/net/service/org.echocat.jomon.net.service.iml" group="org.echocat.jomon.net and modules" />
+      <module fileurl="file://$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" filepath="$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" />
       <module fileurl="file://$PROJECT_DIR$/net/testing/org.echocat.jomon.net.testing.iml" filepath="$PROJECT_DIR$/net/testing/org.echocat.jomon.net.testing.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/process/org.echocat.jomon.process.iml" filepath="$PROJECT_DIR$/process/org.echocat.jomon.process.iml" />
       <module fileurl="file://$PROJECT_DIR$/resources/org.echocat.jomon.resources.iml" filepath="$PROJECT_DIR$/resources/org.echocat.jomon.resources.iml" />

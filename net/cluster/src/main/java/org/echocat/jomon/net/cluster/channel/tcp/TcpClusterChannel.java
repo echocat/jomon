@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.net.*;
@@ -36,6 +37,8 @@ import java.util.concurrent.locks.Lock;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.unmodifiableSet;
+import static org.echocat.jomon.net.NetworkInterfaceUtils.assertThatContainsAddress;
+import static org.echocat.jomon.net.NetworkInterfaceUtils.findFirstAddressOf;
 import static org.echocat.jomon.net.cluster.channel.Node.ADDRESS_BASED_COMPARATOR;
 import static org.echocat.jomon.runtime.concurrent.ThreadUtils.stop;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
@@ -72,6 +75,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
     private Duration _connectionTimeout = new Duration("2s");
     private Collection<InetSocketAddress> _remoteAddresses;
     private InetSocketAddress _address = new InetSocketAddress(DEFAULT_PORT);
+    private NetworkInterface _networkInterface;
     private int _maxNumberOfIncomingConnections = 100;
     private int _numberOfIncomingWorker = 10;
     private int _sendingQueueCapacity = 250;
@@ -113,13 +117,16 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
     }
 
     public void setConnectionTimeout(final Duration connectionTimeout) {
-        doSafe(new Callable<Void>() { @Override public Void call() throws Exception {
-            _connectionTimeout = connectionTimeout;
-            if (_outbound != null) {
-                _outbound.setConnectionTimeout(connectionTimeout);
+        doSafe(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                _connectionTimeout = connectionTimeout;
+                if (_outbound != null) {
+                    _outbound.setConnectionTimeout(connectionTimeout);
+                }
+                return null;
             }
-            return null;
-        }});
+        });
     }
 
     @Override
@@ -193,10 +200,13 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
 
     @Override
     public void setSendingQueueCapacity(final int sendingQueueCapacity) {
-        doSafeAndReinetIfNeeded(new Callable<Void>() { @Override public Void call() throws Exception {
-            _sendingQueueCapacity = sendingQueueCapacity;
-            return null;
-        }});
+        doSafeAndReinetIfNeeded(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+                _sendingQueueCapacity = sendingQueueCapacity;
+                return null;
+            }
+        });
     }
 
     @Override
@@ -233,12 +243,54 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
 
     @Override
     public void setAddress(@Nullable final InetSocketAddress address) {
-        doSafe(new Callable<Void>() { @Override public Void call() throws Exception {
+        doSafe(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
             if (address != null ? !address.equals(_address) : _address != null) {
                 _address = address;
                 closeQuietly(_in);
                 _in = null;
                 closeQuietly(_inboundWorkers);
+                _address = resolveAddress();
+            }
+            return null;
+            }
+        });
+    }
+
+    @Override
+    public void setAddress(@Nullable final InetSocketAddress address, @Nullable final NetworkInterface networkInterface) {
+        doSafe(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+            if ((address != null ? !address.equals(_address) : _address != null) || (networkInterface != null ? !networkInterface.equals(_networkInterface) : _networkInterface != null)) {
+                _address = address;
+                _networkInterface = networkInterface;
+                closeQuietly(_in);
+                _in = null;
+                closeQuietly(_inboundWorkers);
+                _address = resolveAddress();
+            }
+            return null;
+            }
+        });
+    }
+
+    @Override
+    @Nullable
+    public NetworkInterface getInterface() {
+        return _networkInterface;
+    }
+
+    @Override
+    public void setInterface(@Nullable final NetworkInterface networkInterface) {
+        doSafe(new Callable<Void>() { @Override public Void call() throws Exception {
+            if (networkInterface != null ? !networkInterface.equals(_networkInterface) : _networkInterface != null) {
+                _networkInterface = networkInterface;
+                closeQuietly(_in);
+                _in = null;
+                closeQuietly(_inboundWorkers);
+                _address = resolveAddress();
             }
             return null;
         }});
@@ -341,6 +393,28 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
         } finally {
             lock.unlock();
         }
+    }
+
+    @GuardedBy("getLock()")
+    @Nullable
+    protected InetSocketAddress resolveAddress() {
+        final InetSocketAddress result;
+        if (_address != null) {
+            if (_networkInterface != null) {
+                final InetAddress address = _address.getAddress();
+                if (address.isAnyLocalAddress()) {
+                    result = new InetSocketAddress(findFirstAddressOf(_networkInterface), _address.getPort());
+                } else {
+                    assertThatContainsAddress(_networkInterface, address);
+                    result = _address;
+                }
+            } else {
+                result = _address;
+            }
+        } else {
+            result = null;
+        }
+        return result;
     }
 
     @Nonnull

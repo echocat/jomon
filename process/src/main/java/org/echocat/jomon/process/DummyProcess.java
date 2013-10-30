@@ -14,34 +14,36 @@
 
 package org.echocat.jomon.process;
 
+import org.echocat.jomon.process.local.LocalProcess;
+
+import javax.annotation.Nullable;
 import java.io.File;
+import java.util.List;
 
-public class DummyProcess implements Process {
+import static java.util.Collections.emptyList;
 
-    private final long _id;
+public class DummyProcess<E, ID> implements Process<E, ID> {
 
-    public DummyProcess(long id) {
+    @Nullable
+    private final ID _id;
+
+    public DummyProcess(@Nullable ID id) {
         _id = id;
     }
 
     @Override
-    public long getId() {
+    public ID getId() {
         return _id;
     }
 
     @Override
-    public File getExecutable() {
+    public E getExecutable() {
         return null;
     }
 
     @Override
-    public String[] getCommandLine() {
-        return new String[0];
-    }
-
-    @Override
-    public boolean isPathCaseSensitive() {
-        return false;
+    public List<String> getArguments() {
+        return emptyList();
     }
 
     @Override
@@ -52,20 +54,31 @@ public class DummyProcess implements Process {
         } else if (!(o instanceof DummyProcess)) {
             result = false;
         } else {
-            final DummyProcess that = (DummyProcess) o;
-            result = _id == that._id;
+            final DummyProcess<?, ?> that = (DummyProcess) o;
+            final ID id = getId();
+            result = id != null ? id.equals(that.getId()) : that.getId() == null;
         }
         return result;
     }
 
     @Override
     public int hashCode() {
-        return (int) (_id ^ (_id >>> 32));
+        return (_id != null ? _id.hashCode() : 0);
     }
 
     @Override
     public String toString() {
         return "Process #" + _id;
+    }
+
+    public static class LocalDummyProcess extends DummyProcess<File, Long> implements LocalProcess {
+
+        public LocalDummyProcess(@Nullable Long aLong) {
+            super(aLong);
+        }
+
+
+
     }
 
 }

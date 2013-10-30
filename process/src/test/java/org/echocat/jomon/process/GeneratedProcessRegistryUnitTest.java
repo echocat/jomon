@@ -29,8 +29,8 @@ public class GeneratedProcessRegistryUnitTest {
 
     @Test
     public void testRegister() throws Exception {
-        GeneratedProcessRegistry.getIdsFileFor(666).delete();
-        try (final GeneratedProcessRegistry registry = new GeneratedProcessRegistry(666)) {
+        try (final GeneratedProcessRegistry<Long, GeneratedProcess<Object, Long>> registry = new GeneratedProcessRegistry<>(666, "local", Long.class)) {
+            registry.clear();
             registry.register(daemonProcess(1));
             registry.register(daemonProcess(2));
             registry.register(process(3));
@@ -44,15 +44,16 @@ public class GeneratedProcessRegistryUnitTest {
     }
 
     @Nonnull
-    protected static GeneratedProcess process(long id) {
-        final GeneratedProcess process = mock(GeneratedProcess.class);
+    protected static GeneratedProcess<Object, Long> process(long id) {
+        // noinspection unchecked
+        final GeneratedProcess<Object, Long> process = mock(GeneratedProcess.class);
         doReturn(id).when(process).getId();
         return process;
     }
 
     @Nonnull
-    protected static GeneratedProcess daemonProcess(long id) throws Exception {
-        final GeneratedProcess process = process(id);
+    protected static GeneratedProcess<Object, Long> daemonProcess(long id) throws Exception {
+        final GeneratedProcess<Object, Long> process = process(id);
         doReturn(true).when(process).isDaemon();
         doAnswer(new Answer() {
             @Override

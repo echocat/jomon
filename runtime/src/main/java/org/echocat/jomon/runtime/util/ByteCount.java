@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -101,24 +102,19 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
         return sb.toString();
     }
 
-    @Nonnull
-    public static ByteCount byteCount(@Nonnull ByteCount byteCount) {
-        return byteCount;
-    }
-
     @Nullable
     public static ByteCount byteCount(@Nullable String byteCount) {
         return byteCount != null ? new ByteCount(byteCount) : null;
     }
 
-    @Nullable
+    @Nonnull
     public static ByteCount byteCount(@Nonnegative long byteCount) {
         return new ByteCount(byteCount);
     }
 
     @Nonnull
-    public static ByteCount byteCountOf(@Nonnull ByteCount byteCount) {
-        return byteCount(byteCount);
+    public static ByteCount byteCount(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
+        return new ByteCount(byteCount, unit);
     }
 
     @Nullable
@@ -126,9 +122,54 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
         return byteCount(byteCount);
     }
 
-    @Nullable
+    @Nonnull
     public static ByteCount byteCountOf(@Nonnegative long byteCount) {
         return byteCount(byteCount);
+    }
+
+    @Nonnull
+    public static ByteCount byteCountOf(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
+        return byteCount(byteCount, unit);
+    }
+
+    @Nonnull
+    public static byte[] allocate(@Nonnull String byteCount) {
+        return byteCount(byteCount).allocate();
+    }
+
+    @Nonnull
+    public static byte[] allocate(@Nonnegative long byteCount) {
+        return byteCount(byteCount).allocate();
+    }
+
+    @Nonnull
+    public static byte[] allocate(@Nonnegative ByteCount byteCount) {
+        return byteCount.allocate();
+    }
+
+    @Nonnull
+    public static byte[] allocate(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
+        return byteCount(byteCount, unit).allocate();
+    }
+
+    @Nonnull
+    public static ByteBuffer allocateBuffer(@Nonnull String byteCount) {
+        return byteCount(byteCount).allocateBuffer();
+    }
+
+    @Nonnull
+    public static ByteBuffer allocateBuffer(@Nonnegative long byteCount) {
+        return byteCount(byteCount).allocateBuffer();
+    }
+
+    @Nonnull
+    public static ByteBuffer allocateBuffer(@Nonnegative ByteCount byteCount) {
+        return byteCount.allocateBuffer();
+    }
+
+    @Nonnull
+    public static ByteBuffer allocateBuffer(@Nonnegative long byteCount, @Nonnull ByteUnit unit) {
+        return byteCount(byteCount, unit).allocateBuffer();
     }
 
     private final long _count;
@@ -151,6 +192,27 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
     @Nonnegative
     public long toByteCount() {
         return _count;
+    }
+
+    @Nonnull
+    public byte[] allocate() {
+        return new byte[toByteCountForAllocation()];
+    }
+
+    @Nonnull
+    public ByteBuffer allocateBuffer() {
+        return ByteBuffer.allocate(toByteCountForAllocation());
+    }
+
+    /**
+     * @throws UnsupportedOperationException if this byteCount exceeds {@link Integer#MAX_VALUE}.
+     */
+    @Nonnegative
+    public int toByteCountForAllocation() throws UnsupportedOperationException {
+        if (_count > Integer.MAX_VALUE) {
+            throw new UnsupportedOperationException("This byteCount exceeds " + byteCount(Integer.MAX_VALUE) + " and could not be allocated.");
+        }
+        return (int) _count;
     }
 
     @Nonnegative

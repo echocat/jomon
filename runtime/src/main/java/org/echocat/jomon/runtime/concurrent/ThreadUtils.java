@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class ThreadUtils {
 
@@ -37,9 +37,7 @@ public class ThreadUtils {
 
     public static void stop(@Nullable Thread thread) {
         if (thread != null) {
-            if (thread instanceof AutoCloseable) {
-                closeQuietly((AutoCloseable) thread);
-            }
+            closeQuietlyIfAutoCloseable(thread);
             thread.interrupt();
             try {
                 while (thread.isAlive()) {

@@ -14,7 +14,6 @@
 
 package org.echocat.jomon.runtime.concurrent;
 
-import com.google.common.collect.Sets;
 import org.echocat.jomon.runtime.annotations.Excluding;
 import org.echocat.jomon.runtime.annotations.Including;
 import org.echocat.jomon.runtime.util.Duration;
@@ -25,15 +24,16 @@ import org.echocat.jomon.runtime.util.ExactDurationRequirement;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.emptySet;
+import static org.echocat.jomon.runtime.CollectionUtils.asImmutableSet;
 
 public abstract class BaseRetryingStrategy<T, S extends BaseRetryingStrategy<T, S>> implements RetryingStrategy<T> {
 
-    private Set<Class<? extends Throwable>> _exceptionsThatForceRetry = Sets.<Class<? extends Throwable>>newHashSet(Exception.class);
+    private Set<Class<? extends Throwable>> _exceptionsThatForceRetry = emptySet();
+    private Set<T> _resultsThatForceRetry = emptySet();
     private DurationRequirement _waitBetweenEachTry;
 
     protected BaseRetryingStrategy(@Nonnull DurationRequirement defaultWaitBetweenEachTry) {
@@ -47,11 +47,18 @@ public abstract class BaseRetryingStrategy<T, S extends BaseRetryingStrategy<T, 
 
     @Nonnull
     public S withExceptionsThatForceRetry(@Nonnull Iterable<Class<? extends Throwable>> exceptionTypes) {
-        final Set<Class<? extends Throwable>> exceptionsThatForceRetry = new HashSet<>();
-        for (Class<? extends Throwable> exceptionType : exceptionTypes) {
-            exceptionsThatForceRetry.add(exceptionType);
-        }
-        _exceptionsThatForceRetry = unmodifiableSet(exceptionsThatForceRetry);
+        _exceptionsThatForceRetry = asImmutableSet(exceptionTypes);
+        return thisInstance();
+    }
+
+    @Nonnull
+    public S withResultsThatForceRetry(@Nonnull T... results) {
+        return withResultsThatForceRetry(asList(results));
+    }
+
+    @Nonnull
+    public S withResultsThatForceRetry(@Nonnull Iterable<T> results) {
+        _resultsThatForceRetry = asImmutableSet(results);
         return thisInstance();
     }
 
@@ -97,11 +104,6 @@ public abstract class BaseRetryingStrategy<T, S extends BaseRetryingStrategy<T, 
         return thisInstance();
     }
 
-    @Override
-    public boolean isRetryRequiredForResult(@Nullable T result, @Nonnull RetryingStatus status) {
-        return false;
-    }
-
     protected boolean isExceptionThatForceRetry(@Nonnull Throwable e) {
         boolean result = false;
         for (Class<? extends Throwable> exceptionType : _exceptionsThatForceRetry) {
@@ -113,9 +115,18 @@ public abstract class BaseRetryingStrategy<T, S extends BaseRetryingStrategy<T, 
         return result;
     }
 
+    protected boolean isResultThatForceRetry(@Nullable T result) {
+        return _resultsThatForceRetry.contains(result);
+    }
+
     @Nonnull
     public Set<Class<? extends Throwable>> getExceptionsThatForceRetry() {
         return _exceptionsThatForceRetry;
+    }
+
+    @Nonnull
+    public Set<T> getResultsThatForceRetry() {
+        return _resultsThatForceRetry;
     }
 
     @Nonnull

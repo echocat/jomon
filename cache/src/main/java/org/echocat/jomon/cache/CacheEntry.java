@@ -14,8 +14,10 @@
 
 package org.echocat.jomon.cache;
 
-import org.echocat.jomon.cache.Value.Fixed;
 import org.echocat.jomon.runtime.util.ProducingType;
+import org.echocat.jomon.runtime.util.Value;
+import org.echocat.jomon.runtime.util.Value.Fixed;
+import org.echocat.jomon.runtime.util.Value.Lazy;
 import org.echocat.jomon.runtime.util.ValueProducer;
 
 import javax.annotation.Nonnegative;
@@ -70,7 +72,7 @@ public class CacheEntry<K, V> {
     }
 
     public void setValue(@Nullable Long expireAfter, @Nullable ValueProducer<K, V> producer, @Nonnull ProducingType producingType) {
-        setValue(expireAfter, producer != null ? new Value.Lazy<>(_key, producer, producingType) : new Fixed<V>(null));
+        setValue(expireAfter, producer != null ? new Lazy<>(_key, producer, producingType) : new Fixed<V>(null));
     }
 
     protected void setValue(@Nullable Long expireAfter, @Nonnull Value<V> entry) {

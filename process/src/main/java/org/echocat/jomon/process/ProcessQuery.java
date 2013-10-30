@@ -20,71 +20,58 @@ import org.echocat.jomon.runtime.util.Glob;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.lang.*;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.ArrayUtils.toObject;
 import static org.apache.commons.lang3.StringUtils.join;
 
-public class ProcessQuery implements Query, Predicate<Process> {
+public abstract class ProcessQuery<E, ID, T extends ProcessQuery<E, ID, T>> implements Query, Predicate<Process<E, ID>> {
 
-    @Nonnull
-    public static ProcessQuery query() {
-        return new ProcessQuery();
-    }
-
-    private List<Long> _ids;
-    private File _executable;
+    private List<ID> _ids;
+    private E _executable;
     private Glob _commandLineGlob;
 
     @Nonnull
-    public ProcessQuery withId(long... id) {
+    public T withId(@Nonnull ID id) {
         return withIds(id);
     }
 
     @Nonnull
-    public ProcessQuery withIds(@Nonnull long... ids) {
-        return withIds(toObject(ids));
-    }
-
-    @Nonnull
-    public ProcessQuery withIds(@Nonnull Long... ids) {
+    public T withIds(@Nonnull ID... ids) {
         return withIds(asList(ids));
     }
 
     @Nonnull
-    public ProcessQuery withIds(@Nonnull Iterable<Long> ids) {
-        final List<Long> idsAsList = new ArrayList<>();
-        for (Long id : ids) {
+    public T withIds(@Nonnull Iterable<ID> ids) {
+        final List<ID> idsAsList = new ArrayList<>();
+        for (ID id : ids) {
             idsAsList.add(id);
         }
         return withIds(idsAsList);
     }
 
     @Nonnull
-    public ProcessQuery withIds(@Nonnull List<Long> ids) {
+    public T withIds(@Nonnull List<ID> ids) {
         if (_ids != null) {
             throw new IllegalStateException("Ids already set.");
         }
         _ids = ids;
-        return this;
+        return thisObject();
     }
 
     @Nonnull
-    public ProcessQuery withExecutable(@Nonnull File executable) {
+    public T withExecutable(@Nonnull E executable) {
         if (_executable != null) {
             throw new IllegalStateException("Executable already set.");
         }
         _executable = executable;
-        return this;
+        return thisObject();
     }
 
     @Nonnull
-    public ProcessQuery withCommandLineLike(@Nonnull String commandLineGlobPattern) {
+    public T withCommandLineLike(@Nonnull String commandLineGlobPattern) {
         try {
             return withCommandLineLike(new Glob(commandLineGlobPattern));
         } catch (ParseException e) {
@@ -93,21 +80,21 @@ public class ProcessQuery implements Query, Predicate<Process> {
     }
 
     @Nonnull
-    public ProcessQuery withCommandLineLike(@Nonnull Glob commandLine) {
+    public T withCommandLineLike(@Nonnull Glob commandLine) {
         if (_commandLineGlob != null) {
             throw new IllegalStateException("Executable already set.");
         }
         _commandLineGlob = commandLine;
-        return this;
+        return thisObject();
     }
 
     @Nullable
-    public List<Long> getIds() {
+    public List<ID> getIds() {
         return _ids;
     }
 
     @Nullable
-    public File getExecutable() {
+    public E getExecutable() {
         return _executable;
     }
 
@@ -117,7 +104,7 @@ public class ProcessQuery implements Query, Predicate<Process> {
     }
 
     @Override
-    public boolean apply(@Nullable Process input) {
+    public boolean apply(@Nullable Process<E, ID> input) {
         return input != null
             && applyId(input)
             && applyExecutable(input)
@@ -125,27 +112,33 @@ public class ProcessQuery implements Query, Predicate<Process> {
             ;
     }
 
-    protected boolean applyId(@Nonnull Process process) {
+    protected boolean applyId(@Nonnull Process<E, ID> process) {
         return _ids == null || _ids.contains(process.getId());
     }
 
-    protected boolean applyExecutable(@Nonnull Process process) {
+    protected boolean applyExecutable(@Nonnull Process<E, ID> process) {
         return _executable == null || _executable.equals(process.getExecutable());
     }
 
-    protected boolean applyCommandLine(@Nonnull Process process) {
+    protected boolean applyCommandLine(@Nonnull Process<E, ID> process) {
         final boolean result;
         if (_commandLineGlob == null) {
             result = true;
         } else {
-            final String[] commandLine = process.getCommandLine();
-            if (commandLine != null) {
-                final String joinedCommandLine = join(commandLine, ' ');
+            final List<String> arguments = process.getArguments();
+            if (arguments != null) {
+                final String joinedCommandLine = join(arguments, ' ');
                 result = _commandLineGlob.matches(joinedCommandLine);
             } else {
                 result = false;
             }
         }
         return result;
+    }
+
+    @Nonnull
+    protected T thisObject() {
+        // noinspection unchecked
+        return (T) this;
     }
 }

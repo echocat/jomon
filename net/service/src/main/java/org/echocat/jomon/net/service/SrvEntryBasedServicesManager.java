@@ -39,6 +39,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static java.util.Collections.*;
 import static org.echocat.jomon.net.service.SrvEntryBasedServicesManager.State.*;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 @ThreadSafe
 public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager<I, O> {
@@ -223,7 +224,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
                     success = true;
                 } finally {
                     if (!success) {
-                        closeQuietly(output);
+                        closeQuietlyIfAutoCloseable(output);
                     }
                 }
             } else {

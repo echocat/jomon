@@ -21,7 +21,7 @@ import org.echocat.jomon.runtime.util.IdEnabled;
 import javax.annotation.Nonnull;
 import java.util.Iterator;
 
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class PutInCacheIterator<K, T extends IdEnabled<K>> implements CloseableIterator<T> {
 
@@ -35,7 +35,7 @@ public class PutInCacheIterator<K, T extends IdEnabled<K>> implements CloseableI
 
     @Override
     public void close() {
-        closeQuietly(_delegate);
+        closeQuietlyIfAutoCloseable(_delegate);
     }
 
     @Override

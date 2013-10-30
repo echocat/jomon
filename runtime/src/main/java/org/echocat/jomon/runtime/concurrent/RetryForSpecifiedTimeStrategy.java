@@ -19,6 +19,7 @@ import org.echocat.jomon.runtime.util.IncreasingDurationRequirement;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
 import static java.lang.Thread.currentThread;
@@ -60,6 +61,11 @@ public class RetryForSpecifiedTimeStrategy<T> extends BaseRetryingStrategy<T, Re
     @Override
     public boolean isRetryRequiredForException(@Nonnull Throwable e, @Nonnull RetryingStatus status) {
         return isExceptionThatForceRetry(e) && _maximumWaitTime.isGreaterThan(status.getDurationSinceStart());
+    }
+
+    @Override
+    public boolean isRetryRequiredForResult(@Nullable T result, @Nonnull RetryingStatus status) {
+        return isResultThatForceRetry(result) && _maximumWaitTime.isGreaterThan(status.getDurationSinceStart());
     }
 
     @Override

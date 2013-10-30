@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import static java.util.Arrays.asList;
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class IteratorMatchers {
 
@@ -37,7 +37,7 @@ public class IteratorMatchers {
                 try {
                     return iterator != null && !iterator.hasNext();
                 } finally {
-                    closeQuietly(iterator);
+                    closeQuietlyIfAutoCloseable(iterator);
                 }
             }
 
@@ -77,7 +77,7 @@ public class IteratorMatchers {
                     }
                     return result;
                 } finally {
-                    closeQuietly(itemsIterator);
+                    closeQuietlyIfAutoCloseable(itemsIterator);
                 }
             }
 
@@ -117,7 +117,7 @@ public class IteratorMatchers {
                     }
                     return result;
                 } finally {
-                    closeQuietly(itemsIterator);
+                    closeQuietlyIfAutoCloseable(itemsIterator);
                 }
             }
 

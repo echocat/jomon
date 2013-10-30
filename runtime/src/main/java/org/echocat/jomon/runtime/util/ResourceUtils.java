@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 
 public class ResourceUtils {
 
-    public static void closeQuietly(@Nullable Object autoCloseable) {
+    public static void closeQuietlyIfAutoCloseable(@Nullable Object autoCloseable) {
         try {
             if (autoCloseable instanceof AutoCloseable) {
                 ((AutoCloseable)autoCloseable).close();
@@ -26,24 +26,36 @@ public class ResourceUtils {
         } catch (Exception ignored) {}
     }
 
-    public static <T> void closeQuietly(@Nullable Iterable<? extends T> elements) {
+    public static void closeQuietly(@Nullable AutoCloseable autoCloseable) {
+        closeQuietlyIfAutoCloseable(autoCloseable);
+    }
+
+    public static void closeQuietlyIfAutoCloseable(@Nullable Iterable<?> elements) {
         try {
             if (elements != null) {
                 for (Object element : elements) {
-                    closeQuietly(element);
+                    closeQuietlyIfAutoCloseable(element);
                 }
             }
         } catch (Exception ignored) {}
     }
 
-    public static <T> void closeQuietly(@Nullable T[] elements) {
+    public static void closeQuietly(@Nullable Iterable<? extends AutoCloseable> elements) {
+        closeQuietlyIfAutoCloseable(elements);
+    }
+
+    public static void closeQuietlyIfAutoCloseable(@Nullable Object[] elements) {
         try {
             if (elements != null) {
                 for (Object element : elements) {
-                    closeQuietly(element);
+                    closeQuietlyIfAutoCloseable(element);
                 }
             }
         } catch (Exception ignored) {}
+    }
+
+    public static void closeQuietly(@Nullable AutoCloseable[] elements) {
+        closeQuietlyIfAutoCloseable(elements);
     }
 
     private ResourceUtils() {}

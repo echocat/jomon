@@ -19,6 +19,7 @@ import org.echocat.jomon.runtime.annotations.Including;
 import org.echocat.jomon.runtime.numbers.IntegerRange;
 
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.*;
@@ -27,18 +28,31 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 
+import static org.echocat.jomon.net.NetworkInterfaceUtils.getFirstAddressOf;
+
 public class FreeTcpPortDetector {
 
     public static final int DEFAULT_MIN_PORT = 10000;
     public static final int DEFAULT_MAX_PORT = 45000;
 
+    @Nonnull
     private final Random _random = new Random();
+    @Nonnull
     private final InetAddress _address;
+    @Nonnegative
+    @Including
     private final int _from;
+    @Nonnegative
+    @Excluding
     private final int _to;
+    @Nonnegative
     private final int _range;
 
-    public FreeTcpPortDetector(@Nullable InetAddress address, @Including @Nonnegative int minPort, @Excluding @Nonnegative int maxPort) {
+    public FreeTcpPortDetector(@Nonnull NetworkInterface networkInterface, @Including @Nonnegative int minPort, @Excluding @Nonnegative int maxPort) {
+        this(getFirstAddressOf(networkInterface),  minPort, maxPort);
+    }
+
+    public FreeTcpPortDetector(@Nonnull InetAddress address, @Including @Nonnegative int minPort, @Excluding @Nonnegative int maxPort) {
         if (minPort > maxPort) {
             throw new IllegalArgumentException("The maxPort have to larger than or equal to the minPort.");
         }
@@ -48,7 +62,11 @@ public class FreeTcpPortDetector {
         _range = maxPort - minPort;
     }
 
-    public FreeTcpPortDetector(@Nullable InetAddress address, @Nullable IntegerRange portRange) {
+    public FreeTcpPortDetector(@Nonnull NetworkInterface networkInterface, @Nullable IntegerRange portRange) {
+        this(getFirstAddressOf(networkInterface), portRange);
+    }
+
+    public FreeTcpPortDetector(@Nonnull InetAddress address, @Nullable IntegerRange portRange) {
         _address = address;
         _from = portRange != null ? portRange.getFrom(DEFAULT_MIN_PORT) : DEFAULT_MIN_PORT;
         _to = portRange != null ? portRange.getTo(DEFAULT_MAX_PORT) : DEFAULT_MAX_PORT;
@@ -81,4 +99,5 @@ public class FreeTcpPortDetector {
         }
         return port;
     }
+
 }

@@ -65,9 +65,7 @@ public class Hints implements Iterable<Entry<Hint<?>, Object>> {
     public Hints() {}
 
     public Hints(@Nullable Hints hints) {
-        if (hints != null) {
-            _hintToValue.putAll(hints.getHintToValue());
-        }
+        setAll(hints);
     }
 
     public Hints(@Nullable Map<Hint<?>, Object> hints) {
@@ -85,6 +83,12 @@ public class Hints implements Iterable<Entry<Hint<?>, Object>> {
             throw new NullPointerException(hint + " does not accept null values.");
         }
         getHintToValue().put(hint, value);
+    }
+
+    public void setAll(@Nullable Hints hints) {
+        if (hints != null) {
+            _hintToValue.putAll(hints.getHintToValue());
+        }
     }
 
     @Nullable

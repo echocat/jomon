@@ -18,14 +18,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
+import java.lang.reflect.*;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static java.lang.reflect.Modifier.*;
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
 
 public class ClassUtils {
 
@@ -178,6 +176,26 @@ public class ClassUtils {
         }
     }
 
+    @Nonnull
+    public static Field getFieldOf(@Nonnull Class<?> ofType, @Nonnull Class<?> valueType, @Nonnull String fieldName, boolean isStatic) {
+        try {
+            final Field field = ofType.getDeclaredField(fieldName);
+            final int modifiers = field.getModifiers();
+            if (isStatic(modifiers) != isStatic) {
+                throw new IllegalArgumentException(fieldName + " is " + (isStatic ? "not " : "") + "static.");
+            }
+            if (!isPublic(modifiers)) {
+                field.setAccessible(true);
+            }
+            if (!valueType.equals(field.getType())) {
+                throw new IllegalArgumentException(field + " is not of type " + valueType.getName() + ".");
+            }
+            return field;
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException("Could not find " + (isStatic ? "static " : "") + "field " + valueType.getName() + " " + ofType.getSimpleName() + "." + fieldName + ".", e);
+        }
+    }
+
     @Nullable
     public static <T extends Annotation> T findAnnotation(@Nonnull Class<T> annotationType, @Nonnull PropertyDescriptor of) {
         final Method readMethod = of.getReadMethod();
@@ -187,6 +205,34 @@ public class ClassUtils {
             result = writeMethod != null ? writeMethod.getAnnotation(annotationType) : null;
         }
         return result;
+    }
+
+    @Nullable
+    public static Class<?> findClass(@Nonnull String name, @Nullable ClassLoader classLoader) {
+        Class<?> result;
+        try {
+            result = classLoader != null ? classLoader.loadClass(name) : Class.forName(name);
+        } catch (ClassNotFoundException ignored) {
+            result = null;
+        }
+        return result;
+    }
+
+    @Nullable
+    public static <T> Class<? extends T> findClass(@Nonnull String name, @Nullable ClassLoader classLoader, @Nonnull Class<T> expectedType) {
+        final Class<?> plain = findClass(name, classLoader);
+        // noinspection unchecked
+        return plain != null && expectedType.isAssignableFrom(plain) ? (Class<? extends T>) plain : null;
+    }
+
+    @Nullable
+    public static Class<?> findClass(@Nonnull String name) {
+        return findClass(name, (ClassLoader) null);
+    }
+
+    @Nullable
+    public static <T> Class<? extends T> findClass(@Nonnull String name, @Nonnull Class<T> expectedType) {
+        return findClass(name, null, expectedType);
     }
 
     private ClassUtils() {}

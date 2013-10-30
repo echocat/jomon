@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 @ThreadSafe
@@ -56,11 +58,13 @@ public abstract class NumberRange<N extends Number> extends RangeSupport<N> impl
     @Override
     public abstract boolean isSignificant(@Nonnull N minValue, @Nonnull N maxValue, @Nonnull N base);
 
+    @XmlTransient
     protected abstract static class Container<N extends Number> {
 
         private N _from;
         private N _to;
 
+        @XmlAttribute(name = "from")
         public N getFrom() {
             return _from;
         }
@@ -69,6 +73,7 @@ public abstract class NumberRange<N extends Number> extends RangeSupport<N> impl
             _from = from;
         }
 
+        @XmlAttribute(name = "to")
         public N getTo() {
             return _to;
         }

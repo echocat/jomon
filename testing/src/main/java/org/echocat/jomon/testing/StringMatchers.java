@@ -103,6 +103,26 @@ public class StringMatchers {
             }
         };
     }
-    
+
+    public static <T> Matcher<T> toStringIs(@Nonnull final String stringValue) {
+        return new TypeSafeMatcher<T>() {
+
+            @Override
+            protected final boolean matchesSafely(@Nonnull T item) {
+                return stringValue.equals(item.toString());
+            }
+
+            @Override
+            public final void describeTo(@Nonnull Description description) {
+                description.appendText("returns on toString() ").appendValue(stringValue);
+            }
+
+            @Override
+            protected void describeMismatchSafely(@Nullable T item, @Nonnull Description description) {
+                description.appendText("was ").appendValue(item != null ? item.toString() : null);
+            }
+        };
+    }
+
     private StringMatchers() {}
 }

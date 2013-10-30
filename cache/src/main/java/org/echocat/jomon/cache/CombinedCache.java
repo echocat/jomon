@@ -14,7 +14,8 @@
 
 package org.echocat.jomon.cache;
 
-import org.echocat.jomon.cache.Value.Lazy;
+import org.echocat.jomon.runtime.util.Value;
+import org.echocat.jomon.runtime.util.Value.Lazy;
 import org.echocat.jomon.runtime.util.Duration;
 import org.echocat.jomon.runtime.util.ValueProducer;
 
@@ -68,7 +69,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
             }
         }
         if (result == null && cacheValueProducer != null) {
-            result = new Lazy<>(key, cacheValueProducer, nonBlocking).get();
+            result = new Lazy<>(key, cacheValueProducer, nonBlocking).getValue();
         }
         if (result != null) {
             for (Cache<K, V> cache : missedOn) {

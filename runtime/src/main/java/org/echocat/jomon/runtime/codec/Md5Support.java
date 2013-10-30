@@ -28,7 +28,6 @@ import static java.nio.charset.Charset.forName;
 public abstract class Md5Support implements Md5 {
 
     public static final Charset DEFAULT_CHARSET = forName("UTF-8");
-    public static final char[] MD5_CHARACTERS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
     @Override
     @Nonnull
@@ -91,22 +90,13 @@ public abstract class Md5Support implements Md5 {
     @Nonnull
     @Override
     public char[] asHexCharacters() {
-        final byte[] bytes = asBytes();
-        final int length = bytes.length;
-        final char[] out = new char[length << 1];
-        int j = 0;
-        for (int i = 0; i < length; i++) {
-            final byte b = bytes[i];
-            out[j++] = MD5_CHARACTERS[(240 & b) >>> 4];
-            out[j++] = MD5_CHARACTERS[15 & b];
-        }
-        return out;
+        return Md5Utils.asHexCharacters(asBytes());
     }
 
     @Nonnull
     @Override
     public String asHexString() {
-        return new String(asHexCharacters());
+        return Md5Utils.asHexString(asBytes());
     }
 
 }

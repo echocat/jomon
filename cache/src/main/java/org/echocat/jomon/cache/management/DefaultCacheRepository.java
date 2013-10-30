@@ -25,7 +25,7 @@ import javax.annotation.PreDestroy;
 import java.util.*;
 
 import static org.echocat.jomon.cache.CacheUtils.assertValidCacheId;
-import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 
 public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
 
@@ -167,7 +167,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
                 final Cache<?, ?> cache = entry.getValue();
                 try {
                     if (beforeDestroy(id, cache)) {
-                        closeQuietly(cache);
+                        closeQuietlyIfAutoCloseable(cache);
                         i.remove();
                         afterDestroy(id, cache);
                     } else {

@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.net.cluster.channel.multicast;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.echocat.jomon.net.cluster.channel.ClusterChannelTestSupport;
 import org.echocat.jomon.net.cluster.channel.ReceivedMessage;
 import org.echocat.jomon.net.cluster.channel.StateCondition;
@@ -21,7 +22,6 @@ import org.echocat.jomon.runtime.concurrent.StopWatch;
 import org.echocat.jomon.runtime.math.OverPeriodCounter;
 import org.echocat.jomon.runtime.util.Duration;
 import org.echocat.jomon.testing.concurrent.ParallelTestRunner.Worker;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +29,14 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.echocat.jomon.net.NetworkInterfaceQuery.networkInterface;
+import static org.echocat.jomon.net.NetworkInterfaceRepository.networkInterfaceRepository;
+import static org.echocat.jomon.net.NetworkInterfaceType.loopBack;
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.*;
 import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
@@ -98,7 +102,7 @@ public class MulticastClusterChannelIntegrationTest extends ClusterChannelTestSu
             assertThat(stopWatch.getCurrentDuration(), isLessThan(new Duration("2ms").multiplyBy(messagesSend.size())));
             assertThat(messagesSend, hasSize(channels.size() * numberOfWorkersPerChannel * numberOfMessagesPerWorker));
 
-            waitFor(new StateCondition<MulticastClusterChannel>(new Duration("1ms").multiplyBy(numberOfMessagesPerWorker).multiplyBy(0.25)) {
+            waitFor(new StateCondition<MulticastClusterChannel>(new Duration("1ms").multiplyBy(numberOfMessagesPerWorker).multiplyBy(0.15)) {
                 @Override
                 public boolean check(@Nullable MulticastClusterChannel clusterChannel) throws Exception {
                     for (MulticastClusterChannel channel : channels) {
@@ -136,7 +140,11 @@ public class MulticastClusterChannelIntegrationTest extends ClusterChannelTestSu
     @Nonnull
     protected MulticastClusterChannel channel(@Nonnull UUID uuid) throws Exception {
         final MulticastClusterChannel channel = new MulticastClusterChannel(uuid);
-        channel.setAddress(new InetSocketAddress(HOST, PORT));
+        final NetworkInterface loopBackInterface = networkInterfaceRepository().findOneBy(
+            networkInterface().whichIsOfType(loopBack)
+        );
+        assertThat(loopBackInterface, isNotNull());
+        channel.setAddress(new InetSocketAddress(HOST, PORT), loopBackInterface);
         channel.register(getMessageHandler());
         channel.register(getStateHandler());
         channel.setName(uuid.getLeastSignificantBits() + "");

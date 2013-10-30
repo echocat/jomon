@@ -15,6 +15,7 @@
 package org.echocat.jomon.cache;
 
 import org.echocat.jomon.runtime.util.Duration;
+import org.echocat.jomon.runtime.util.Value;
 import org.echocat.jomon.runtime.util.ValueProducer;
 
 import javax.annotation.Nonnull;

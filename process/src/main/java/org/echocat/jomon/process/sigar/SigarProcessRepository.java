@@ -14,43 +14,51 @@
 
 package org.echocat.jomon.process.sigar;
 
+import org.echocat.jomon.process.GeneratedProcessRegistry;
+import org.echocat.jomon.process.Signal;
+import org.echocat.jomon.process.local.LocalGeneratedProcess;
+import org.echocat.jomon.process.local.LocalProcess;
+import org.echocat.jomon.process.local.LocalProcessQuery;
+import org.echocat.jomon.process.local.LocalProcessRepository;
 import org.echocat.jomon.runtime.concurrent.Daemon;
 import org.echocat.jomon.runtime.iterators.CloseableIterator;
 import org.echocat.jomon.runtime.iterators.ConvertingIterator;
-import org.echocat.jomon.process.*;
-import org.echocat.jomon.process.Process;
 import org.echocat.jomon.runtime.util.Duration;
-import org.hyperic.sigar.Sigar;
-import org.hyperic.sigar.SigarException;
-import org.hyperic.sigar.SigarPermissionDeniedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.*;
 
-import static org.echocat.jomon.runtime.iterators.IteratorUtils.filter;
-import static org.echocat.jomon.process.GeneratedProcessRegistry.getParentProcessIds;
 import static org.echocat.jomon.process.Signal.*;
-import static org.echocat.jomon.process.sigar.SigarInitializer.initializeSigar;
+import static org.echocat.jomon.process.sigar.SigarFacadeFactory.create;
+import static org.echocat.jomon.process.sigar.SigarFacadeFactory.isAvialable;
+import static org.echocat.jomon.runtime.iterators.IteratorUtils.filter;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
 @ThreadSafe
-public class SigarProcessRepository extends ProcessRepository {
+public class SigarProcessRepository extends LocalProcessRepository {
 
     private static final Map<Long, Long> ONE_LONG_INSTANCE = new WeakHashMap<>();
-    private static final Logger LOG = LoggerFactory.getLogger(SigarProcessRepository.class);
 
+    @Nonnull
     private final KillDaemonsOfDeadProcesses _killDaemonsOfDeadProcesses = new KillDaemonsOfDeadProcesses();
 
-    private Sigar _sigar;
-    private GeneratedProcessRegistry _generatedProcessRegistry;
-    private Daemon _killDaemonsOfDeadProcessesDaemon;
+    @Nullable
+    private final SigarFacade _sigar;
+    @Nullable
+    private final GeneratedProcessRegistry<Long, LocalGeneratedProcess> _generatedProcessRegistry;
+    @Nullable
+    private final Daemon _killDaemonsOfDeadProcessesDaemon;
+
+    public SigarProcessRepository() {
+        _sigar = isAvialable() ? create() : null;
+        _generatedProcessRegistry = _sigar != null ? new GeneratedProcessRegistry<Long, LocalGeneratedProcess>(_sigar.getPid(), "local", Long.class) : null;
+        _killDaemonsOfDeadProcessesDaemon = _sigar != null ? startDaemon() : null;
+    }
 
     @Override
-    public Process findOneBy(@Nonnull Long id) {
+    public LocalProcess findOneBy(@Nonnull Long id) {
         Long idInstance;
         synchronized (ONE_LONG_INSTANCE) {
             idInstance = ONE_LONG_INSTANCE.get(id);
@@ -59,14 +67,14 @@ public class SigarProcessRepository extends ProcessRepository {
                 idInstance = id;
             }
         }
-        Process process;
+        LocalProcess process;
         try {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (idInstance) {
-                _sigar.getProcState(idInstance);
+                getSigar().getProcState(idInstance);
             }
-            process = new SigarProcess(id, _sigar);
-        } catch (SigarException ignored) {
+            process = new SigarProcess(id, getSigar());
+        } catch (Exception ignored) {
             process = null;
         }
         return process;
@@ -74,15 +82,15 @@ public class SigarProcessRepository extends ProcessRepository {
 
     @Nonnull
     @Override
-    public CloseableIterator<Process> findBy(@Nonnull ProcessQuery query) {
-        final CloseableIterator<Process> result;
+    public CloseableIterator<LocalProcess> findBy(@Nonnull LocalProcessQuery query) {
+        final CloseableIterator<LocalProcess> result;
         final List<Long> ids = query.getIds();
         if (ids != null) {
             result = new ToProcessConvertingIterator(ids);
         } else {
             try {
-                result = new KnownIdsProcessIterator(_sigar.getProcList(), _sigar);
-            } catch (SigarException e) {
+                result = new KnownIdsProcessIterator(getSigar().getProcList(), getSigar());
+            } catch (Exception e) {
                 throw new RuntimeException("Could not get process list for " + query + ".", e);
             }
         }
@@ -91,14 +99,14 @@ public class SigarProcessRepository extends ProcessRepository {
 
     @Nonnull
     @Override
-    protected GeneratedProcess toControllableProcess(@Nonnull Process placeHolder, @Nonnull java.lang.Process original, boolean isDaemon) {
-        final GeneratedProcess result = super.toControllableProcess(placeHolder, original, isDaemon);
+    protected LocalGeneratedProcess toControllableProcess(@Nonnull LocalProcess placeHolder, @Nonnull Process original, boolean isDaemon) {
+        final LocalGeneratedProcess result = super.toControllableProcess(placeHolder, original, isDaemon);
         _generatedProcessRegistry.register(result);
         return result;
     }
 
     @Override
-    public void send(@Nonnull Process to, @Nonnull Signal signal) {
+    public void send(@Nonnull LocalProcess to, @Nonnull Signal signal) {
         final int code;
         if (signal == terminate) {
             code = 15;
@@ -109,45 +117,29 @@ public class SigarProcessRepository extends ProcessRepository {
         } else {
             throw new IllegalArgumentException("Could not handle signal: " + signal);
         }
-        try {
-            _sigar.kill(to.getId(), code);
-        } catch (SigarPermissionDeniedException e) {
-            throw new AccessDeniedException("Could not kill: " + to, e);
-        } catch (SigarException e) {
-            throw new RuntimeException("Could not kill: " + to, e);
+        getSigar().kill(to.getId(), code);
+    }
+
+    @Nonnull
+    protected SigarFacade getSigar() {
+        if (_sigar == null) {
+            throw new UnsupportedOperationException("This method is not available because sigar does not completely initialized on this platform. See previous log entries for more information.");
         }
+        return _sigar;
     }
 
     @Override
-    protected boolean couldHandleThisVirtualMachine() {
-        boolean result;
-        try {
-            initializeSigar();
-            result = true;
-        } catch (Exception e) {
-            LOG.info("Could not load sigar.", e);
-            result = false;
-        }
-        return result;
+    public boolean isAvailable() {
+        return _sigar != null;
     }
 
     @Override
-    protected long getCurrentJvmId() {
-        return _sigar.getPid();
+    public long getThisPid() {
+        return getSigar().getPid();
     }
 
-    @Override
-    protected void init() {
-        if (_sigar != null || _generatedProcessRegistry != null) {
-            close();
-        }
-        initializeSigar();
-        _sigar = new Sigar();
-        _generatedProcessRegistry = new GeneratedProcessRegistry(_sigar.getPid());
-        startDaemons();
-    }
-
-    protected void startDaemons() {
+    @Nonnull
+    protected Daemon startDaemon() {
         final Daemon daemon = new Daemon(_killDaemonsOfDeadProcesses);
         daemon.setInterval(new Duration("1m"));
         try {
@@ -156,7 +148,7 @@ public class SigarProcessRepository extends ProcessRepository {
             throw new RuntimeException("Could not start killDaemonsOfDeadProcessesDaemon.", e);
         }
         daemon.run();
-        _killDaemonsOfDeadProcessesDaemon = daemon;
+        return daemon;
     }
 
     @Override
@@ -167,12 +159,7 @@ public class SigarProcessRepository extends ProcessRepository {
             try {
                 closeQuietly(_killDaemonsOfDeadProcessesDaemon);
             } finally {
-                try {
-                    final Sigar sigar = _sigar;
-                    if (sigar != null) {
-                        sigar.close();
-                    }
-                } catch (Exception ignored) {}
+                closeQuietly(getSigar());
             }
         }
     }
@@ -180,11 +167,11 @@ public class SigarProcessRepository extends ProcessRepository {
 
 
     @Nonnull
-    protected static SigarProcess toProcess(long pid, @Nonnull Sigar sigar) {
+    protected static SigarProcess toProcess(long pid, @Nonnull SigarFacade sigar) {
         return new SigarProcess(pid, sigar);
     }
 
-    protected class ToProcessConvertingIterator extends ConvertingIterator<Long, Process> {
+    protected class ToProcessConvertingIterator extends ConvertingIterator<Long, LocalProcess> {
 
         public ToProcessConvertingIterator(@Nonnull Iterable<Long> ids) {
             this(ids.iterator());
@@ -195,20 +182,20 @@ public class SigarProcessRepository extends ProcessRepository {
         }
 
         @Override
-        protected Process convert(@Nullable Long id) {
+        protected LocalProcess convert(@Nullable Long id) {
             return id != null ? findOneBy(id) : null;
         }
 
     }
 
-    protected static class KnownIdsProcessIterator implements CloseableIterator<Process> {
+    protected static class KnownIdsProcessIterator implements CloseableIterator<LocalProcess> {
 
         private final long[] _pids;
-        private final Sigar _sigar;
+        private final SigarFacade _sigar;
 
         private int _index;
 
-        public KnownIdsProcessIterator(@Nonnull long[] pids, @Nonnull Sigar sigar) {
+        public KnownIdsProcessIterator(@Nonnull long[] pids, @Nonnull SigarFacade sigar) {
             _pids = pids;
             _sigar = sigar;
         }
@@ -222,7 +209,7 @@ public class SigarProcessRepository extends ProcessRepository {
         }
 
         @Override
-        public Process next() {
+        public LocalProcess next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -239,16 +226,14 @@ public class SigarProcessRepository extends ProcessRepository {
     protected class KillDaemonsOfDeadProcesses implements Runnable {
         @Override
         public void run() {
-            final Sigar sigar = _sigar;
+            final SigarFacade sigar = getSigar();
             if (sigar != null) {
-                for (long parentProcessId : getParentProcessIds()) {
-                    if (findOneBy(parentProcessId) == null) {
-                        try (final GeneratedProcessRegistry registry = new GeneratedProcessRegistry(parentProcessId)) {
-                            for (Long processId : registry.getAllIds()) {
-                                try {
-                                    sigar.kill(processId, 9);
-                                } catch (SigarException ignored) {}
-                            }
+                for (GeneratedProcessRegistry<Long, LocalGeneratedProcess> registry : GeneratedProcessRegistry.<Long, LocalGeneratedProcess>getKnownInstancesFor("local", Long.class)) {
+                    if (findOneBy(registry.getParentLocalProcessId()) == null) {
+                        for (Long processId : registry.getAllIds()) {
+                            try {
+                                sigar.kill(processId, 9);
+                            } catch (IllegalArgumentException ignored) {}
                         }
                     }
                 }

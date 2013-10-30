@@ -17,26 +17,38 @@ package org.echocat.jomon.testing.environments;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import static java.lang.Thread.currentThread;
 import static org.echocat.jomon.runtime.Log4JUtils.configureRuntime;
+import static org.echocat.jomon.runtime.reflection.ClassUtils.findClass;
 
 public class LogEnvironment extends BaseEnvironment implements TestRule {
 
+    private final Class<?> _reference;
+
     public LogEnvironment() {
-        this(LogEnvironment.class);
+        this(null);
     }
 
     public LogEnvironment(@Nonnull Object object) {
         this(object instanceof Class ? (Class<?>)object : object.getClass());
     }
 
-    public LogEnvironment(@Nonnull Class<?> clazz) {
-        final String configuration = findFileFor(clazz, getLog4JFileNameSuffixOfClasses(), getLog4JConfigurationFileNameInPackage());
-        if (configuration != null) {
-            configureRuntime(clazz.getClassLoader().getResource(configuration));
+    public LogEnvironment(@Nullable Class<?> clazz) {
+        final Class<?> targetClass = clazz != null ? clazz : findTopFromCallStack();
+        String configuration = findFileFor(targetClass, getLog4JFileNameSuffixOfClasses(), getLog4JConfigurationFileNameInPackage());
+        if (configuration == null) {
+            configuration = findFileFor(LogEnvironment.class, getLog4JFileNameSuffixOfClasses(), getLog4JConfigurationFileNameInPackage());
         }
+        if (configuration != null) {
+            configureRuntime(targetClass.getClassLoader().getResource(configuration));
+        }
+        _reference = targetClass;
     }
 
     @Override
@@ -58,4 +70,34 @@ public class LogEnvironment extends BaseEnvironment implements TestRule {
             base.evaluate();
         }};
     }
+
+    @Nonnull
+    public Logger getLogger() {
+        return getLogger(_reference);
+    }
+
+    @Nonnull
+    public Logger getLogger(@Nonnull String name) {
+        return LoggerFactory.getLogger(name);
+    }
+
+    @Nonnull
+    public Logger getLogger(@Nonnull Class<?> reference) {
+        return LoggerFactory.getLogger(reference);
+    }
+
+    @Nonnull
+    protected Class<?> findTopFromCallStack() {
+        final StackTraceElement[] stackTrace = currentThread().getStackTrace();
+        Class<?> found = null;
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            final Class<?> currentClass = findClass(stackTraceElement.getClassName());
+            if (currentClass != Thread.class && !currentClass.isAssignableFrom(LogEnvironment.class)) {
+                found = currentClass;
+                break;
+            }
+        }
+        return found != null ? found : getClass();
+    }
+
 }

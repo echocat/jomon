@@ -20,7 +20,7 @@
     <parent>
         <artifactId>jomon</artifactId>
         <groupId>org.echocat</groupId>
-        <version>1.3.2-SNAPSHOT</version>
+        <version>1.4.0-SNAPSHOT</version>
     </parent>
 
     <name>echocat Jomon Spring</name>
