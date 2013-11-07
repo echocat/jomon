@@ -21,7 +21,7 @@
     <groupId>org.echocat</groupId>
     <artifactId>jomon</artifactId>
     <packaging>pom</packaging>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>1.4.0</version>
     <url>https://jomon.echocat.org</url>
     <description>Collection of many useful tools for Java. Could be compared with apache-commons.</description>
 
@@ -494,7 +494,7 @@
         <connection>scm:git://github.com/echocat/jomon.git</connection>
         <developerConnection>scm:git:git@github.com:echocat/jomon.git</developerConnection>
         <url>https://github.com/echocat/jomon</url>
-        <tag>HEAD</tag>
+        <tag>version-1.4.0</tag>
     </scm>
 
 </project>
