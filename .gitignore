@@ -22,6 +22,7 @@
 /net/common/target
 /net/http/target
 /net/service/target
+/net/ssh/target
 /net/mail/target
 /net/testing/target
 /process/target
