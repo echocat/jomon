@@ -13,8 +13,7 @@
   ~ **** END LICENSE BLOCK *****
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -344,8 +343,11 @@
                     <version>2.4</version>
                     <configuration>
                         <tagNameFormat>version-@{project.version}</tagNameFormat>
-                        <arguments>-DskipTests</arguments>
-                        <scmCommentPrefix>* [RELEASE]</scmCommentPrefix>
+                        <!--suppress MavenModelInspection -->
+                        <arguments>-DskipTests -Dgpg.passphrase=${passphrase} ${arguments}</arguments>
+                        <scmCommentPrefix>* [RELEASE] </scmCommentPrefix>
+                        <releaseProfiles>sign</releaseProfiles>
+                        <pushChanges>false</pushChanges>
                     </configuration>
                 </plugin>
                 <plugin>
