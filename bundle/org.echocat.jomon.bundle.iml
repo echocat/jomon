@@ -73,6 +73,7 @@
     <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.2.1" level="project" />
     <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
     <orderEntry type="module" module-name="org.echocat.net.mail" />
+    <orderEntry type="module" module-name="org.echocat.jomon.net.ssh" />
     <orderEntry type="module" module-name="org.echocat.jomon.net.testing" />
     <orderEntry type="module" module-name="org.echocat.jomon.testing" />
     <orderEntry type="library" name="Maven: junit:junit:4.11" level="project" />

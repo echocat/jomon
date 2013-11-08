@@ -347,7 +347,6 @@
                         <arguments>-DskipTests -Dgpg.passphrase=${passphrase} ${arguments}</arguments>
                         <scmCommentPrefix>* [RELEASE] </scmCommentPrefix>
                         <releaseProfiles>sign</releaseProfiles>
-                        <pushChanges>false</pushChanges>
                     </configuration>
                 </plugin>
                 <plugin>
