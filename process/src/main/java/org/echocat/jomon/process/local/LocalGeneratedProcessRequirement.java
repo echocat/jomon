@@ -45,7 +45,7 @@ public class LocalGeneratedProcessRequirement extends BaseGeneratedProcessRequir
     @Override
     @Nonnull
     public LocalGeneratedProcessRequirement withWorkingDirectory(@Nonnull File workingDirectory) {
-        if (workingDirectory.isDirectory()) {
+        if (!workingDirectory.isDirectory()) {
             throw new IllegalArgumentException(workingDirectory + " does not exist.");
         }
         return super.withWorkingDirectory(workingDirectory);
