@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -35,8 +36,21 @@ public class ExactIntegerRequirement extends ExactValueRequirementSupport<Intege
     }
 
     @XmlRootElement(name = "exactIntegerRequirement")
-    @XmlType(name = "exactIntegerRequirement")
-    public static class Container extends ExactValueRequirementSupport.Container<Integer> {}
+    @XmlType(name = "exactIntegerRequirementType")
+    public static class Container extends ExactValueRequirementSupport.Container<Integer> {
+
+        @Override
+        @XmlAttribute(name = "value")
+        public Integer getValue() {
+            return super.getValue();
+        }
+
+        @Override
+        public void setValue(Integer value) {
+            super.setValue(value);
+        }
+
+    }
 
 
     public static class Adapter extends ExactValueRequirementSupport.Adapter<Integer, Container, ExactIntegerRequirement> {

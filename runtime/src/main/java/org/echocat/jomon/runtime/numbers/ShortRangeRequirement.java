@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -41,8 +42,32 @@ public class ShortRangeRequirement extends RangeRequirementSupport<Short, ShortR
     }
 
     @XmlRootElement(name = "shortRangeRequirement")
-    @XmlType(name = "shortRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Short> {}
+    @XmlType(name = "shortRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Short> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Short getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Short from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        public Short getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public void setTo(Short to) {
+            super.setTo(to);
+        }
+
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Short, Container, ShortRange> {

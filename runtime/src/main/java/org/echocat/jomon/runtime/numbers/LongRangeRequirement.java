@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -41,8 +42,32 @@ public class LongRangeRequirement extends RangeRequirementSupport<Long, LongRang
     }
 
     @XmlRootElement(name = "longRangeRequirement")
-    @XmlType(name = "longRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Long> {}
+    @XmlType(name = "longRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Long> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Long getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Long from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Long getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Long to) {
+            super.setTo(to);
+        }
+
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Long, Container, LongRange> {

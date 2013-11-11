@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 @ThreadSafe
 @Immutable
+@XmlTransient
 public abstract class NumberRange<N extends Number> extends RangeSupport<N> implements SignificantableWithMinAndMaxBasedOn<N, N> {
 
     protected NumberRange(@Nullable @Including N from, @Nullable @Excluding N to) {

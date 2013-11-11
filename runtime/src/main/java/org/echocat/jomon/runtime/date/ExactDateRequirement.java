@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -36,8 +37,21 @@ public class ExactDateRequirement extends ExactValueRequirementSupport<Date> imp
     }
 
     @XmlRootElement(name = "exactDateRequirement")
-    @XmlType(name = "exactDateRequirement")
-    public static class Container extends ExactValueRequirementSupport.Container<Date> {}
+    @XmlType(name = "exactDateRequirementType")
+    public static class Container extends ExactValueRequirementSupport.Container<Date> {
+
+        @Override
+        @XmlAttribute(name = "value")
+        public Date getValue() {
+            return super.getValue();
+        }
+
+        @Override
+        public void setValue(Date value) {
+            super.setValue(value);
+        }
+
+    }
 
 
     public static class Adapter extends ExactValueRequirementSupport.Adapter<Date, Container, ExactDateRequirement> {

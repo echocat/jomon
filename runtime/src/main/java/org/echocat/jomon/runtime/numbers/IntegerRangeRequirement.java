@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -41,8 +42,32 @@ public class IntegerRangeRequirement extends RangeRequirementSupport<Integer, In
     }
 
     @XmlRootElement(name = "integerRangeRequirement")
-    @XmlType(name = "integerRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Integer> {}
+    @XmlType(name = "integerRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Integer> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Integer getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Integer from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Integer getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Integer to) {
+            super.setTo(to);
+        }
+
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Integer, Container, IntegerRange> {

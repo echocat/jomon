@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -49,8 +50,32 @@ public class DurationRangeRequirement extends RangeRequirementSupport<Duration, 
     }
 
     @XmlRootElement(name = "durationRangeRequirement")
-    @XmlType(name = "durationRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Duration> {}
+    @XmlType(name = "durationRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Duration> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Duration getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Duration from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Duration getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Duration to) {
+            super.setTo(to);
+        }
+
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Duration, Container, DurationRange> {

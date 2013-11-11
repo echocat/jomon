@@ -23,15 +23,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;import java.lang.Double;import java.lang.Override;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @ThreadSafe
 @Immutable
 @XmlJavaTypeAdapter(Adapter.class)
 public class DoubleRangeRequirement extends RangeRequirementSupport<Double, DoubleRange> implements DoubleRequirement {
-    
+
     public DoubleRangeRequirement(@Nullable @Including Double from, @Nullable @Excluding Double to) {
         this(new DoubleRange(from, to));
     }
@@ -41,8 +42,32 @@ public class DoubleRangeRequirement extends RangeRequirementSupport<Double, Doub
     }
 
     @XmlRootElement(name = "doubleRangeRequirement")
-    @XmlType(name = "doubleRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Double> {}
+    @XmlType(name = "doubleRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Double> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Double getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Double from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Double getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Double to) {
+            super.setTo(to);
+        }
+
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Double, Container, DoubleRange> {
@@ -60,5 +85,5 @@ public class DoubleRangeRequirement extends RangeRequirementSupport<Double, Doub
         }
     }
 
-    
+
 }

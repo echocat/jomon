@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -42,8 +43,31 @@ public class DateRangeRequirement extends RangeRequirementSupport<Date, DateRang
     }
 
     @XmlRootElement(name = "dateRangeRequirement")
-    @XmlType(name = "dateRangeRequirement")
-    public static class Container extends RangeRequirementSupport.Container<Date> {}
+    @XmlType(name = "dateRangeRequirementType")
+    public static class Container extends RangeRequirementSupport.Container<Date> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Date getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Date from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Date getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Date to) {
+            super.setTo(to);
+        }
+    }
 
 
     public static class Adapter extends RangeRequirementSupport.Adapter<Date, Container, DateRange> {

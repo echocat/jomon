@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 @ThreadSafe
@@ -41,6 +42,7 @@ public abstract class RangeRequirementSupport<T, R extends Range<T>> implements 
         return _range;
     }
 
+    @XmlTransient
     protected abstract static class Container<T> {
 
         private T _from;

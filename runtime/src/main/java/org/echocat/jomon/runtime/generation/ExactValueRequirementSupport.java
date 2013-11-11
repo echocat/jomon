@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 @ThreadSafe
@@ -37,6 +38,7 @@ public abstract class ExactValueRequirementSupport<T> implements ExactValueRequi
         return _value;
     }
 
+    @XmlTransient
     protected abstract static class Container<T> {
 
         private T _value;

@@ -61,7 +61,7 @@ public class DurationRange extends RangeSupport<Duration> {
     }
 
     @XmlRootElement(name = "durationRange")
-    @XmlType(name = "durationRange")
+    @XmlType(name = "durationRangeType")
     public static class Container {
 
         private Long _from;

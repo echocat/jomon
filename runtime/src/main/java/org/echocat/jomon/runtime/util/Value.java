@@ -109,91 +109,91 @@ public interface Value<T> {
         }
     }
 
-    @XmlType(name = "boolean")
+    @XmlType(name = "booleanType")
     @XmlRootElement(name = "boolean")
     public static class BooleanValue extends ValueSupport<Boolean> {
             @Override @XmlAttribute(name = "content") public Boolean getValue() { return super.getValue(); }
             @Override public void setValue(Boolean content) { super.setValue(content); }
     }
 
-    @XmlType(name = "byte")
+    @XmlType(name = "byteType")
     @XmlRootElement(name = "byte")
     public static class ByteValue extends ValueSupport<Byte> {
             @Override @XmlAttribute(name = "content") public Byte getValue() { return super.getValue(); }
             @Override public void setValue(Byte content) { super.setValue(content); }
     }
 
-    @XmlType(name = "character")
+    @XmlType(name = "characterType")
     @XmlRootElement(name = "character")
     public static class CharacterValue extends ValueSupport<Character> {
             @Override @XmlAttribute(name = "content") public Character getValue() { return super.getValue(); }
             @Override public void setValue(Character content) { super.setValue(content); }
     }
 
-    @XmlType(name = "short")
+    @XmlType(name = "shortType")
     @XmlRootElement(name = "short")
     public static class ShortValue extends ValueSupport<Short> {
             @Override @XmlAttribute(name = "content") public Short getValue() { return super.getValue(); }
             @Override public void setValue(Short content) { super.setValue(content); }
     }
 
-    @XmlType(name = "integer")
+    @XmlType(name = "integerType")
     @XmlRootElement(name = "integer")
     public static class IntegerValue extends ValueSupport<Integer> {
             @Override @XmlAttribute(name = "content") public Integer getValue() { return super.getValue(); }
             @Override public void setValue(Integer content) { super.setValue(content); }
     }
 
-    @XmlType(name = "long")
+    @XmlType(name = "longType")
     @XmlRootElement(name = "long")
     public static class LongValue extends ValueSupport<Long> {
             @Override @XmlAttribute(name = "content") public Long getValue() { return super.getValue(); }
             @Override public void setValue(Long content) { super.setValue(content); }
     }
 
-    @XmlType(name = "bigInteger")
+    @XmlType(name = "bigIntegerType")
     @XmlRootElement(name = "bigInteger")
     public static class BigIntegerValue extends ValueSupport<BigInteger> {
             @Override @XmlAttribute(name = "content") public BigInteger getValue() { return super.getValue(); }
             @Override public void setValue(BigInteger content) { super.setValue(content); }
     }
 
-    @XmlType(name = "float")
+    @XmlType(name = "floatType")
     @XmlRootElement(name = "float")
     public static class FloatValue extends ValueSupport<Float> {
             @Override @XmlAttribute(name = "content") public Float getValue() { return super.getValue(); }
             @Override public void setValue(Float content) { super.setValue(content); }
     }
 
-    @XmlType(name = "double")
+    @XmlType(name = "doubleType")
     @XmlRootElement(name = "double")
     public static class DoubleValue extends ValueSupport<Double> {
             @Override @XmlAttribute(name = "content") public Double getValue() { return super.getValue(); }
             @Override public void setValue(Double content) { super.setValue(content); }
     }
 
-    @XmlType(name = "bigDecimal")
+    @XmlType(name = "bigDecimalType")
     @XmlRootElement(name = "bigDecimal")
     public static class BigDecimalValue extends ValueSupport<BigDecimal> {
             @Override @XmlAttribute(name = "content") public BigDecimal getValue() { return super.getValue(); }
             @Override public void setValue(BigDecimal content) { super.setValue(content); }
     }
 
-    @XmlType(name = "string")
+    @XmlType(name = "stringType")
     @XmlRootElement(name = "string")
     public static class StringValue extends ValueSupport<String> {
         @Override @XmlAttribute(name = "content") public String getValue() { return super.getValue(); }
         @Override public void setValue(String content) { super.setValue(content); }
     }
 
-    @XmlType(name = "date")
+    @XmlType(name = "dateType")
     @XmlRootElement(name = "date")
     public static class DateValue extends ValueSupport<Date> {
             @Override @XmlAttribute(name = "content") public Date getValue() { return super.getValue(); }
             @Override public void setValue(Date content) { super.setValue(content); }
     }
 
-    @XmlType(name = "pattern")
+    @XmlType(name = "patternType")
     @XmlRootElement(name = "pattern")
     public static class PatternValue extends ValueSupport<Pattern> {
             @Override @XmlAttribute(name = "content") @XmlJavaTypeAdapter(PatternAdapter.class) public Pattern getValue() { return super.getValue(); }

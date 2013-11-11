@@ -14,13 +14,14 @@
 
 package org.echocat.jomon.runtime.logic;
 
-import org.echocat.jomon.runtime.logic.ExactBooleanRequirement.Adapter;
 import org.echocat.jomon.runtime.generation.ExactValueRequirementSupport;
+import org.echocat.jomon.runtime.logic.ExactBooleanRequirement.Adapter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -35,8 +36,21 @@ public class ExactBooleanRequirement extends ExactValueRequirementSupport<Boolea
     }
 
     @XmlRootElement(name = "exactBooleanRequirement")
-    @XmlType(name = "exactBooleanRequirement")
-    public static class Container extends ExactValueRequirementSupport.Container<Boolean> {}
+    @XmlType(name = "exactBooleanRequirementType")
+    public static class Container extends ExactValueRequirementSupport.Container<Boolean> {
+
+        @Override
+        @XmlAttribute(name = "value")
+        public Boolean getValue() {
+            return super.getValue();
+        }
+
+        @Override
+        public void setValue(Boolean value) {
+            super.setValue(value);
+        }
+
+    }
 
 
     public static class Adapter extends ExactValueRequirementSupport.Adapter<Boolean, Container, ExactBooleanRequirement> {

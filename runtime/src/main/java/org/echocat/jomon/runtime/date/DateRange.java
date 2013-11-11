@@ -76,7 +76,7 @@ public class DateRange extends RangeSupport<Date> implements SignificantableWith
     }
 
     @XmlRootElement(name = "dateRange")
-    @XmlType(name = "dateRange")
+    @XmlType(name = "dateRangeType")
     public static class Container {
 
         private Date _from;

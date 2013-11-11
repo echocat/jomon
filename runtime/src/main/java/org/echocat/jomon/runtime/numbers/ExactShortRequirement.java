@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -35,8 +36,21 @@ public class ExactShortRequirement extends ExactValueRequirementSupport<Short> i
     }
 
     @XmlRootElement(name = "exactShortRequirement")
-    @XmlType(name = "exactShortRequirement")
-    public static class Container extends ExactValueRequirementSupport.Container<Short> {}
+    @XmlType(name = "exactShortRequirementType")
+    public static class Container extends ExactValueRequirementSupport.Container<Short> {
+
+        @Override
+        @XmlAttribute(name = "value")
+        public Short getValue() {
+            return super.getValue();
+        }
+
+        @Override
+        public void setValue(Short value) {
+            super.setValue(value);
+        }
+
+    }
 
 
     public static class Adapter extends ExactValueRequirementSupport.Adapter<Short, Container, ExactShortRequirement> {

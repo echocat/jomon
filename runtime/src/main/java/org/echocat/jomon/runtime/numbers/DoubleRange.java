@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -49,8 +50,31 @@ public class DoubleRange extends NumberRange<Double> {
     }
 
     @XmlRootElement(name = "doubleRange")
-    @XmlType(name = "doubleRange")
-    public static class Container extends NumberRange.Container<Double> {}
+    @XmlType(name = "doubleRangeType")
+    public static class Container extends NumberRange.Container<Double> {
+
+        @Override
+        @XmlAttribute(name = "from")
+        public Double getFrom() {
+            return super.getFrom();
+        }
+
+        @Override
+        public void setFrom(Double from) {
+            super.setFrom(from);
+        }
+
+        @Override
+        @XmlAttribute(name = "to")
+        public Double getTo() {
+            return super.getTo();
+        }
+
+        @Override
+        public void setTo(Double to) {
+            super.setTo(to);
+        }
+    }
 
     public static class Adapter extends NumberRange.Adapter<Double, Container, DoubleRange> {
 
