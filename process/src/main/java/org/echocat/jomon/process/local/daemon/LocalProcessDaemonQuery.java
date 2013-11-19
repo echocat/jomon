@@ -22,7 +22,7 @@ import java.io.File;
 public class LocalProcessDaemonQuery extends BaseProcessDaemonQuery<File, Long, LocalProcessDaemonQuery, LocalProcessDaemon<?>> {
 
     @Nonnull
-    public static LocalProcessDaemonQuery applicationDaemon() {
+    public static LocalProcessDaemonQuery processDaemon() {
         return new LocalProcessDaemonQuery();
     }
 

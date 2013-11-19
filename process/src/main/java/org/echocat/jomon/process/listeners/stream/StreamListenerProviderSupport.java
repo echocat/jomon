@@ -68,7 +68,7 @@ public abstract class StreamListenerProviderSupport implements StreamListenerPro
             result = null;
         }
         // noinspection unchecked
-        return result.canHandleReferenceType(processType) ? (StreamListener<P>) result : null;
+        return result != null && result.canHandleReferenceType(processType) ? (StreamListener<P>) result : null;
     }
 
     @Nonnull

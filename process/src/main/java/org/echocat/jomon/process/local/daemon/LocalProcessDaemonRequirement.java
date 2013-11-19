@@ -22,7 +22,15 @@ import java.io.File;
 
 public interface LocalProcessDaemonRequirement<T extends LocalProcessDaemon<?>> extends ProcessDaemonRequirement<File, Long, LocalGeneratedProcess, T> {
 
-    public static class Impl extends Base<File, Long, LocalGeneratedProcess, LocalProcessDaemon<?>, Impl> {
+    public static class Base<D extends LocalProcessDaemon<?>, T extends Base<D, T>> extends ProcessDaemonRequirement.Base<File, Long, LocalGeneratedProcess, D, T> implements LocalProcessDaemonRequirement<D> {
+
+        public Base(@Nonnull Class<D> type) {
+            super(type);
+        }
+
+    }
+
+    public static class Impl extends Base<LocalProcessDaemon<?>, Impl> {
 
         @Nonnull
         public static Impl localProcessDaemonOfType(@Nonnull Class<? extends LocalProcessDaemon<?>> type) {

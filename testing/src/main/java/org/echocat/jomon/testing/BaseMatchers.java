@@ -30,17 +30,22 @@ import static java.util.Arrays.asList;
 public class BaseMatchers {
 
     @Nonnull
-    public static <T> Matcher<T> isSameAs(@Nullable final T expected) {
-        return new TypeSafeMatcher<T>() {
+    public static Matcher<Object> isSameAs(@Nullable final Object expected) {
+        return new BaseMatcher<Object>() {
             @Override
-            public boolean matchesSafely(T item) {
+            public boolean matches(Object item) {
                 // noinspection ObjectEquality
                 return item == expected;
             }
 
             @Override
             public void describeTo(@Nonnull Description description) {
-                description.appendText("is same as ").appendValue(expected);
+                description.appendText("is same as ").appendValue(expected).appendText("#" + (expected != null ? expected.hashCode() : ""));
+            }
+
+            @Override
+            public void describeMismatch(@Nullable Object item, @Nonnull Description description) {
+                description.appendText("was ").appendValue(item).appendText("#" + (item != null ? item.hashCode() : ""));
             }
         };
     }
@@ -384,7 +389,7 @@ public class BaseMatchers {
 
             @Override
             public void describeMismatch(@Nullable Object actual, @Nonnull Description description) {
-                handleDiscribeSizeMismatch(actual, description);
+                handleDescribeSizeMismatch(actual, description);
             }
 
         };
@@ -408,7 +413,7 @@ public class BaseMatchers {
 
             @Override
             public void describeMismatch(@Nullable Object actual, @Nonnull Description description) {
-                handleDiscribeSizeMismatch(actual, description);
+                handleDescribeSizeMismatch(actual, description);
             }
 
         };
@@ -451,9 +456,9 @@ public class BaseMatchers {
         return result;
     }
 
-    protected static void handleDiscribeSizeMismatch(@Nullable Object actual, @Nonnull Description description) {
+    protected static void handleDescribeSizeMismatch(@Nullable Object actual, @Nonnull Description description) {
         description.appendText("was ");
-        if (actual != null) {
+        if (actual == null) {
             description.appendValue(null);
         } else {
             description.appendValue(getSizeOf(actual));
