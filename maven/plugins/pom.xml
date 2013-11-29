@@ -18,20 +18,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>jomon</artifactId>
-        <groupId>org.echocat</groupId>
+        <artifactId>maven</artifactId>
+        <groupId>org.echocat.jomon</groupId>
         <version>1.4.3-SNAPSHOT</version>
     </parent>
 
-    <name>echocat Jomon Maven</name>
-    <groupId>org.echocat.jomon</groupId>
-    <artifactId>maven</artifactId>
+    <name>echocat Jomon Maven-Plugins</name>
+    <groupId>org.echocat.jomon.maven</groupId>
+    <artifactId>plugins</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>boot</module>
         <module>common</module>
-        <module>plugins</module>
     </modules>
 
 </project>

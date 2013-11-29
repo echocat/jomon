@@ -18,6 +18,7 @@ import org.echocat.jomon.runtime.generation.Requirement;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -27,6 +28,9 @@ public interface ProcessExecuter<R extends Requirement> {
 
     @Nonnull
     public Response execute(@Nonnull R requirement) throws InterruptedException, IOException;
+
+    @Nonnull
+    public Response execute(@Nonnull R requirement, @Nullable Drains drains) throws InterruptedException, IOException;
 
     public static class Response {
 

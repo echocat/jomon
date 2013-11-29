@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.process.daemon;
 
+import com.google.common.base.Predicate;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.echocat.jomon.process.CouldNotStartException;
@@ -44,8 +45,8 @@ public class ProcessDaemonRepository<
     ID,
     P extends GeneratedProcess<E, ID>,
     D extends ProcessDaemon<E, ID, P, ?, ?>,
-    R extends ProcessDaemonRequirement<E, ID, P, D>,
-    Q extends BaseProcessDaemonQuery<E, ID, ?, D>,
+    R extends ProcessDaemonRequirement<E, ID, P, ? extends D>,
+    Q extends BaseProcessDaemonQuery<E, ID, ?, ? extends D>,
     G extends Generator<P, ?>
 > implements QueryableRepository<Q, ID, D>, Iterable<D>, RemovingRepository<Q, ID>, InsertingRepository<D>, Generator<D, R>, AutoCloseable {
 
@@ -96,12 +97,14 @@ public class ProcessDaemonRepository<
     @Nonnull
     @Override
     public CloseableIterator<D> findBy(@Nonnull Q query) {
-        return filter(iterator(), query);
+        //noinspection unchecked
+        return filter(iterator(), (Predicate<? super D>) query);
     }
 
     @Override
     public long countBy(@Nonnull Q query) {
-        return countElementsOf(iterator(), query);
+        // noinspection unchecked
+        return countElementsOf(iterator(), (Predicate<D>) query);
     }
 
     @Override
@@ -147,10 +150,10 @@ public class ProcessDaemonRepository<
     }
 
     @Nonnull
-    protected Pair<Constructor<D>, Object[]> getConstructorFor(@Nonnull Class<D> type, @Nonnull R requirement) {
+    protected Pair<Constructor<D>, Object[]> getConstructorFor(@Nonnull Class<? extends D> type, @Nonnull R requirement) {
         final List<Object> potentialParameters = getPotentialParametersFor(requirement);
         Pair<Constructor<D>, Object[]> result = null;
-        for (Constructor<D> potentialConstructor : getPotentialConstructorsSortedFor(type)) {
+        for (final Constructor<D> potentialConstructor : getPotentialConstructorsSortedFor(type)) {
             final Object[] parameters = findRightParametersFor(potentialConstructor, potentialParameters);
             if (parameters != null) {
                 result = new ImmutablePair<>(potentialConstructor, parameters);
@@ -182,7 +185,7 @@ public class ProcessDaemonRepository<
     @Nullable
     protected Object findRightParameterFor(@Nonnull Class<?> expectedType, @Nonnull List<Object> potentialParameters) {
         Object result = null;
-        for (Object potentialParameter : potentialParameters) {
+        for (final Object potentialParameter : potentialParameters) {
             if (expectedType.isInstance(potentialParameter)) {
                 result = potentialParameter;
                 break;
@@ -192,7 +195,7 @@ public class ProcessDaemonRepository<
     }
 
     @Nonnull
-    protected List<Constructor<D>> getPotentialConstructorsSortedFor(@Nonnull Class<D> type) {
+    protected List<Constructor<D>> getPotentialConstructorsSortedFor(@Nonnull Class<? extends D> type) {
         // noinspection unchecked
         final List<Constructor<D>> potentialConstructors = asList((Constructor<D>[])type.getConstructors());
         sort(potentialConstructors, BY_PARAMETER_COUNT);
@@ -214,7 +217,7 @@ public class ProcessDaemonRepository<
         final D result;
         try {
             result = constructorAndParameters.getLeft().newInstance(constructorAndParameters.getRight());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             final Throwable target;
             // noinspection InstanceofCatchParameter
             if (e instanceof InvocationTargetException) {
@@ -255,7 +258,7 @@ public class ProcessDaemonRepository<
         } finally {
             try {
                 Runtime.getRuntime().removeShutdownHook(_shutdownHook);
-            } catch (IllegalStateException ignored) {}
+            } catch (final IllegalStateException ignored) {}
         }
     }
 

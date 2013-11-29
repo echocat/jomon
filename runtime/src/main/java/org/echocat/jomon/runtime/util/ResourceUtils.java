@@ -23,7 +23,7 @@ public class ResourceUtils {
             if (autoCloseable instanceof AutoCloseable) {
                 ((AutoCloseable)autoCloseable).close();
             }
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
     public static void closeQuietly(@Nullable AutoCloseable autoCloseable) {
@@ -33,28 +33,28 @@ public class ResourceUtils {
     public static void closeQuietlyIfAutoCloseable(@Nullable Iterable<?> elements) {
         try {
             if (elements != null) {
-                for (Object element : elements) {
+                for (final Object element : elements) {
                     closeQuietlyIfAutoCloseable(element);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
     public static void closeQuietly(@Nullable Iterable<? extends AutoCloseable> elements) {
         closeQuietlyIfAutoCloseable(elements);
     }
 
-    public static void closeQuietlyIfAutoCloseable(@Nullable Object[] elements) {
+    public static void closeQuietlyIfAutoCloseable(@Nullable Object... elements) {
         try {
             if (elements != null) {
-                for (Object element : elements) {
+                for (final Object element : elements) {
                     closeQuietlyIfAutoCloseable(element);
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
-    public static void closeQuietly(@Nullable AutoCloseable[] elements) {
+    public static void closeQuietly(@Nullable AutoCloseable... elements) {
         closeQuietlyIfAutoCloseable(elements);
     }
 

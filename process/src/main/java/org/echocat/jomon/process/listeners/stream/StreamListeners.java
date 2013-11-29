@@ -16,6 +16,7 @@ package org.echocat.jomon.process.listeners.stream;
 
 import org.echocat.jomon.process.GeneratedProcess;
 import org.echocat.jomon.runtime.io.StreamType;
+import org.slf4j.Logger;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -39,6 +40,21 @@ public class StreamListeners {
     public static <P extends GeneratedProcess<?, ?>> StreamListener<P> redirectToLogger() {
         // noinspection unchecked
         return (StreamListener<P>) redirectToLogger;
+    }
+
+    @Nonnull
+    public static <P extends GeneratedProcess<?, ?>> StreamListener<P> redirectToLogger(@Nullable Class<?> forClass) {
+        return new RedirectToLoggerStreamListener<>(forClass);
+    }
+
+    @Nonnull
+    public static <P extends GeneratedProcess<?, ?>> StreamListener<P> redirectToLogger(@Nullable String loggerName) {
+        return new RedirectToLoggerStreamListener<>(loggerName);
+    }
+
+    @Nonnull
+    public static <P extends GeneratedProcess<?, ?>> StreamListener<P> redirectToLogger(@Nullable Logger logger) {
+        return new RedirectToLoggerStreamListener<>(logger);
     }
 
     @Nullable

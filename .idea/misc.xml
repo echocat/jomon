@@ -3,6 +3,9 @@
   <component name="CppTools.Loader" reportImplicitCastToBool="false" reportNameReferencedOnce="false" version="3" compilerSelect="AUTO" />
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="org.apache.maven.plugins.annotations.Component" />
+    </list>
   </component>
   <component name="IdProvider" IDEtalkID="663364B5FDD00544456E9F05140EE579" />
   <component name="MavenProjectsManager">

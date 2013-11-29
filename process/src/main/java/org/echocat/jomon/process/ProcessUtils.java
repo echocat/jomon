@@ -15,9 +15,11 @@
 package org.echocat.jomon.process;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.echocat.jomon.runtime.CollectionUtils.asImmutableList;
 
 public class ProcessUtils {
@@ -32,7 +34,7 @@ public class ProcessUtils {
     @Nonnull
     public static String toEscapedCommandLine(@Nonnull Iterable<String> commandLine) {
         final StringBuilder sb = new StringBuilder();
-        for (String argument : commandLine) {
+        for (final String argument : commandLine) {
             if (sb.length() > 0) {
                 sb.append(' ');
             }
@@ -43,6 +45,22 @@ public class ProcessUtils {
             }
         }
         return sb.toString();
+    }
+
+    @Nonnull
+    public static String toEscapedCommandLine(@Nonnull Object executable, @Nullable Iterable<String> arguments) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(executable);
+        final String argumentsAsString = arguments != null ? toEscapedCommandLine(arguments) : null;
+        if (!isEmpty(argumentsAsString)) {
+            sb.append(' ').append(argumentsAsString);
+        }
+        return sb.toString();
+    }
+
+    @Nonnull
+    public static String toEscapedCommandLine(@Nonnull Object executable, @Nullable String... arguments) {
+        return toEscapedCommandLine(executable, asImmutableList(arguments));
     }
 
     private ProcessUtils() {}

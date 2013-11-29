@@ -18,7 +18,6 @@ import org.echocat.jomon.process.CouldNotStartException;
 import org.echocat.jomon.process.GeneratedProcess;
 import org.echocat.jomon.process.listeners.stream.LineBasedStreamListenerSupport;
 import org.echocat.jomon.runtime.io.StreamType;
-import org.echocat.jomon.runtime.util.ByteCount;
 import org.echocat.jomon.runtime.util.Duration;
 
 import javax.annotation.Nonnegative;
@@ -28,11 +27,14 @@ import java.nio.ByteBuffer;
 
 import static java.lang.Thread.currentThread;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.echocat.jomon.runtime.util.ByteCount.allocateBuffer;
 
 public abstract class LineBasedStartupListenerSupport<P extends GeneratedProcess<?, ?>, L extends LineBasedStartupListenerSupport<P, L>> extends LineBasedStreamListenerSupport<P, L> implements StartupListener<P> {
 
-    private final ByteBuffer _recordedContentWhileWaiting = ByteCount.allocateBuffer("5m");
+    @Nonnull
+    private final ByteBuffer _recordedContentWhileWaiting = allocateBuffer("5m");
 
+    @Nonnull
     private Duration _maxWaitTimeForStartupOfApplication = new Duration("1m");
 
     private volatile Boolean _startupDone;
@@ -45,7 +47,7 @@ public abstract class LineBasedStartupListenerSupport<P extends GeneratedProcess
                 if (!condition().await(_maxWaitTimeForStartupOfApplication.toMilliSeconds(), MILLISECONDS)) {
                     _startupDone = false;
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             } finally {
                 lock().unlock();

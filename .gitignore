@@ -17,6 +17,8 @@
 /maven/target
 /maven/boot/target
 /maven/common/target
+/maven/plugins/target
+/maven/plugins/common/target
 /net/target
 /net/cluster/target
 /net/common/target

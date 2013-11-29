@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isWhitespace;
 import static java.lang.Long.valueOf;
-import static java.lang.Thread.interrupted;
+import static java.lang.Thread.currentThread;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.concurrent.TimeUnit.*;
 import static org.echocat.jomon.runtime.StringUtils.addElement;
@@ -110,8 +110,8 @@ public class Duration implements Comparable<Duration>, Serializable {
     public static void sleepSafe(@Nonnegative long milliSeconds) throws GotInterruptedException {
         try {
             sleep(milliSeconds);
-        } catch (InterruptedException e) {
-            interrupted();
+        } catch (final InterruptedException e) {
+            currentThread().interrupt();
             throw new GotInterruptedException(e);
         }
     }
@@ -240,6 +240,11 @@ public class Duration implements Comparable<Duration>, Serializable {
     @Nonnull
     public Duration dividedBy(long what) {
         return new Duration(Math.round(_milliSeconds / what));
+    }
+
+    @Nonnull
+    public Duration trim(@Nonnull TimeUnit toUnit) {
+        return new Duration(toUnit.toMillis(toUnit.convert(_milliSeconds, MILLISECONDS)));
     }
 
     /**
@@ -396,12 +401,12 @@ public class Duration implements Comparable<Duration>, Serializable {
         long value;
         try {
             value = valueOf(interval);
-        } catch (NumberFormatException ignored) {
+        } catch (final NumberFormatException ignored) {
             if (interval.length() >= 2) {
                 final long plainValue;
                 try {
                     plainValue = valueOf(interval.substring(0, interval.length() - 1));
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     throw new IllegalArgumentException("Don't know how to convert: " + interval, e);
                 }
                 final String mode = interval.substring(interval.length() - 1);
@@ -432,7 +437,7 @@ public class Duration implements Comparable<Duration>, Serializable {
         StringBuilder sb = new StringBuilder();
         final char[] chars = pattern.replace("ms", "S").toCharArray();
         long result = 0;
-        for (char c : chars) {
+        for (final char c : chars) {
             if (isWhitespace(c)) {
                 result += oneUncheckedIntervalToMilliSeconds(sb.toString());
                 sb = new StringBuilder();

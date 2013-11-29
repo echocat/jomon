@@ -25,14 +25,19 @@ import java.util.List;
 import static org.echocat.jomon.runtime.CollectionUtils.asImmutableList;
 import static org.echocat.jomon.runtime.CollectionUtils.asIterator;
 
-public abstract class BaseProcessDaemonQuery<E, ID, Q extends BaseProcessDaemonQuery<E, ID, Q, T>, T extends ProcessDaemon<E, ID, ?, ?, ?>> implements Query, Predicate<T> {
+public abstract class BaseProcessDaemonQuery<
+    E,
+    ID,
+    Q extends BaseProcessDaemonQuery<E, ID, Q, ? extends D>,
+    D extends ProcessDaemon<E, ID, ?, ?, ?>
+    > implements Query, Predicate<D> {
 
     @Nullable
     private ID _pid;
     @Nullable
     private E _executable;
     @Nullable
-    private Class<? extends T> _type;
+    private Class<? extends D> _type;
     @Nullable
     private Boolean _isAlive;
     @Nullable
@@ -57,7 +62,7 @@ public abstract class BaseProcessDaemonQuery<E, ID, Q extends BaseProcessDaemonQ
     }
 
     @Nonnull
-    public Q whichIsOfType(@Nonnull Class<? extends T> type) {
+    public Q whichIsOfType(@Nonnull Class<? extends D> type) {
         if (_type != null) {
             throw new IllegalStateException("executable was already defined.");
         }
@@ -118,7 +123,7 @@ public abstract class BaseProcessDaemonQuery<E, ID, Q extends BaseProcessDaemonQ
     }
 
     @Nullable
-    public Class<? extends T> getType() {
+    public Class<? extends D> getType() {
         return _type;
     }
 
@@ -133,7 +138,7 @@ public abstract class BaseProcessDaemonQuery<E, ID, Q extends BaseProcessDaemonQ
     }
 
     @Override
-    public boolean apply(@Nullable T daemon) {
+    public boolean apply(@Nullable D daemon) {
         return daemon != null
             && applyPid(daemon)
             && applyExecutable(daemon)
@@ -143,23 +148,23 @@ public abstract class BaseProcessDaemonQuery<E, ID, Q extends BaseProcessDaemonQ
             ;
     }
 
-    protected boolean applyPid(@Nonnull T daemon) {
+    protected boolean applyPid(@Nonnull D daemon) {
         return _pid == null || _pid.equals(daemon.getProcess().getId());
     }
 
-    protected boolean applyExecutable(@Nonnull T daemon) {
+    protected boolean applyExecutable(@Nonnull D daemon) {
         return _executable == null || _executable.equals(daemon.getProcess().getExecutable());
     }
 
-    protected boolean applyType(@Nonnull T daemon) {
+    protected boolean applyType(@Nonnull D daemon) {
         return _type == null || _type.isInstance(daemon);
     }
 
-    protected boolean applyIsAlive(@Nonnull T daemon) {
+    protected boolean applyIsAlive(@Nonnull D daemon) {
         return _isAlive == null || _isAlive.equals(daemon.getProcess().isAlive());
     }
 
-    protected boolean applyFirstArguments(@Nonnull T daemon) {
+    protected boolean applyFirstArguments(@Nonnull D daemon) {
         boolean result;
         final List<String> firstArguments = _firstArguments;
         if (firstArguments == null || firstArguments.isEmpty()) {

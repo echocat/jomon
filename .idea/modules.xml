@@ -12,6 +12,8 @@
       <module fileurl="file://$PROJECT_DIR$/maven/org.echocat.jomon.maven.iml" filepath="$PROJECT_DIR$/maven/org.echocat.jomon.maven.iml" group="org.echocat.jomon.maven and modules" />
       <module fileurl="file://$PROJECT_DIR$/maven/boot/org.echocat.jomon.maven.boot.iml" filepath="$PROJECT_DIR$/maven/boot/org.echocat.jomon.maven.boot.iml" group="org.echocat.jomon.maven and modules" />
       <module fileurl="file://$PROJECT_DIR$/maven/common/org.echocat.jomon.maven.common.iml" filepath="$PROJECT_DIR$/maven/common/org.echocat.jomon.maven.common.iml" group="org.echocat.jomon.maven and modules" />
+      <module fileurl="file://$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" filepath="$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" filepath="$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/net/org.echocat.jomon.net.iml" filepath="$PROJECT_DIR$/net/org.echocat.jomon.net.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" filepath="$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" filepath="$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" group="org.echocat.jomon.net and modules" />

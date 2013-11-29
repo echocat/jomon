@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.process.sigar;
 
+import org.echocat.jomon.process.AccessDeniedException;
 import org.echocat.jomon.process.GeneratedProcessRegistry;
 import org.echocat.jomon.process.Signal;
 import org.echocat.jomon.process.local.LocalGeneratedProcess;
@@ -74,7 +75,7 @@ public class SigarProcessRepository extends LocalProcessRepository {
                 getSigar().getProcState(idInstance);
             }
             process = new SigarProcess(id, getSigar());
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             process = null;
         }
         return process;
@@ -90,7 +91,7 @@ public class SigarProcessRepository extends LocalProcessRepository {
         } else {
             try {
                 result = new KnownIdsProcessIterator(getSigar().getProcList(), getSigar());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not get process list for " + query + ".", e);
             }
         }
@@ -144,7 +145,7 @@ public class SigarProcessRepository extends LocalProcessRepository {
         daemon.setInterval(new Duration("1m"));
         try {
             daemon.init();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not start killDaemonsOfDeadProcessesDaemon.", e);
         }
         daemon.run();
@@ -228,12 +229,12 @@ public class SigarProcessRepository extends LocalProcessRepository {
         public void run() {
             final SigarFacade sigar = getSigar();
             if (sigar != null) {
-                for (GeneratedProcessRegistry<Long, LocalGeneratedProcess> registry : GeneratedProcessRegistry.<Long, LocalGeneratedProcess>getKnownInstancesFor("local", Long.class)) {
+                for (final GeneratedProcessRegistry<Long, LocalGeneratedProcess> registry : GeneratedProcessRegistry.<Long, LocalGeneratedProcess>getKnownInstancesFor("local", Long.class)) {
                     if (findOneBy(registry.getParentLocalProcessId()) == null) {
-                        for (Long processId : registry.getAllIds()) {
+                        for (final Long processId : registry.getAllIds()) {
                             try {
                                 sigar.kill(processId, 9);
-                            } catch (IllegalArgumentException ignored) {}
+                            } catch (IllegalArgumentException | AccessDeniedException ignored) {}
                         }
                     }
                 }

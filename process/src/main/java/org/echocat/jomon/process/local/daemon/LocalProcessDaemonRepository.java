@@ -25,7 +25,16 @@ import java.io.File;
 
 import static org.echocat.jomon.process.local.LocalProcessRepository.processRepository;
 
-public class LocalProcessDaemonRepository extends ProcessDaemonRepository<File, Long, LocalGeneratedProcess, LocalProcessDaemon<?>, LocalProcessDaemonRequirement<LocalProcessDaemon<?>>, BaseProcessDaemonQuery<File, Long, ?, LocalProcessDaemon<?>>, Generator<LocalGeneratedProcess, LocalGeneratedProcessRequirement>> {
+public class LocalProcessDaemonRepository extends ProcessDaemonRepository<
+    File,
+    Long,
+    LocalGeneratedProcess,
+    LocalProcessDaemon<?>,
+    LocalProcessDaemonRequirement<? extends LocalProcessDaemon<?>>,
+    BaseProcessDaemonQuery<File, Long, ?, ? extends LocalProcessDaemon<?>>,
+    Generator<LocalGeneratedProcess, LocalGeneratedProcessRequirement>
+    >
+{
 
     @Nonnull
     private static final LocalProcessDaemonRepository INSTANCE = new LocalProcessDaemonRepository();
@@ -53,9 +62,4 @@ public class LocalProcessDaemonRepository extends ProcessDaemonRepository<File, 
         super(processGenerator);
     }
 
-    @Nonnull
-    public LocalProcessDaemon<?> generate(@Nonnull LocalProcessDaemonRequirement<? extends LocalProcessDaemon<?>> requirement) {
-        // noinspection unchecked
-        return super.generate((LocalProcessDaemonRequirement<LocalProcessDaemon<?>>)requirement);
-    }
 }

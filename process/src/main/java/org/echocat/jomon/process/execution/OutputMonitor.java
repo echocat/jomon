@@ -20,11 +20,9 @@ import org.echocat.jomon.runtime.io.StreamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -40,13 +38,11 @@ public class OutputMonitor<E, ID> extends Thread implements AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(OutputMonitor.class);
 
     @Nonnull
-    private final StringBuilder _buffer = new StringBuilder();
-    @Nonnull
     private final ThreadLocal<Boolean> _alreadyInClosing = new ThreadLocal<>();
     @Nonnull
     private final InputStream _stream;
-    @Nonnegative
-    private final int _numberOfCharactersToRead;
+    @Nonnull
+    private final Drain _drain;
 
     @Nonnull
     private final Lock _lock = new ReentrantLock();
@@ -56,11 +52,11 @@ public class OutputMonitor<E, ID> extends Thread implements AutoCloseable {
     private boolean _alive = true;
 
 
-    public OutputMonitor(@Nonnull GeneratedProcess<E, ID> process, @Nonnull StreamType streamType, @Nonnegative int numberOfCharactersToRead) throws IOException {
+    public OutputMonitor(@Nonnull GeneratedProcess<E, ID> process, @Nonnull StreamType streamType, @Nonnull Drain drain) throws IOException {
         super("OutputMonitor:" + process.getId() + ":" + streamType);
-        _numberOfCharactersToRead = numberOfCharactersToRead;
         setDaemon(true);
         _stream = streamType == stdout ? process.getStdout() : process.getStderr();
+        _drain = drain;
         start();
     }
 
@@ -69,17 +65,16 @@ public class OutputMonitor<E, ID> extends Thread implements AutoCloseable {
         try {
             _lock.lockInterruptibly();
             try {
-                final InputStreamReader reader = new InputStreamReader(_stream);
                 try {
-                    final char[] buf = new char[_numberOfCharactersToRead];
-                    int read = reader.read(buf);
+                    final byte[] buf = new byte[4096];
+                    int read = _stream.read(buf);
                     while (!currentThread().isInterrupted() && read >= 0) {
-                        _buffer.append(buf, 0, read);
-                        read = reader.read(buf);
+                        _drain.drain(buf, 0, read);
+                        read = _stream.read(buf);
                     }
-                } catch (InterruptedIOException ignored) {
+                } catch (final InterruptedIOException ignored) {
                     currentThread().interrupt();
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     // noinspection InstanceofCatchParameter
                     if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
                         LOG.warn("Could not read from " + _stream + ".", e);
@@ -93,18 +88,20 @@ public class OutputMonitor<E, ID> extends Thread implements AutoCloseable {
                     _lock.unlock();
                 }
             }
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
         } finally {
             closeQuietly(_stream);
         }
     }
 
+    /**
+     * @deprecated Use the {@link Drain#toString()} in the future.
+     */
     @Nonnull
+    @Deprecated
     public String getRecordedContent() {
-        synchronized (_buffer) {
-            return _buffer.toString();
-        }
+        return _drain.toString();
     }
 
     public void waitFor() throws InterruptedException {
@@ -125,7 +122,7 @@ public class OutputMonitor<E, ID> extends Thread implements AutoCloseable {
             _alreadyInClosing.set(TRUE);
             try {
                 try {
-                    closeQuietly(_stream);
+                    closeQuietly(_stream, _drain);
                 } finally {
                     ThreadUtils.stop(this);
                 }

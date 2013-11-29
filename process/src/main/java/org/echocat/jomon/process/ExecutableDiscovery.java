@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static java.io.File.pathSeparatorChar;
@@ -31,30 +32,52 @@ public class ExecutableDiscovery {
 
     @Nullable
     public File discover(@Nonnull Task task) {
-        final List<File> searhInPaths = getSearhInPathsFor(task);
-        return discoverIn(task, searhInPaths);
+        File result = findFullQualifiedExecutableOf(task);
+        if (result == null) {
+            final List<File> searchInPaths = getSearchInPathsFor(task);
+            result = discoverIn(task, searchInPaths);
+        }
+        return result;
     }
 
-    @Nonnull
-    protected List<File> getSearhInPathsFor(@Nonnull Task task) {
-        final List<File> result = new ArrayList<>();
-        for (String environmentVariable : task.getEnvironmentVariables()) {
-            result.addAll(getSearhInPathsFor(task, environmentVariable));
+    @Nullable
+    protected File findFullQualifiedExecutableOf(@Nonnull Task task) {
+        return findFullQualifiedExecutableOf(task.getExecutableNames());
+    }
+
+    @Nullable
+    protected File findFullQualifiedExecutableOf(@Nonnull Iterable<String> executableNames) {
+        File result = null;
+        for (final String executableName : executableNames) {
+            final File potentialExecutable = new File(executableName);
+            if (potentialExecutable.isAbsolute() && potentialExecutable.canExecute()) {
+                result = potentialExecutable;
+                break;
+            }
         }
-        result.addAll(getBaseSearhInPathsFor("PATH"));
         return result;
     }
 
     @Nonnull
-    protected List<File> getSearhInPathsFor(@Nonnull Task task, @Nonnull String environmentVariable) {
-        final List<File> bases = getBaseSearhInPathsFor(environmentVariable);
+    protected List<File> getSearchInPathsFor(@Nonnull Task task) {
+        final List<File> result = new ArrayList<>();
+        for (final String environmentVariable : task.getEnvironmentVariables()) {
+            result.addAll(getSearchInPathsFor(task, environmentVariable));
+        }
+        result.addAll(getBaseSearchInPathsFor("PATH"));
+        return result;
+    }
+
+    @Nonnull
+    protected List<File> getSearchInPathsFor(@Nonnull Task task, @Nonnull String environmentVariable) {
+        final List<File> bases = getBaseSearchInPathsFor(environmentVariable);
         final List<File> result = new ArrayList<>(bases.size());
-        for (File base : bases) {
+        for (final File base : bases) {
             final List<String> subDirectories = task.getSubDirectories();
             if (subDirectories.isEmpty()) {
                 result.add(base);
             } else {
-                for (String subDirectory : subDirectories) {
+                for (final String subDirectory : subDirectories) {
                     result.add(new File(base, subDirectory));
                 }
             }
@@ -63,12 +86,12 @@ public class ExecutableDiscovery {
     }
 
     @Nonnull
-    protected List<File> getBaseSearhInPathsFor(@Nonnull String environmentVariable) {
+    protected List<File> getBaseSearchInPathsFor(@Nonnull String environmentVariable) {
         final String plainPaths = getenv(environmentVariable);
         final String[] paths = plainPaths != null ? split(plainPaths, pathSeparatorChar) : null;
         final List<File> result = new ArrayList<>(paths != null ? paths.length : 0);
         if (paths != null) {
-            for (String path : paths) {
+            for (final String path : paths) {
                 result.add(new File(path));
             }
         }
@@ -76,10 +99,10 @@ public class ExecutableDiscovery {
     }
 
     @Nullable
-    protected File discoverIn(@Nonnull Task task, @Nonnull List<File> searhInPaths) {
+    protected File discoverIn(@Nonnull Task task, @Nonnull List<File> searchInPaths) {
         File result = null;
-        for (File searhInPath : searhInPaths) {
-            result = discoverIn(task, searhInPath);
+        for (final File searchInPath : searchInPaths) {
+            result = discoverIn(task, searchInPath);
             if (result != null) {
                 break;
             }
@@ -88,11 +111,11 @@ public class ExecutableDiscovery {
     }
 
     @Nullable
-    protected File discoverIn(@Nonnull Task task, @Nonnull File searhInPath) {
+    protected File discoverIn(@Nonnull Task task, @Nonnull File searchInPath) {
         File result = null;
         final List<String> executableNames = task.getExecutableNames();
-        for (String executableName : executableNames) {
-            result = discoverIn(task, searhInPath, executableName);
+        for (final String executableName : executableNames) {
+            result = discoverIn(task, searchInPath, executableName);
             if (result != null) {
                 break;
             }
@@ -101,10 +124,10 @@ public class ExecutableDiscovery {
     }
 
     @Nullable
-    protected File discoverIn(@Nonnull Task task, @Nonnull File searhInPath, @Nonnull String executableName) {
+    protected File discoverIn(@Nonnull Task task, @Nonnull File searchInPath, @Nonnull String executableName) {
         File result = null;
-        for (String extension : currentFileSystem().getExecutableExtensions()) {
-            result = discoverIn(task, searhInPath, executableName, extension);
+        for (final String extension : currentFileSystem().getExecutableExtensions()) {
+            result = discoverIn(task, searchInPath, executableName, extension);
             if (result != null) {
                 break;
             }
@@ -131,6 +154,16 @@ public class ExecutableDiscovery {
         }
 
         @Nonnull
+        public static Task executableDiscoveryTask(@Nonnull Iterable<String> executableNames) {
+            return new Task().withExecutableNames(executableNames);
+        }
+
+        @Nonnull
+        public static Task executable(@Nonnull Iterable<String> executableNames) {
+            return executableDiscoveryTask(executableNames);
+        }
+
+        @Nonnull
         private final List<String> _executableNames = new ArrayList<>(1);
         @Nonnull
         private final List<String> _environmentVariables = new ArrayList<>();
@@ -150,12 +183,32 @@ public class ExecutableDiscovery {
         }
 
         @Nonnull
+        public Task withExecutableNames(@Nonnull Iterable<String> names) {
+            // noinspection ConstantConditions
+            if (names == null) {
+                throw new IllegalArgumentException("There is a minimum of 1 name required.");
+            }
+            final Iterator<String> iterator = names.iterator();
+            if (!iterator.hasNext()) {
+                throw new IllegalArgumentException("There is a minimum of 1 name required.");
+            }
+            addAll(_executableNames, iterator);
+            return this;
+        }
+
+        @Nonnull
         public Task withExecutableName(@Nonnull String name) {
             return withExecutableNames(name);
         }
 
         @Nonnull
         public Task withinEnvironmentVariables(@Nullable String... names) {
+            addAll(_environmentVariables, names);
+            return this;
+        }
+
+        @Nonnull
+        public Task withinEnvironmentVariables(@Nullable Iterable<String> names) {
             addAll(_environmentVariables, names);
             return this;
         }
@@ -170,6 +223,12 @@ public class ExecutableDiscovery {
 
         @Nonnull
         public Task searchInSubDirectories(@Nullable String... paths) {
+            addAll(_subDirectories, paths);
+            return this;
+        }
+
+        @Nonnull
+        public Task searchInSubDirectories(@Nullable Iterable<String> paths) {
             addAll(_subDirectories, paths);
             return this;
         }
@@ -249,7 +308,7 @@ public class ExecutableDiscovery {
         FileSystem(boolean caseSensitive, @Nonnull String... executableExtensions) {
             _caseSensitive = caseSensitive;
             final List<String> targetExtensions = new ArrayList<>(executableExtensions.length);
-            for (String extension : executableExtensions) {
+            for (final String extension : executableExtensions) {
                 targetExtensions.add(caseSensitive ? extension : extension.toUpperCase());
             }
             _executableExtensions = asImmutableList(targetExtensions);

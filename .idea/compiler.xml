@@ -48,6 +48,7 @@
         <module name="org.echocat.jomon.format" />
         <module name="org.echocat.jomon.maven.boot" />
         <module name="org.echocat.jomon.maven.common" />
+        <module name="org.echocat.jomon.maven.plugins.common" />
         <module name="org.echocat.jomon.net.cluster" />
         <module name="org.echocat.jomon.net.common" />
         <module name="org.echocat.jomon.net.http" />
@@ -74,6 +75,7 @@
       <module name="org.echocat.jomon.maven" target="1.7" />
       <module name="org.echocat.jomon.maven.boot" target="1.7" />
       <module name="org.echocat.jomon.maven.common" target="1.7" />
+      <module name="org.echocat.jomon.maven.plugins.common" target="1.7" />
       <module name="org.echocat.jomon.net" target="1.7" />
       <module name="org.echocat.jomon.net.cluster" target="1.7" />
       <module name="org.echocat.jomon.net.common" target="1.7" />
