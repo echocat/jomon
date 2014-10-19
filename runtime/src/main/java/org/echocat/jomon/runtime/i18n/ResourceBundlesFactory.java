@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,7 +71,7 @@ public class ResourceBundlesFactory {
     protected ResourceBundles loadResourceBundles(@Nonnull Class<?> type, @Nonnull ClassLoader classLoader) {
         final ResourceBundles resourceBundles;
         resourceBundles = new ResourceBundles();
-        for (Locale locale : _locales) {
+        for (final Locale locale : _locales) {
             final ResourceBundle resourceBundle = _recursiveResourceBundleFactory.getFor(type, classLoader, locale);
             resourceBundles.putBundle(locale, resourceBundle);
         }
@@ -86,7 +86,7 @@ public class ResourceBundlesFactory {
     public void setLocalesFromCommaSeparatedString(String localesAsCommaSeparatedString) {
         if (localesAsCommaSeparatedString != null) {
             final Set<Locale> locales = new HashSet<>();
-            for (String localeAsString : localesAsCommaSeparatedString.split(",")) {
+            for (final String localeAsString : localesAsCommaSeparatedString.split(",")) {
                 final String trimmedLocalAsString = localeAsString.trim();
                 if (!trimmedLocalAsString.isEmpty()) {
                     locales.add(forLanguageTag(trimmedLocalAsString));

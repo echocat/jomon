@@ -12,14 +12,14 @@
       <module fileurl="file://$PROJECT_DIR$/maven/org.echocat.jomon.maven.iml" filepath="$PROJECT_DIR$/maven/org.echocat.jomon.maven.iml" group="org.echocat.jomon.maven and modules" />
       <module fileurl="file://$PROJECT_DIR$/maven/boot/org.echocat.jomon.maven.boot.iml" filepath="$PROJECT_DIR$/maven/boot/org.echocat.jomon.maven.boot.iml" group="org.echocat.jomon.maven and modules" />
       <module fileurl="file://$PROJECT_DIR$/maven/common/org.echocat.jomon.maven.common.iml" filepath="$PROJECT_DIR$/maven/common/org.echocat.jomon.maven.common.iml" group="org.echocat.jomon.maven and modules" />
-      <module fileurl="file://$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" filepath="$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" />
-      <module fileurl="file://$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" filepath="$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" filepath="$PROJECT_DIR$/maven/plugins/org.echocat.jomon.maven.plugins.iml" group="org.echocat.jomon.maven and modules/org.echocat.jomon.maven.plugins and modules" />
+      <module fileurl="file://$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" filepath="$PROJECT_DIR$/maven/plugins/common/org.echocat.jomon.maven.plugins.common.iml" group="org.echocat.jomon.maven and modules/org.echocat.jomon.maven.plugins and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/org.echocat.jomon.net.iml" filepath="$PROJECT_DIR$/net/org.echocat.jomon.net.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" filepath="$PROJECT_DIR$/net/cluster/org.echocat.jomon.net.cluster.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" filepath="$PROJECT_DIR$/net/common/org.echocat.jomon.net.common.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/http/org.echocat.jomon.net.http.iml" filepath="$PROJECT_DIR$/net/http/org.echocat.jomon.net.http.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/service/org.echocat.jomon.net.service.iml" filepath="$PROJECT_DIR$/net/service/org.echocat.jomon.net.service.iml" group="org.echocat.jomon.net and modules" />
-      <module fileurl="file://$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" filepath="$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" />
+      <module fileurl="file://$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" filepath="$PROJECT_DIR$/net/ssh/org.echocat.jomon.net.ssh.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/net/testing/org.echocat.jomon.net.testing.iml" filepath="$PROJECT_DIR$/net/testing/org.echocat.jomon.net.testing.iml" group="org.echocat.jomon.net and modules" />
       <module fileurl="file://$PROJECT_DIR$/process/org.echocat.jomon.process.iml" filepath="$PROJECT_DIR$/process/org.echocat.jomon.process.iml" />
       <module fileurl="file://$PROJECT_DIR$/resources/org.echocat.jomon.resources.iml" filepath="$PROJECT_DIR$/resources/org.echocat.jomon.resources.iml" />

@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,7 +40,7 @@ public abstract class ResourceSupport implements Resource {
                 result = Arrays.equals(getMd5(), that.getMd5()) && getSize() == getSize();
             }
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not check equality.", e);
         }
     }
@@ -51,7 +51,7 @@ public abstract class ResourceSupport implements Resource {
             int result = Arrays.hashCode(getMd5());
             result = 37 * result + (int)getSize();
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not build hashCode.", e);
         }
     }
@@ -61,7 +61,7 @@ public abstract class ResourceSupport implements Resource {
         String result;
         try {
             result = encodeHexString(getMd5()) + "_" + getSize() + "." + getType();
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             result = super.toString();
         }
         return result;

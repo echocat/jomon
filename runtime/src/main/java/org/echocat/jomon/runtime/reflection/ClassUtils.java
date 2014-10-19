@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
+import static org.echocat.jomon.runtime.reflection.ClassIterator.classIteratorFor;
 
 public class ClassUtils {
 
@@ -171,7 +172,7 @@ public class ClassUtils {
                 throw new IllegalArgumentException(method + " does not return " + returnType.getName() + ".");
             }
             return method;
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalArgumentException("Could not find public static " + returnType.getSimpleName() + " " + ofType.getSimpleName() + "." + methodName + "(" + Arrays.toString(parameterTypes) + ").", e);
         }
     }
@@ -191,7 +192,7 @@ public class ClassUtils {
                 throw new IllegalArgumentException(field + " is not of type " + valueType.getName() + ".");
             }
             return field;
-        } catch (NoSuchFieldException e) {
+        } catch (final NoSuchFieldException e) {
             throw new IllegalArgumentException("Could not find " + (isStatic ? "static " : "") + "field " + valueType.getName() + " " + ofType.getSimpleName() + "." + fieldName + ".", e);
         }
     }
@@ -212,7 +213,7 @@ public class ClassUtils {
         Class<?> result;
         try {
             result = classLoader != null ? classLoader.loadClass(name) : Class.forName(name);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = null;
         }
         return result;
@@ -233,6 +234,33 @@ public class ClassUtils {
     @Nullable
     public static <T> Class<? extends T> findClass(@Nonnull String name, @Nonnull Class<T> expectedType) {
         return findClass(name, null, expectedType);
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Class<A> annotationType, @Nonnull Annotation[] in) {
+        A result = null;
+        for (final Annotation annotation : in) {
+            if (annotationType.isAssignableFrom(annotationType)) {
+                result = annotationType.cast(annotation);
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotation(@Nonnull Class<A> annotationType, @Nonnull Class<?> at) {
+        return at.getAnnotation(annotationType);
+    }
+
+    @Nullable
+    public static <A extends Annotation> A findAnnotationRecursively(@Nonnull Class<A> annotationType, @Nonnull Class<?> at) {
+        A result = null;
+        final Iterator<Class<?>> i = classIteratorFor(at);
+        while (result == null && i.hasNext()) {
+            result = i.next().getAnnotation(annotationType);
+        }
+        return result;
     }
 
     private ClassUtils() {}

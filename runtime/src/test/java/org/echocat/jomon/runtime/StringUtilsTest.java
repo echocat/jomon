@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,6 +16,7 @@ package org.echocat.jomon.runtime;
 
 import org.junit.Test;
 
+import static org.echocat.jomon.runtime.StringUtils.containsNoneOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -23,13 +24,13 @@ public class StringUtilsTest {
 
     @Test
     public void testContainsNone() {
-        assertThat(StringUtils.containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da"), is(true));
-        assertThat(StringUtils.containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da", "cd"), is(false));
-        assertThat(StringUtils.containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da", "cd", "bc"), is(false));
-        assertThat(StringUtils.containsNoneOf("abcd", ""), is(false));
+        assertThat(containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da"), is(true));
+        assertThat(containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da", "cd"), is(false));
+        assertThat(containsNoneOf("abcd", "ac", "ad", "bd", "ba", "ca", "da", "cd", "bc"), is(false));
+        assertThat(containsNoneOf("abcd", ""), is(false));
         final String nullString = null;
-        assertThat(StringUtils.containsNoneOf("abcd", nullString), is(true));
-        assertThat(StringUtils.containsNoneOf(nullString, nullString), is(true));
+        assertThat(containsNoneOf("abcd", nullString), is(true));
+        assertThat(containsNoneOf(nullString, nullString), is(true));
     }
 
     @Test

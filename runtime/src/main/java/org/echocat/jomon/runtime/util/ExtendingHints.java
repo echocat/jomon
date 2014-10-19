@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -45,7 +45,7 @@ public class ExtendingHints extends Hints {
     }
 
     @Override
-    public <T> T get(@Nonnull Hint<T> hint, @Nullable T defaultValue) {
+    public <T> T get(@Nonnull Key<T> hint, @Nullable T defaultValue) {
         T result = super.get(hint, null);
         // noinspection ObjectEquality
         if (result == NULL) {
@@ -57,23 +57,29 @@ public class ExtendingHints extends Hints {
     }
 
     @Override
-    public <T> void remove(@Nonnull Hint<T> hint) {
+    public <T> void remove(@Nonnull Key<T> hint) {
         // noinspection unchecked
         set(hint, (T) NULL);
     }
 
+    /**
+     * @deprecated Use {@link ValueProvider#contains} in the future.
+     */
+    @Deprecated
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isSet(@Nonnull Hint<?> hint) {
-        final Object value = getHintToValue().get(hint);
+        // noinspection SuspiciousMethodCalls
+        final Object value = getKeyToValue().get(hint);
         // noinspection ObjectEquality
         return (value != null && value != NULL) || hint.getDefaultValue() != null;
     }
 
     @Override
-    public Iterator<Entry<Hint<?>, Object>> iterator() {
-        return new FilterIterator<>(concat(super.iterator(), _superHints.iterator()), new Predicate<Entry<Hint<?>, Object>>() {
+    public Iterator<Entry<Key<Object>, Object>> iterator() {
+        return new FilterIterator<>(concat(super.iterator(), _superHints.iterator()), new Predicate<Entry<Key<Object>, Object>>() {
             @Override
-            public boolean evaluate(Entry<Hint<?>, Object> entry) {
+            public boolean evaluate(Entry<Key<Object>, Object> entry) {
                 // noinspection ObjectEquality
                 return entry != null && entry.getValue() != NULL;
             }

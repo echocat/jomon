@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,21 +36,25 @@ public class ManifestInformationFactory {
     public static final Name IMPLEMENTATION_BUILD_REVISION = new Name("Implementation-Build-Revision");
     public static final Name IMPLEMENTATION_BUILD_DATE = new Name("Implementation-Build-Date");
 
+    @Nonnull
     private final String _resource;
+    @Nonnull
     private final ClassLoader _classLoader;
 
+    @Nullable
     private volatile Manifest _manifest;
+    @Nullable
     private volatile String _applicationInfoString;
 
     public ManifestInformationFactory() {
         this(ManifestInformationFactory.class);
     }
 
-    public ManifestInformationFactory(Class<?> baseClass) {
+    public ManifestInformationFactory(@Nonnull Class<?> baseClass) {
         this(baseClass.getName().replace('.', '/') + ".class", baseClass.getClassLoader());
     }
 
-    public ManifestInformationFactory(String resource, ClassLoader classLoader) {
+    public ManifestInformationFactory(@Nonnull String resource, @Nonnull ClassLoader classLoader) {
         _resource = resource;
         _classLoader = classLoader;
     }
@@ -140,7 +144,7 @@ public class ManifestInformationFactory {
             if (manifestUrl != null) {
                 try (final InputStream is = manifestUrl.openStream()) {
                     _manifest = new Manifest(is);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new RuntimeException("Could not read manifest from " + manifestUrl + ".", e);
                 }
             } else {
@@ -150,6 +154,7 @@ public class ManifestInformationFactory {
         return _manifest;
     }
 
+    @Nullable
     private URL findManifestUrl() {
         final Iterator<URL> i = findResources(_resource);
         if (!i.hasNext()) {
@@ -158,7 +163,7 @@ public class ManifestInformationFactory {
         URL manifestUrl = null;
         while (i.hasNext() && manifestUrl == null) {
             final URL classUrl = i.next();
-            final String base = getBaseFor(classUrl, _resource);
+            final String base = findBaseFor(classUrl, _resource);
             if (base != null) {
                 manifestUrl = findManifestUrlStartsWith(base);
             }
@@ -166,7 +171,8 @@ public class ManifestInformationFactory {
         return manifestUrl;
     }
 
-    private String getBaseFor(URL classUrl, String classResourceName) {
+    @Nullable
+    private String findBaseFor(@Nonnull URL classUrl, @Nonnull String classResourceName) {
         final String classUrlString = classUrl.toString();
         final int cutBefore = classUrlString.lastIndexOf(classResourceName);
         final String base;
@@ -178,7 +184,8 @@ public class ManifestInformationFactory {
         return base;
     }
 
-    private URL findManifestUrlStartsWith(String manifestUrlStartsWith) {
+    @Nullable
+    private URL findManifestUrlStartsWith(@Nonnull String manifestUrlStartsWith) {
         URL manifestUrl = null;
         final Iterator<URL> j = findResources(MANIFEST_NAME);
         while (j.hasNext() && manifestUrl == null) {
@@ -190,14 +197,15 @@ public class ManifestInformationFactory {
         return manifestUrl;
     }
 
-    Iterator<URL> findResources(String name) {
+    @Nullable
+    protected Iterator<URL> findResources(@Nonnull String name) {
         Iterator<URL> result = null;
         try {
             final Enumeration<URL> enumeration = _classLoader.getResources(name);
             if (enumeration != null) {
                 result = asIterator(enumeration);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not find all resources of " + name + ".", e);
         }
         if (result == null) {

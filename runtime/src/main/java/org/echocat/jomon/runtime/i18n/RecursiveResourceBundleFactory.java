@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -79,7 +79,7 @@ public class RecursiveResourceBundleFactory {
     public ResourceBundle getFor(@Nonnull Class<?> type, @Nullable ClassLoader classLoader, @Nullable Locale locale) {
         final List<ResourceBundle> bundles = new ArrayList<>();
         Class<?> current = type;
-        while (type != null && !Object.class.equals(current)) {
+        while (current != null && !Object.class.equals(current)) {
             bundles.addAll(getAllRecursivelyWithNoInheritanceFor(current, classLoader, locale));
             current = current.getSuperclass();
         }
@@ -180,7 +180,7 @@ public class RecursiveResourceBundleFactory {
         final Enumeration<URL> i;
         try {
             i = from.getResources(withName);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not find all resourceBundles with name '" + withName + "' in " + from + ".", e);
         }
         while (i.hasMoreElements()) {
@@ -189,7 +189,7 @@ public class RecursiveResourceBundleFactory {
                 try (final Reader reader = new InputStreamReader(is, _charset)) {
                     bundles.add(new PropertyResourceBundle(reader));
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Could not load resourceBundle from '" + propertiesUrl + "'.", e);
             }
         }

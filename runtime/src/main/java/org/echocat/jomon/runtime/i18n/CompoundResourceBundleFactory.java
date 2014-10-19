@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,4 +41,5 @@ public class CompoundResourceBundleFactory implements ResourceBundleFactory<Comp
         final ResourceBundles resourceBundles = _resourceBundlesFactory.getFor(type);
         return new CompoundResourceBundle(resourceBundles, locale);
     }
+
 }

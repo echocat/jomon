@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,11 +16,8 @@ package org.echocat.jomon.spring;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,18 +39,29 @@ public abstract class AutomaticServicesDiscovery<V, C extends Collection<V>> imp
         _applicationContext = applicationContext;
     }
 
-    protected abstract boolean isApplicable(@Nonnull Class<?> type, @Nonnull String withBeanName, @Nonnull ApplicationContext of);
+    @SuppressWarnings("UnusedParameters")
+    protected boolean isApplicable(@Nonnull Class<?> type, @Nonnull String withBeanName, @Nonnull ApplicationContext of) {
+        return _expectedType.isAssignableFrom(type);
+    }
     
+    @SuppressWarnings("UnusedParameters")
+    protected boolean isApplicable(@Nonnull V bean, @Nonnull String withBeanName, @Nonnull ApplicationContext of) {
+        return true;
+    }
+
     protected abstract C createNewCollection();
 
     @Override
     public C getObject() throws Exception {
         final C values = createNewCollection();
         final String[] names = _applicationContext.getBeanDefinitionNames();
-        for (String name : names) {
-            final Class<?> type = getTypeFor(name);
+        for (final String name : names) {
+            final Class<?> type = findTypeOfBeanDefinition(name);
             if (type != null && isApplicable(type, name, _applicationContext) && !isExcluded(type)) {
-                values.add(_applicationContext.getBean(name, _expectedType));
+                final V bean = _applicationContext.getBean(name, _expectedType);
+                if (isApplicable(bean, name, _applicationContext)) {
+                    values.add(bean);
+                }
             }
         }
         return values;
@@ -62,7 +70,7 @@ public abstract class AutomaticServicesDiscovery<V, C extends Collection<V>> imp
     protected boolean isExcluded(@Nonnull Class<?> type) {
         boolean excluded = false;
         if (_excludes != null) {
-            for (Class<?> exclude : _excludes) {
+            for (final Class<?> exclude : _excludes) {
                 if (exclude.isAssignableFrom(type)) {
                     excluded = true;
                     break;
@@ -73,29 +81,8 @@ public abstract class AutomaticServicesDiscovery<V, C extends Collection<V>> imp
     }
 
     @Nullable
-    protected Class<?> getTypeFor(@Nonnull String name) {
-        Class<?> type;
-        if (_applicationContext instanceof ConfigurableApplicationContext) {
-            final ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) _applicationContext).getBeanFactory();
-            final BeanDefinition definition = beanFactory.getBeanDefinition(name);
-            if (definition != null && definition.getFactoryMethodName() == null) {
-                final String beanClassName = definition.getBeanClassName();
-                if (beanClassName != null) {
-                    try {
-                        type = AutomaticServicesDiscovery.class.getClassLoader().loadClass(beanClassName);
-                    } catch (ClassNotFoundException ignored) {
-                        type = null;
-                    }
-                } else {
-                    type = null;
-                }
-            } else {
-                type = null;
-            }
-        } else {
-            throw new IllegalArgumentException("Currently there is only an applicationContext of type " + ConfigurableApplicationContext.class.getName() + " supported.");
-        }
-        return type == null || FactoryBean.class.isAssignableFrom(type)  ? null : type;
+    protected Class<?> findTypeOfBeanDefinition(@Nonnull String beanName) {
+        return ApplicationContextUtils.findTypeOfBeanDefinition(_applicationContext, beanName);
     }
 
     public Collection<Class<?>> getExcludes() {

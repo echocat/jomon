@@ -4,7 +4,7 @@
   ~
   ~ Version: MPL 2.0
   ~
-  ~ echocat Jomon, Copyright (c) 2012-2013 echocat
+  ~ echocat Jomon, Copyright (c) 2012-2014 echocat
   ~
   ~ This Source Code Form is subject to the terms of the Mozilla Public
   ~ License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -64,7 +64,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.basePackages>${project.groupId}.${project.artifactId}</project.build.basePackages>
 
-        <versions.springframework>3.1.2.RELEASE</versions.springframework>
+        <versions.springframework>4.0.0.RELEASE</versions.springframework>
         <versions.jetty>8.1.7.v20120910</versions.jetty>
         <versions.org.slf4j>1.7.5</versions.org.slf4j>
         <versions.org.eclipse.mylyn.wikitext>0.9.4.I20090220-1600-e3x</versions.org.eclipse.mylyn.wikitext>
@@ -241,6 +241,11 @@
                 <artifactId>opencsv</artifactId>
                 <version>2.3</version>
             </dependency>
+            <dependency>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>1.7R4</version>
+            </dependency>
 
             <!-- Platform -->
             <dependency>
@@ -392,36 +397,62 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <!--suppress MavenModelInspection -->
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <!--suppress MavenModelInspection -->
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>javadoc</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!--suppress MavenModelInspection -->
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>source</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <!--suppress MavenModelInspection -->
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>sign</id>
             <build>

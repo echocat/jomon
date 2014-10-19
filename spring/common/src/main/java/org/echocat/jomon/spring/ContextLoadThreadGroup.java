@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,6 +28,7 @@ import java.util.*;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.synchronizedSet;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable<Thread>, UncaughtExceptionHandler {
 
@@ -43,7 +44,7 @@ public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable
     }
 
     public void join() throws InterruptedException {
-        for (Thread thread : this) {
+        for (final Thread thread : this) {
             if (thread.isAlive()) {
                 thread.join();
             }
@@ -58,7 +59,7 @@ public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable
         while (result && i.hasNext()) {
             final Thread thread = i.next();
             if (thread.isAlive()) {
-                thread.join(duration.minus(stopWatch.getCurrentDuration()).toMilliSeconds());
+                thread.join(duration.minus(stopWatch.getCurrentDuration()).in(MILLISECONDS));
             }
             result = !thread.isAlive();
         }
@@ -80,8 +81,8 @@ public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable
         synchronized (_failedThreads) {
             final Throwable highestRatedThrowable = findHighestRatedThrowableIn(_failedThreads);
             if (highestRatedThrowable != null) {
-                for (List<Throwable> throwables : _failedThreads.values()) {
-                    for (Throwable throwable : throwables) {
+                for (final List<Throwable> throwables : _failedThreads.values()) {
+                    for (final Throwable throwable : throwables) {
                         if (!highestRatedThrowable.equals(throwable)) {
                             highestRatedThrowable.addSuppressed(throwable);
                         }
@@ -103,7 +104,7 @@ public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable
     @Nullable
     protected Throwable findHighestRatedThrowableIn(@Nonnull Map<Thread, List<Throwable>> threadToExceptions) {
         Throwable result = null;
-        for (List<Throwable> exceptions : threadToExceptions.values()) {
+        for (final List<Throwable> exceptions : threadToExceptions.values()) {
             final Throwable current = findHighestRatedThrowableIn(exceptions);
             if (isHigherRated(current, result)) {
                 result = current;
@@ -115,7 +116,7 @@ public class ContextLoadThreadGroup implements ApplicationContextAware, Iterable
     @Nullable
     protected Throwable findHighestRatedThrowableIn(@Nonnull Iterable<Throwable> exceptions) {
         Throwable result = null;
-        for (Throwable exception : exceptions) {
+        for (final Throwable exception : exceptions) {
             if (isHigherRated(exception, result)) {
                 result = exception;
             }

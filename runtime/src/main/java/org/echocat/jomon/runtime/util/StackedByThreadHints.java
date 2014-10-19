@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,13 +63,18 @@ public class StackedByThreadHints extends Hints {
         getCurrent().remove(hint);
     }
 
+    /**
+     * @deprecated Use {@link ValueProvider#contains} in the future.
+     */
+    @SuppressWarnings("deprecation")
+    @Deprecated
     @Override
     public boolean isSet(@Nonnull Hint<?> hint) {
         return getCurrent().isSet(hint);
     }
 
     @Override
-    public Iterator<Entry<Hint<?>, Object>> iterator() {
+    public Iterator<Entry<Key<Object>, Object>> iterator() {
         return getCurrent().iterator();
     }
 

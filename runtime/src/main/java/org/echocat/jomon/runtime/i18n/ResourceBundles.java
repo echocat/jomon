@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,14 +21,14 @@ import org.echocat.jomon.runtime.util.Entry.Impl;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.text.MessageFormat.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @NotThreadSafe
-public class ResourceBundles implements Iterable<Entry<Locale, ResourceBundle>> {
+public class ResourceBundles implements Iterable<Entry<Locale, ResourceBundle>>, Localizer {
 
     private static final Comparator<Locale> COMPARATOR = new Comparator<Locale>() { @Override public int compare(Locale o1, Locale o2) {
         return asString(o1).compareTo(asString(o2));
@@ -80,17 +80,31 @@ public class ResourceBundles implements Iterable<Entry<Locale, ResourceBundle>> 
     protected boolean containsBundle(@Nullable Locale locale) {
         return _localeToBundle.containsKey(locale);
     }
-    
+
+    /**
+     * @deprecated Use {@link #localize(java.util.Locale, String, Object...)} in the future.
+     */
+    @Deprecated
     @Nonnull
     public String get(@Nullable Locale locale, @Nonnull String key) {
-        final ResourceBundle bundle = getBundle(locale);
-        return bundle.getString(key);
+        return localize(locale, key, null);
     }
 
+    /**
+     * @deprecated Use {@link #localize(java.util.Locale, String, Object...)} in the future.
+     */
+    @Deprecated
     @Nonnull
     public String get(@Nullable Locale locale, @Nonnull String key, @Nullable Object... parameters) {
+        return localize(locale, key, parameters);
+    }
+
+    @Override
+    @Nonnull
+    public String localize(@Nullable Locale locale, @Nonnull String key, @Nullable Object... parameters) {
         final ResourceBundle bundle = getBundle(locale);
-        return MessageFormat.format(bundle.getString(key), parameters);
+        final String message = bundle.getString(key);
+        return parameters != null && parameters.length > 0 ? format(message, parameters) : message;
     }
     
     @Override

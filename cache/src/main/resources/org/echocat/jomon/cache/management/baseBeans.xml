@@ -4,7 +4,7 @@
   ~
   ~ Version: MPL 2.0
   ~
-  ~ echocat Jomon, Copyright (c) 2012-2013 echocat
+  ~ echocat Jomon, Copyright (c) 2012-2014 echocat
   ~
   ~ This Source Code Form is subject to the terms of the Mozilla Public
   ~ License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,12 +21,12 @@
 
     <!--suppress SpringModelInspection -->
     <bean id="org.echocat.jomon.cache.management.CacheCreator" class="org.echocat.jomon.cache.management.CombinedCacheCreator"
-          p:delegates-ref="org.echocat.jomon.cache.management.CombinedCacheCreator.delegates" />
+          p:delegates-ref="org.echocat.jomon.cache.CombinedCacheCreator.delegates" />
 
     <!--suppress SpringModelInspection -->
     <bean id="org.echocat.jomon.cache.management.CacheRepository" class="org.echocat.jomon.cache.management.DefaultCacheRepository"
           c:cacheCreator-ref="org.echocat.jomon.cache.management.CacheCreator"
-          p:listeners-ref="org.echocat.jomon.cache.management.CacheRepository.listeners" />
+          p:listeners-ref="org.echocat.jomon.cache.CacheRepository.listeners" />
     <alias name="org.echocat.jomon.cache.management.CacheRepository" alias="org.echocat.jomon.cache.management.CacheProvider" />
 
 </beans>

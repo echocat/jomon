@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,7 +16,6 @@ package org.echocat.jomon.resources.optimizing;
 
 import org.echocat.jomon.resources.PathBasedResourceProvider;
 import org.echocat.jomon.resources.Resource;
-import org.echocat.jomon.resources.ResourceRepository;
 import org.echocat.jomon.resources.ResourceRequestUriGenerator;
 import org.echocat.jomon.resources.optimizing.OptimizationContext.Feature;
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ import java.util.Map.Entry;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.Boolean.TRUE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Collections.unmodifiableSet;
 
@@ -41,13 +41,11 @@ public class OptimizationContextFactory {
     private final ResourcesOptimizer _optimizer;
     private final PathBasedResourceProvider<Resource> _resourceProvider;
     private final ResourceRequestUriGenerator _resourceRequestUriGenerator;
-    private final ResourceRepository<Resource> _resourceRepository;
 
-    public OptimizationContextFactory(@Nonnull ResourcesOptimizer optimizer, @Nonnull PathBasedResourceProvider<Resource> resourceProvider, @Nonnull ResourceRequestUriGenerator resourceRequestUriGenerator, @Nonnull ResourceRepository<Resource> resourceRepository) {
+    public OptimizationContextFactory(@Nonnull ResourcesOptimizer optimizer, @Nonnull PathBasedResourceProvider<Resource> resourceProvider, @Nonnull ResourceRequestUriGenerator resourceRequestUriGenerator) {
         _optimizer = optimizer;
         _resourceProvider = resourceProvider;
         _resourceRequestUriGenerator = resourceRequestUriGenerator;
-        _resourceRepository = resourceRepository;
     }
 
     @Nonnull
@@ -59,7 +57,7 @@ public class OptimizationContextFactory {
     public OptimizationContext create(@Nullable Iterable<Feature> withFeatures) {
         final OptimizationContextImpl context = new OptimizationContextImpl();
         if (withFeatures != null) {
-            for (Feature withFeature : withFeatures) {
+            for (final Feature withFeature : withFeatures) {
                 if (withFeature != null) {
                     context.setFeature(withFeature, true);
                 }
@@ -88,7 +86,7 @@ public class OptimizationContextFactory {
         public Set<Feature> getFeatures() {
             final Set<Feature> features = new HashSet<>();
             synchronized (_features) {
-                for (Entry<Feature, Boolean> entry : _features.entrySet()) {
+                for (final Entry<Feature, Boolean> entry : _features.entrySet()) {
                     if (TRUE.equals(entry.getValue())) {
                         features.add(entry.getKey());
                     }
@@ -100,7 +98,7 @@ public class OptimizationContextFactory {
         @Nonnull
         @Override
         public Resource optimize(@Nonnull Resource input) throws Exception {
-            final Collection<Resource> outputs = optimize(Collections.<Resource>singletonList(input));
+            final Collection<Resource> outputs = optimize(singletonList(input));
             final Resource output;
             if (isEmpty(outputs)) {
                 LOG.warn("This resource " + input + " could not be optimized by " + _optimizer + ". The optimizer returned no results. This will return the original one. This could cause other problems but we hope that this will help. Check the configuration of you optimizers to prevent this problem in the future.");
@@ -118,11 +116,8 @@ public class OptimizationContextFactory {
         @Override
         public Collection<Resource> optimize(@Nonnull Collection<Resource> inputs) throws Exception {
             final Collection<Resource> optimized = _optimizer.optimize(inputs, this);
-            for (Resource resource : optimized) {
+            for (final Resource resource : optimized) {
                 resource.touch();
-                if (resource.isGenerated()) {
-                    _resourceRepository.save(resource);
-                }
             }
             return optimized;
         }

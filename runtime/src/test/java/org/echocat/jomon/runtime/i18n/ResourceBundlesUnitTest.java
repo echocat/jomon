@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -76,10 +76,10 @@ public class ResourceBundlesUnitTest {
     public void testGetBundleWithMissingBundles() throws Exception {
         try {
             BUNDLES.getBundle(new Locale("foo"));
-        } catch (NoSuchElementException expected) {}
+        } catch (final NoSuchElementException expected) {}
         try {
             BUNDLES.getBundle(new Locale("bar"));
-        } catch (NoSuchElementException expected) {}
+        } catch (final NoSuchElementException expected) {}
     }
 
     @Test
@@ -97,46 +97,46 @@ public class ResourceBundlesUnitTest {
     }
 
     @Test
-    public void testGetWithExistingKeys() throws Exception {
-        assertThat(BUNDLES.get(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "1"), is("a"));
-        assertThat(BUNDLES.get(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "2"), is("b"));
-        assertThat(BUNDLES.get(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "3"), is("c"));
-        assertThat(BUNDLES.get(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "4"), is("d"));
+    public void testLocalizeWithExistingKeys() throws Exception {
+        assertThat(BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "1"), is("a"));
+        assertThat(BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "2"), is("b"));
+        assertThat(BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "3"), is("c"));
+        assertThat(BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "4"), is("d"));
 
-        assertThat(BUNDLES.get(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "1"), is("b"));
-        assertThat(BUNDLES.get(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "2"), is("b"));
-        assertThat(BUNDLES.get(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "3"), is("c"));
-        assertThat(BUNDLES.get(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "4"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "1"), is("b"));
+        assertThat(BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "2"), is("b"));
+        assertThat(BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "3"), is("c"));
+        assertThat(BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "4"), is("d"));
 
-        assertThat(BUNDLES.get(LOCALE_C_WITH_LANGUAGE, "1"), is("c"));
-        assertThat(BUNDLES.get(LOCALE_C_WITH_LANGUAGE, "2"), is("c"));
-        assertThat(BUNDLES.get(LOCALE_C_WITH_LANGUAGE, "3"), is("c"));
-        assertThat(BUNDLES.get(LOCALE_C_WITH_LANGUAGE, "4"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "1"), is("c"));
+        assertThat(BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "2"), is("c"));
+        assertThat(BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "3"), is("c"));
+        assertThat(BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "4"), is("d"));
 
-        assertThat(BUNDLES.get(LOCALE_D_WHICH_IS_BLANK, "1"), is("d"));
-        assertThat(BUNDLES.get(LOCALE_D_WHICH_IS_BLANK, "2"), is("d"));
-        assertThat(BUNDLES.get(LOCALE_D_WHICH_IS_BLANK, "3"), is("d"));
-        assertThat(BUNDLES.get(LOCALE_D_WHICH_IS_BLANK, "4"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "1"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "2"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "3"), is("d"));
+        assertThat(BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "4"), is("d"));
     }
 
     @Test
-    public void testGetWithMissingKeys() throws Exception {
+    public void testLocalizeWithMissingKeys() throws Exception {
         try {
-            BUNDLES.get(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "x");
+            BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "x");
             fail("Exception missing.");
-        } catch (MissingResourceException expected) {}
+        } catch (final MissingResourceException expected) {}
         try {
-            BUNDLES.get(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "x");
+            BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "x");
             fail("Exception missing.");
-        } catch (MissingResourceException expected) {}
+        } catch (final MissingResourceException expected) {}
         try {
-            BUNDLES.get(LOCALE_C_WITH_LANGUAGE, "x");
+            BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "x");
             fail("Exception missing.");
-        } catch (MissingResourceException expected) {}
+        } catch (final MissingResourceException expected) {}
         try {
-            BUNDLES.get(LOCALE_D_WHICH_IS_BLANK, "x");
+            BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "x");
             fail("Exception missing.");
-        } catch (MissingResourceException expected) {}
+        } catch (final MissingResourceException expected) {}
     }
 
     @Test

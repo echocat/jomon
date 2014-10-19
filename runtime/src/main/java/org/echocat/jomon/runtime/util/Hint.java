@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,20 +17,9 @@ package org.echocat.jomon.runtime.util;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface Hint<T> {
+public interface Hint<T> extends Key<T> {
 
-    @Nonnull
-    public Class<T> getValueType();
-
-    @Nonnull
-    public String getName();
-
-    @Nullable
-    public T getDefaultValue();
-
-    public boolean isNullValueAllowed();
-
-    public static class Impl<T> implements Hint<T> {
+    public static class Impl<T> extends Key.Impl<T> implements Hint<T> {
 
         @Nonnull
         public static <T> Hint<T> hint(@Nonnull Class<T> valueType, @Nonnull String fullName) {
@@ -39,7 +28,7 @@ public interface Hint<T> {
 
         @Nonnull
         public static <T> Hint<T> hint(@Nonnull Class<T> valueType, @Nonnull String fullName, @Nullable T defaultValue) {
-            return new Impl<>(valueType, fullName, defaultValue, true);
+            return new Hint.Impl<>(valueType, fullName, defaultValue, true);
         }
 
         @Nonnull
@@ -64,7 +53,7 @@ public interface Hint<T> {
 
         @Nonnull
         public static <T> Hint<T> nonNullHint(@Nonnull Class<T> valueType, @Nonnull String fullName, @Nonnull T defaultValue) {
-            return new Impl<>(valueType, fullName, defaultValue, false);
+            return new Hint.Impl<>(valueType, fullName, defaultValue, false);
         }
 
         @Nonnull
@@ -77,62 +66,10 @@ public interface Hint<T> {
             return nonNullHint(valueType, forContainer.getClass(), withName, defaultValue);
         }
 
-        private final Class<T> _valueType;
-        private final String _name;
-        private final T _defaultValue;
-        private final boolean _nullValueAllowed;
-
         public Impl(@Nonnull Class<T> valueType, @Nonnull String name, @Nullable T defaultValue, boolean nullValueAllowed) {
-            _valueType = valueType;
-            _name = name;
-            _defaultValue = defaultValue;
-            _nullValueAllowed = nullValueAllowed;
+            super(valueType, name, defaultValue, nullValueAllowed);
         }
 
-        @Nonnull
-        @Override
-        public Class<T> getValueType() {
-            return _valueType;
-        }
-
-        @Nonnull
-        @Override
-        public String getName() {
-            return _name;
-        }
-
-        @Override
-        public T getDefaultValue() {
-            return _defaultValue;
-        }
-
-        @Override
-        public boolean isNullValueAllowed() {
-            return _nullValueAllowed;
-        }
-
-        @Override
-        public String toString() {
-            return getName();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            final boolean result;
-            if (this == o) {
-                result = true;
-            } else if (!(o instanceof Hint)) {
-                result = false;
-            } else {
-                result = getName().equals(((Hint)o).getName());
-            }
-            return result;
-        }
-
-        @Override
-        public int hashCode() {
-            return _name.hashCode();
-        }
     }
 
 }
