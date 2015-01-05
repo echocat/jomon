@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>maven</artifactId>
-        <version>1.4.4-SNAPSHOT</version>
+        <version>1.5.0</version>
     </parent>
 
     <name>echocat Jomon Maven-Boot</name>
