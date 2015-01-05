@@ -111,7 +111,7 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
             assertThat(stopWatch.getCurrentDuration(), isLessThan(new Duration("2ms").multiplyBy(messagesSend.size())));
             assertThat(messagesSend, hasSize(channels.size() * numberOfWorkersPerChannel * numberOfMessagesPerWorker));
 
-            waitFor(new StateCondition<TcpClusterChannel>(new Duration("1ms").multiplyBy(numberOfMessagesPerWorker).multiplyBy(0.25)) {
+            waitFor(new StateCondition<TcpClusterChannel>(new Duration("3ms").multiplyBy(numberOfMessagesPerWorker)) {
                 @Override
                 public boolean check(@Nullable TcpClusterChannel clusterChannel) throws Exception {
                     assertThat(getNumberOfReceivedMessages(), is(messagesSend.size() * (channels.size() - 1)));
