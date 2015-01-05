@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,14 +51,13 @@ public class FileBasedResourceRepository implements ResourceRepository<Propertie
                     IOUtils.copy(inputStream, outputStream);
                 }
             }
-            resource.release();
         }
     }
 
     protected boolean targetFileIsTheSame(@Nonnull Resource resource, @Nonnull File targetFile) throws IOException {
         final boolean result;
         if (resource instanceof FileResource) {
-            result = ((FileResource) resource).getFile().getCanonicalFile().equals(targetFile.getCanonicalFile());
+            result = ((FileEnabledResource) resource).getFile().getCanonicalFile().equals(targetFile.getCanonicalFile());
         } else {
             result = false;
         }
@@ -82,7 +81,7 @@ public class FileBasedResourceRepository implements ResourceRepository<Propertie
     protected File createTargetFileFor(@Nonnull Resource resource) {
         try {
             return createTargetFileFor(resource.getMd5(), resource.getSize(), resource.getType());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not get target file of " + resource + ".", e);
         }
     }

@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,12 +34,14 @@ public class ImmutableMimeType extends MimeType {
     public static final ImmutableMimeType TEXT_HTML = immutableMimeType("text/html");
     public static final ImmutableMimeType TEXT_PLAIN = immutableMimeType("text/plain");
     public static final ImmutableMimeType APPLICATION_OCTET_STREAM = immutableMimeType("application/octet-stream");
+    public static final ImmutableMimeType APPLICATION_FORM_URL_ENCODED = immutableMimeType("application/x-www-form-urlencoded");
+    public static final ImmutableMimeType MULTIPART_FORM_DATA = immutableMimeType("multipart/form-data");
 
     @Nonnull
     public static Set<ImmutableMimeType> immutableMimeTypes(@Nullable String... rawDatas) throws IllegalArgumentException {
         final Set<ImmutableMimeType> result = new LinkedHashSet<>();
         if (rawDatas != null) {
-            for (String rawData : rawDatas) {
+            for (final String rawData : rawDatas) {
                 result.add(immutableMimeType(rawData));
             }
         }
@@ -50,7 +52,7 @@ public class ImmutableMimeType extends MimeType {
     public static Set<ImmutableMimeType> immutableMimeTypes(@Nullable Iterable<String> rawDatas) throws IllegalArgumentException {
         final Set<ImmutableMimeType> result = new LinkedHashSet<>();
         if (rawDatas != null) {
-            for (String rawData : rawDatas) {
+            for (final String rawData : rawDatas) {
                 result.add(immutableMimeType(rawData));
             }
         }
@@ -61,7 +63,7 @@ public class ImmutableMimeType extends MimeType {
     public static ImmutableMimeType immutableMimeType(@Nonnull String rawData) throws IllegalArgumentException {
         try {
             return new ImmutableMimeType(rawData);
-        } catch (MimeTypeParseException e) {
+        } catch (final MimeTypeParseException e) {
             throw new IllegalArgumentException(rawData, e);
         }
     }
@@ -92,7 +94,7 @@ public class ImmutableMimeType extends MimeType {
     public MimeType createModifiableCopy() {
         try {
             return new MimeType(toString());
-        } catch (MimeTypeParseException e) {
+        } catch (final MimeTypeParseException e) {
             throw new RuntimeException("Could not create a copy of my own (already parsed) rawData?", e);
         }
     }

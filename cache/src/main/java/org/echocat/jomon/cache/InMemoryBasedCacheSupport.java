@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.runtime.CollectionUtils.asCloseableIterator;
 
 /**
@@ -155,7 +156,7 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
                         }
                     }
                 }
-                for (K key : keysToRemove) {
+                for (final K key : keysToRemove) {
                     removeInternal(key);
                 }
             }
@@ -173,10 +174,10 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
                 _last = null;
                 resetStatistics();
             }
-            for (CacheEntry<K, V> entry : oldEntries.values()) {
+            for (final CacheEntry<K, V> entry : oldEntries.values()) {
                 try {
                     handleRemove(entry);
-                } catch (ValueProducingFailedException ignored) {}
+                } catch (final ValueProducingFailedException ignored) {}
             }
             _listenerInvoker.afterClear(this);
         }
@@ -297,15 +298,14 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
         }
     }
 
-    @SuppressWarnings("UnnecessaryBoxing")
     @Nullable
     protected Long getTargetExpireAfterBasedOn(@Nullable Duration expireAfter) {
         final Long targetExpireAfter;
         if (expireAfter != null) {
-            targetExpireAfter = new Long(expireAfter.toMilliSeconds());
+            targetExpireAfter = expireAfter.in(MILLISECONDS);
         } else {
             final Duration defaultExpireAfter = _defaultExpireAfter;
-            targetExpireAfter = defaultExpireAfter != null ? new Long(defaultExpireAfter.toMilliSeconds()) : null;
+            targetExpireAfter = defaultExpireAfter != null ? defaultExpireAfter.in(MILLISECONDS) : null;
         }
         return targetExpireAfter;
     }
@@ -392,7 +392,7 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
             toCleanUp = new ArrayList<>();
             _entries = _capacity != null ? new HashMap<K, CacheEntry<K, V>>(_capacity, 1f) : new HashMap<K, CacheEntry<K, V>>();
             int i = 0;
-            for (Entry<K, CacheEntry<K, V>> entry : old.entrySet()) {
+            for (final Entry<K, CacheEntry<K, V>> entry : old.entrySet()) {
                 if (i < capacity) {
                     _entries.put(entry.getKey(), entry.getValue());
                 } else {
@@ -401,10 +401,10 @@ public abstract class InMemoryBasedCacheSupport<K, V> extends CacheSupport<K, V>
                 i++;
             }
         }
-        for (CacheEntry<K, V> entry : toCleanUp) {
+        for (final CacheEntry<K, V> entry : toCleanUp) {
             try {
                 handleRemove(entry);
-            } catch (ValueProducingFailedException ignored) {
+            } catch (final ValueProducingFailedException ignored) {
             }
         }
     }

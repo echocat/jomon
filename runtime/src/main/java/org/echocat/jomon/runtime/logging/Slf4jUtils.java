@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.echocat.jomon.runtime.logging.LogLevel.*;
+import static org.echocat.jomon.runtime.logging.LogLevels.allLogLevels;
 import static org.slf4j.spi.LocationAwareLogger.*;
 
 public class Slf4jUtils {
@@ -359,7 +360,7 @@ public class Slf4jUtils {
         if (result == null) {
             result = debug;
             int lastDifference = differenceOf(debug, level);
-            for (LogLevel logLevel : LogLevel.defaults) {
+            for (final LogLevel logLevel : allLogLevels()) {
                 final int difference = differenceOf(logLevel, level);
                 if (difference < lastDifference) {
                     result = logLevel;

@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -95,7 +95,7 @@ public class YuiJavaScriptResourceOptimizer implements JavaScriptResourceOptimiz
                             try {
                                 final JavaScriptCompressorFacade compressor = new JavaScriptCompressorFacade(reader);
                                 compressor.compress(writer, _lineBreak, _munge, _verbose, _preserveAllSemiColons, !_enableOptimizations);
-                            } catch (VerifyError e) {
+                            } catch (final VerifyError e) {
                                 if (!c_verifyErrorLogged) {
                                     LOG.warn("Could not optimize the sources because got an verifyError while calling the compressor. This message will not appear anymore while running this JVM. The JVM will now not optimize the resources.", e);
                                     c_verifyErrorLogged = true;

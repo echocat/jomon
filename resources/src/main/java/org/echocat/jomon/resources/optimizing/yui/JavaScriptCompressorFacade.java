@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,14 +23,14 @@ import java.lang.reflect.Method;
 
 public class JavaScriptCompressorFacade extends FacadeSupport {
 
-    protected static final Class<?> COMPRESSOR_CLASS = loadClass("com.yahoo.platform.yui.compressor.JavaScriptCompressor", CLASS_LOADER);
-    protected static final Class<?> ERROR_REPORTER_CLASS = loadClass("org.mozilla.javascript.ErrorReporter", CLASS_LOADER);
-    protected static final Class<?> ERROR_REPORTER_IMPL_CLASS = loadClass("org.echocat.jomon.resources.optimizing.yui.ErrorReporterImpl", CLASS_LOADER);
+    protected static final Class<?> COMPRESSOR_CLASS = loadYuiClass("com.yahoo.platform.yui.compressor.JavaScriptCompressor");
+    protected static final Class<?> ERROR_REPORTER_CLASS = loadYuiClass("org.mozilla.javascript.ErrorReporter");
+    protected static final Class<?> ERROR_REPORTER_IMPL_CLASS = loadYuiClass("org.echocat.jomon.resources.optimizing.yui.ErrorReporterImpl");
 
-    protected static final Constructor<?> COMPRESSOR_CONSTRUCTOR = loadConstructor(COMPRESSOR_CLASS, Reader.class, ERROR_REPORTER_CLASS);
-    protected static final Constructor<?> ERROR_REPORTER_IMPL_CONSTRUCTOR = loadConstructor(ERROR_REPORTER_IMPL_CLASS);
+    protected static final Constructor<?> COMPRESSOR_CONSTRUCTOR = getYuiConstructor(COMPRESSOR_CLASS, Reader.class, ERROR_REPORTER_CLASS);
+    protected static final Constructor<?> ERROR_REPORTER_IMPL_CONSTRUCTOR = getYuiConstructor(ERROR_REPORTER_IMPL_CLASS);
 
-    protected static final Method COMPRESS_METHOD = loadMethod(COMPRESSOR_CLASS, "compress", Writer.class, int.class, boolean.class, boolean.class, boolean.class, boolean.class);
+    protected static final Method COMPRESS_METHOD = getYuiMethod(COMPRESSOR_CLASS, "compress", Writer.class, int.class, boolean.class, boolean.class, boolean.class, boolean.class);
 
     private final Object _instance;
 
@@ -42,7 +42,7 @@ public class JavaScriptCompressorFacade extends FacadeSupport {
     public void compress(@Nonnull Writer out, int linebreak, boolean munge, boolean verbose, boolean preserveAllSemiColons, boolean disableOptimizations) throws Exception {
         try {
             COMPRESS_METHOD.invoke(_instance, out, linebreak, munge, verbose, preserveAllSemiColons, disableOptimizations);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof Exception) {
                 // noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException

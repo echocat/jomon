@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 
 import static org.echocat.jomon.runtime.CollectionUtils.asList;
 import static org.echocat.jomon.testing.BaseMatchers.is;
-import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
+import static org.echocat.jomon.testing.IterableMatchers.containsAllItemsOf;
 import static org.echocat.jomon.demo.repository.EmployeeQuery.employee;
 import static org.junit.Assert.assertThat;
 

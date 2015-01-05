@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,8 +40,8 @@ import static org.echocat.jomon.net.NetworkInterfaceRepository.networkInterfaceR
 import static org.echocat.jomon.net.NetworkInterfaceType.loopBack;
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.*;
-import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
-import static org.echocat.jomon.testing.CollectionMatchers.hasSize;
+import static org.echocat.jomon.testing.IterableMatchers.containsAllItemsOf;
+import static org.echocat.jomon.testing.IterableMatchers.hasSize;
 import static org.echocat.jomon.testing.concurrent.ParallelTestRunner.run;
 
 public class MulticastClusterChannelIntegrationTest extends ClusterChannelTestSupport<Short, MulticastNode, MulticastClusterChannel> {
@@ -108,12 +108,12 @@ public class MulticastClusterChannelIntegrationTest extends ClusterChannelTestSu
             waitFor(new StateCondition<MulticastClusterChannel>(new Duration("1ms").multiplyBy(numberOfMessagesPerWorker).multiplyBy(0.15)) {
                 @Override
                 public boolean check(@Nullable MulticastClusterChannel clusterChannel) throws Exception {
-                    for (MulticastClusterChannel channel : channels) {
+                    for (final MulticastClusterChannel channel : channels) {
                         assertThat(channel.getSendingQueueSize(), is(0));
                     }
                     assertThat(getNumberOfReceivedMessages(), is(messagesSend.size() * (channels.size() - 1)));
                     final Map<String, AtomicInteger> messageToCount = getMessageToCount();
-                    for (String messageSend : messagesSend) {
+                    for (final String messageSend : messagesSend) {
                         final AtomicInteger count = messageToCount.get(messageSend);
                         assertThat(count, isNotNull());
                         assertThat(count.get(), is(channels.size() - 1));
@@ -132,7 +132,7 @@ public class MulticastClusterChannelIntegrationTest extends ClusterChannelTestSu
     @Nonnull
     protected StateCondition<MulticastClusterChannel> thatQueuesAreEmptyAndReceivedMessages(@Nonnull final List<MulticastClusterChannel> channels, @Nonnull final Pair<MulticastClusterChannel, ReceivedMessage<MulticastNode>>... messages) {
         return new StateCondition<MulticastClusterChannel>(new Duration(channels.size() * 1000)) { @Override public boolean check(@Nonnull MulticastClusterChannel clusterChannel) throws Exception {
-            for (MulticastClusterChannel channel : channels) {
+            for (final MulticastClusterChannel channel : channels) {
                 assertThat(channel.getSendingQueueSize(), is(0));
             }
             assertThat(getReceivedMessages(), containsAllItemsOf(messages));

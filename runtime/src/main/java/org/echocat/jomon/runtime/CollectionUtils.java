@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -79,7 +79,7 @@ public class CollectionUtils {
      */
     @Nonnull
     public static <K, V> Map<K, V> putAllAndMakeImmutable(@Nonnull Map<K, V> original, @Nullable Object... a) {
-        return asImmutableMap(CollectionUtils.<K, V>putAll(original, a));
+        return asImmutableMap(CollectionUtils.putAll(original, a));
     }
 
     /**
@@ -173,6 +173,65 @@ public class CollectionUtils {
     }
 
     /**
+     * Returns a {@link Collection} containing the given <code>objects</code>,
+     * returns an empty List, if <code>objects</code> is null.
+     */
+    @Nonnull
+    public static <T> Collection<T> asCollection(@Nullable T... objects) {
+        return asList(objects);
+    }
+
+    /**
+     * Returns an unmodifiable {@link Collection} containing the given <code>objects</code>,
+     * returns an empty {@link Collection}, if <code>objects</code> is null.
+     */
+    @Nonnull
+    public static <T> Collection<T> asImmutableCollection(@Nullable T... objects) {
+        return unmodifiableCollection(asCollection(objects));
+    }
+
+    @Nonnull
+    public static <T> Collection<T> addAllAndMakeImmutable(@Nonnull Collection<T> original, @Nullable T... objects) {
+        return unmodifiableCollection(addAll(original, objects));
+    }
+
+    @Nonnull
+    public static <T> Collection<T> asCollection(@Nullable Iterator<T> iterator) {
+        return asList(iterator);
+    }
+
+    @Nonnull
+    public static <T> Collection<T> asImmutableCollection(@Nullable Iterator<T> iterator) {
+        return unmodifiableCollection(asCollection(iterator));
+    }
+
+    @Nonnull
+    public static <T> Collection<T> addAllAndMakeImmutable(@Nonnull Collection<T> original, @Nullable Iterator<T> iterator) {
+        return unmodifiableCollection(addAll(original, iterator));
+    }
+
+    @Nonnull
+    public static <T> Collection<T> asCollection(@Nullable Iterable<T> in) {
+        final Collection<T> result;
+        if (in instanceof Collection) {
+            result = (Collection<T>) in;
+        } else {
+            result = asList(in);
+        }
+        return result;
+    }
+
+    @Nonnull
+    public static <T> Collection<T> asImmutableCollection(@Nullable Iterable<T> in) {
+        return unmodifiableCollection(asCollection(in));
+    }
+
+    @Nonnull
+    public static <T> Collection<T> addAllAndMakeImmutable(@Nonnull Collection<T> original, @Nullable Iterable<T> in) {
+        return unmodifiableCollection(addAll(original, in));
+    }
+
+    /**
      * Returns a {@link List} containing the given <code>objects</code>,
      * returns an empty List, if <code>objects</code> is null.
      */
@@ -191,7 +250,7 @@ public class CollectionUtils {
 
     /**
      * Returns an unmodifiable {@link List} containing the given <code>objects</code>,
-     * returns an empty List, if <code>objects</code> is null.
+     * returns an empty {@link List}, if <code>objects</code> is null.
      */
     @Nonnull
     public static <T> List<T> asImmutableList(@Nullable T... objects) {

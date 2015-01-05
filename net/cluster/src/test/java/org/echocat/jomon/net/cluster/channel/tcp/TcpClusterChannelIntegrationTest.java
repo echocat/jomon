@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,8 +41,8 @@ import static org.echocat.jomon.net.NetworkInterfaceType.loopBack;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelUtils.formatNodesStatusOf;
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.*;
-import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
-import static org.echocat.jomon.testing.CollectionMatchers.hasSize;
+import static org.echocat.jomon.testing.IterableMatchers.containsAllItemsOf;
+import static org.echocat.jomon.testing.IterableMatchers.hasSize;
 import static org.echocat.jomon.testing.concurrent.ParallelTestRunner.run;
 
 public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<UUID, TcpNode, TcpClusterChannel> {
@@ -68,7 +68,7 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
             channels.get(1).send(message("message2"));
             waitFor(thatQueuesAreEmptyAndReceivedMessages(channels, message(channels.get(0), "message2", U2), message(channels.get(2), "message2", U2)));
 
-            for (TcpClusterChannel channel : channels) {
+            for (final TcpClusterChannel channel : channels) {
                 _logger.info("Nodes status of (" + channel + "):\n" + formatNodesStatusOf(channel));
             }
         } finally {
@@ -116,7 +116,7 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
                 public boolean check(@Nullable TcpClusterChannel clusterChannel) throws Exception {
                     assertThat(getNumberOfReceivedMessages(), is(messagesSend.size() * (channels.size() - 1)));
                     final Map<String, AtomicInteger> messageToCount = getMessageToCount();
-                    for (String messageSend : messagesSend) {
+                    for (final String messageSend : messagesSend) {
                         final AtomicInteger count = messageToCount.get(messageSend);
                         assertThat(count, isNotNull());
                         assertThat(count.get(), is(channels.size() - 1));
@@ -125,7 +125,7 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
                 }
             });
 
-            for (TcpClusterChannel channel : channels) {
+            for (final TcpClusterChannel channel : channels) {
                 _logger.info("Nodes status of (" + channel + "):\n" + formatNodesStatusOf(channel));
             }
             _logger.info("send: " + counter.getAsDouble() + " m/s, received: " + getNumberMessagesReceivedPerSecond() + " m/s");
@@ -161,13 +161,13 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
     protected void afterAllChannelsCreated(@Nonnull List<TcpClusterChannel> channels) throws Exception {
         super.afterAllChannelsCreated(channels);
         final Set<InetSocketAddress> remotes = new HashSet<>();
-        for (TcpClusterChannel channel : channels) {
+        for (final TcpClusterChannel channel : channels) {
             remotes.add(channel.getAddress());
         }
-        for (TcpClusterChannel channel : channels) {
+        for (final TcpClusterChannel channel : channels) {
             channel.setRemoteAddresses(remotes);
         }
-        for (TcpClusterChannel channel : channels) {
+        for (final TcpClusterChannel channel : channels) {
             channel.init();
         }
     }

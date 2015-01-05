@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,7 +41,7 @@ import static org.echocat.jomon.net.dns.RecordUtils.srv;
 import static org.echocat.jomon.net.dns.ZoneUtils.zone;
 import static org.echocat.jomon.runtime.concurrent.Retryer.executeWithRetry;
 import static org.echocat.jomon.testing.BaseMatchers.is;
-import static org.echocat.jomon.testing.CollectionMatchers.containsAllItemsOf;
+import static org.echocat.jomon.testing.IterableMatchers.containsAllItemsOf;
 import static org.junit.Assert.assertThat;
 
 public class SrvDnsEntryEvaluatorUnitTest {
@@ -75,10 +75,10 @@ public class SrvDnsEntryEvaluatorUnitTest {
         setupPrimaryZoneOf(_dnsServer);
         try {
             lookup("unknown-service", tcp, DOMAIN);
-        } catch (NoSuchSrvRecordException expected) {}
+        } catch (final NoSuchSrvRecordException expected) {}
         try {
             lookup(SERVICE_NAME, tcp, "unknown-domain.test.");
-        } catch (UnknownHostException expected) {
+        } catch (final UnknownHostException expected) {
             assertThat(expected instanceof NoSuchSrvRecordException, is(false));
         }
     }
@@ -87,7 +87,7 @@ public class SrvDnsEntryEvaluatorUnitTest {
     public void testIllegalServerLookup() throws Exception {
         try {
             createEvaluator(new InetSocketAddress(InetAddress.getLocalHost(), 6666)).lookup(SERVICE_NAME, tcp, DOMAIN);
-        } catch (ServiceTemporaryUnavailableException expected) {}
+        } catch (final ServiceTemporaryUnavailableException expected) {}
     }
 
     protected static void setupPrimaryZoneOf(@Nonnull DnsServer dnsServer) throws IOException {

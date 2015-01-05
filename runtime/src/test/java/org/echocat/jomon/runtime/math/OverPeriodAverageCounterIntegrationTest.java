@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,7 +36,7 @@ public class OverPeriodAverageCounterIntegrationTest {
         final StopWatch stopWatch = new StopWatch();
         while (stopWatch.getCurrentDuration().isLessThan(counter.getMeasurePeriod())) {
             counter.record(2L);
-            SLEEP.sleepUnchecked();
+            SLEEP.sleepSafe();
         }
         final Long result = counter.get();
         assertThat(result, is(2L));
@@ -54,7 +54,7 @@ public class OverPeriodAverageCounterIntegrationTest {
             counter.record(++value);
             sum+= value;
             steps++;
-            SLEEP.sleepUnchecked();
+            SLEEP.sleepSafe();
         }
         final Long result = counter.get();
         final long expected = sum / steps;
@@ -73,7 +73,7 @@ public class OverPeriodAverageCounterIntegrationTest {
             } else {
                 counter.record(2L);
             }
-            SLEEP.sleepUnchecked();
+            SLEEP.sleepSafe();
         }
         final Long result = counter.get();
         assertThat(result, is(2L));
@@ -92,7 +92,7 @@ public class OverPeriodAverageCounterIntegrationTest {
             } else {
                 counter.record(20L);
             }
-            SLEEP.sleepUnchecked();
+            SLEEP.sleepSafe();
         }
         final Long result = counter.get();
         assertThat(result >= 26L && result <= 34L, is(true));

@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,13 +36,13 @@ public class CompoundResourceBundle extends ResourceBundle {
         if (key == null) {
             throw new NullPointerException("This implementation of " + ResourceBundle.class.getName() + " could not handle null keys.");
         }
-        return _resourceBundles.get(_locale, key);
+        return _resourceBundles.localize(_locale, key);
     }
 
     @Override
     public Enumeration<String> getKeys() {
         final Set<String> keys = new HashSet<>();
-        for (Entry<Locale, ResourceBundle> localeAndBundle : _resourceBundles) {
+        for (final Entry<Locale, ResourceBundle> localeAndBundle : _resourceBundles) {
             final ResourceBundle bundle = localeAndBundle.getValue();
             keys.addAll(bundle.keySet());
         }

@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,14 @@ public class NameEnabledFileResource extends FileResource implements NameEnabled
 
     private String _name;
     private boolean _nameLoaded;
+
+    public NameEnabledFileResource(@Nonnull File file, @Nonnull byte[] md5, @Nonnull ResourceType type) {
+        this(file, md5, type, false);
+    }
+
+    public NameEnabledFileResource(@Nonnull File file, @Nonnull byte[] md5, @Nonnull ResourceType type, @Nonnull String name) throws IOException {
+        this(file, md5, type, name, false);
+    }
 
     public NameEnabledFileResource(@Nonnull File file, @Nonnull byte[] md5, @Nonnull ResourceType type, boolean generated) {
         super(file, md5, type, generated);

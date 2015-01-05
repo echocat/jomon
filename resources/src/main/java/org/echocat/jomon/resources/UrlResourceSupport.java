@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
-public class UrlResource extends ResourceSupport implements UriEnabledResource, PrivateUrlEnabledResource {
+public abstract class UrlResourceSupport extends ResourceSupport implements UriEnabledResource {
 
     private final URL _url;
     private final ResourceType _resourceType;
@@ -33,10 +33,15 @@ public class UrlResource extends ResourceSupport implements UriEnabledResource, 
     private volatile Boolean _exists;
     private volatile Date _lastModified;
 
-    public UrlResource(@Nonnull URL url, @Nonnull ResourceType resourceType, boolean generated) {
+    public UrlResourceSupport(@Nonnull URL url, @Nonnull ResourceType resourceType, boolean generated) {
         _url = url;
         _resourceType = resourceType;
         _generated = generated;
+    }
+
+    @Nonnull
+    public URL getUrl() {
+        return _url;
     }
 
     @Nonnull
@@ -95,19 +100,14 @@ public class UrlResource extends ResourceSupport implements UriEnabledResource, 
                     }
                 } finally {
                     if (urlConnection instanceof HttpURLConnection) {
-                        ((HttpURLConnection)urlConnection).disconnect();
+                        ((HttpURLConnection) urlConnection).disconnect();
                     }
                 }
-            } catch (FileNotFoundException ignored) {
+            } catch (final FileNotFoundException ignored) {
                 _exists = false;
                 _size = 0L;
             }
         }
     }
 
-    @Nonnull
-    @Override
-    public URL getPrivateUrl() throws IOException {
-        return _url;
-    }
 }

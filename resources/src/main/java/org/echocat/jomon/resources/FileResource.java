@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2014 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,20 +27,30 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static java.lang.System.currentTimeMillis;
 import static org.echocat.jomon.runtime.codec.Md5Utils.md5Of;
 import static org.echocat.jomon.runtime.iterators.IteratorUtils.emptyCloseableIterator;
 import static org.apache.commons.io.FileUtils.forceMkdir;
 import static org.apache.commons.io.IOUtils.closeQuietly;
 
 @ThreadSafe
-public class FileResource extends ResourceSupport implements PropertiesEnabledResource<String>, LoggingEnabledResource, PrivateUrlEnabledResource {
+public class FileResource extends ResourceSupport implements PropertiesEnabledResource<String>, LoggingEnabledResource, FileEnabledResource, PrivateUrlEnabledResource {
 
     private final File _file;
     private final ResourceType _type;
     private final boolean _generated;
 
     private volatile byte[] _md5;
+    private volatile Long _size;
     private Properties _properties;
+
+    public FileResource(@Nonnull File file, @Nonnull ResourceType type) {
+        this(file, type, false);
+    }
+
+    public FileResource(@Nonnull File file, @Nullable byte[] md5, @Nonnull ResourceType type) {
+        this(file, md5, type, false);
+    }
 
     public FileResource(@Nonnull File file, @Nonnull ResourceType type, boolean generated) {
         this(file, null, type, generated);
@@ -76,7 +86,10 @@ public class FileResource extends ResourceSupport implements PropertiesEnabledRe
 
     @Override
     public long getSize() {
-        return _file.length();
+        if (_size == null) {
+            _size = _file.length();
+        }
+        return _size;
     }
 
     @Override
@@ -157,7 +170,7 @@ public class FileResource extends ResourceSupport implements PropertiesEnabledRe
                     if (key != null) {
                         try {
                             removeProperty(key);
-                        } catch (IOException e) {
+                        } catch (final IOException e) {
                             throw new RuntimeException("Could not remove " + key + ".", e);
                         }
                     }
@@ -201,6 +214,7 @@ public class FileResource extends ResourceSupport implements PropertiesEnabledRe
         return String.class;
     }
 
+    @Override
     @Nonnull
     public File getFile() {
         return _file;
@@ -297,7 +311,7 @@ public class FileResource extends ResourceSupport implements PropertiesEnabledRe
         try {
             final String line = bufferedReader.readLine();
             return line != null ? line.replace("\\n", "\n").replace("\\\\", "\\") : null;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not read next line.", e);
         }
     }
@@ -311,5 +325,10 @@ public class FileResource extends ResourceSupport implements PropertiesEnabledRe
     @Override
     public URL getPrivateUrl() throws IOException {
         return _file.toURI().toURL();
+    }
+
+    @Override
+    public void touch() throws IOException {
+        _file.setLastModified(currentTimeMillis());
     }
 }
