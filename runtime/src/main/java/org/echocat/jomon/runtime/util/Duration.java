@@ -61,13 +61,13 @@ import static org.echocat.jomon.runtime.StringUtils.addElement;
  *
  * <h2>Examples</h2>
  * <p>
- *     <code>new Duration("1ms").toMilliSeconds() == 1</code><br/>
- *     <code>new Duration("1s").toMilliSeconds() == 1,000</code><br/>
- *     <code>new Duration("1m").toMilliSeconds() == 60,000</code><br/>
- *     <code>new Duration("1m10s").toMilliSeconds() == 70,000</code><br/>
- *     <code>new Duration("1m 10s").toMilliSeconds() == 70,000</code><br/>
- *     <code>new Duration("15").toMilliSeconds() == 15</code><br/>
- *     <code>new Duration("2s 15").toMilliSeconds() == 2,015</code><br/>
+ *     <code>new Duration("1ms").toMilliSeconds() == 1</code><br>
+ *     <code>new Duration("1s").toMilliSeconds() == 1,000</code><br>
+ *     <code>new Duration("1m").toMilliSeconds() == 60,000</code><br>
+ *     <code>new Duration("1m10s").toMilliSeconds() == 70,000</code><br>
+ *     <code>new Duration("1m 10s").toMilliSeconds() == 70,000</code><br>
+ *     <code>new Duration("15").toMilliSeconds() == 15</code><br>
+ *     <code>new Duration("2s 15").toMilliSeconds() == 2,015</code><br>
  * </p>
  *
  */
@@ -610,7 +610,7 @@ public class Duration implements Comparable<Duration>, Serializable {
                 sb.append(c);
                 milli += oneUncheckedIntervalToMilliSeconds(sb.toString());
                 sb = new StringBuilder();
-            } else if (c == 'µ' || c == 'n') {
+            } else if (c == '\u00B5' || c == 'n') {
                 sb.append(c);
                 nano += oneUncheckedIntervalToNanoSeconds(sb.toString());
                 sb = new StringBuilder();
