@@ -15,9 +15,20 @@
 package org.echocat.jomon.runtime.repository;
 
 import javax.annotation.Nonnull;
+import org.echocat.jomon.runtime.generation.*;
 
+/**
+ * @deprecated This way of inserting elements in a persistence layer is unsafe and potentially does not performing good enough.
+ * Use {@link Generator} in combination with an {@link Requirement} instead.
+ */
+@Deprecated
 public interface InsertingRepository<T> extends Repository {
 
+    /**
+     * @deprecated This way of inserting elements in a persistence layer is unsafe and potentially does not performing good enough.
+     * Use {@link Generator#generate} instead.
+    */
+    @Deprecated
     public void insert(@Nonnull T toInsert);
 
 }

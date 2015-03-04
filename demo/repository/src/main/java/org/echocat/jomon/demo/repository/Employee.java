@@ -21,6 +21,8 @@ public class Employee {
     private long _id;
     private String _name;
     private Date _joined;
+    private Date _lastModification;
+    private int _numberOfLogins;
 
     public long getId() {
         return _id;
@@ -44,6 +46,22 @@ public class Employee {
 
     public void setJoined(Date joined) {
         _joined = joined;
+    }
+
+    public Date getLastModification() {
+        return _lastModification;
+    }
+
+    public void setLastModification(Date lastModification) {
+        _lastModification = lastModification;
+    }
+
+    public int getNumberOfLogins() {
+        return _numberOfLogins;
+    }
+
+    public void setNumberOfLogins(int numberOfLogins) {
+        _numberOfLogins = numberOfLogins;
     }
 
     @Override

@@ -35,8 +35,13 @@ import static org.apache.commons.lang3.ArrayUtils.toObject;
 public class EmployeeQuery implements Query, Predicate<Employee> {
 
     @Nonnull
-    public static EmployeeQuery employee() {
+    public static EmployeeQuery query() {
         return new EmployeeQuery();
+    }
+
+    @Nonnull
+    public static EmployeeQuery employee() {
+        return query();
     }
 
     private Set<Long> _ids;

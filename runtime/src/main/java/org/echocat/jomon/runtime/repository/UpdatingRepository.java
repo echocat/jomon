@@ -16,8 +16,18 @@ package org.echocat.jomon.runtime.repository;
 
 import javax.annotation.Nonnull;
 
+/**
+ * @deprecated This way of updating elements in a persistence layer is unsafe and potentially does not performing good enough.
+ * Use {@link UpdateableRepository} in combination with an {@link Update} instead.
+ */
+@Deprecated
 public interface UpdatingRepository<V> extends Repository {
 
+    /**
+     * @deprecated This way of updating elements in a persistence layer is unsafe and potentially does not performing good enough.
+     * Use {@link UpdateableRepository#update} instead.
+     */
+    @Deprecated
     public void update(@Nonnull V value);
 
 }
