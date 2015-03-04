@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,34 +23,34 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-public interface Md5 extends HashFunction {
+public interface Sha256 extends HashFunction {
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable String with);
+    public Sha256 update(@Nullable String with);
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable String with, @Nonnull Charset charset);
+    public Sha256 update(@Nullable String with, @Nonnull Charset charset);
 
     @Nonnull
     @Override
-    public Md5 update(byte with);
+    public Sha256 update(byte with);
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable byte[] with);
+    public Sha256 update(@Nullable byte[] with);
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length);
+    public Sha256 update(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length);
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable @WillNotClose InputStream is) throws IOException;
+    public Sha256 update(@Nullable @WillNotClose InputStream is) throws IOException;
 
     @Nonnull
     @Override
-    public Md5 update(@Nullable File file) throws IOException;
+    public Sha256 update(@Nullable File file) throws IOException;
 
 }

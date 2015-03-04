@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,10 @@
 
 package org.echocat.jomon.runtime.codec;
 
-public class DefaultMd5 extends JvmMessageDigestBasedHashFunctionSupport<DefaultMd5> implements Md5 {
+public class Md5UtilsUnitTest extends HashFunctionUtilsTestSupport {
 
-    public DefaultMd5() {
-        super("MD5");
+    public Md5UtilsUnitTest() {
+        super(Md5Utils.class, DefaultMd5.class);
     }
 
 }

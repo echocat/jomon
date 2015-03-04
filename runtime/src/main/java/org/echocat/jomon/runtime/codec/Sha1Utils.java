@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2013 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,50 +27,50 @@ import java.nio.charset.Charset;
 import static org.echocat.jomon.runtime.codec.HashFunctionUtils.newInstanceOf;
 import static org.echocat.jomon.runtime.codec.HashFunctionUtils.selectConstructorFor;
 
-public class Md5Utils {
+public class Sha1Utils {
 
-    protected static final Constructor<? extends Md5> DEFAULT_CONSTRUCTOR = selectConstructorFor(Md5.class, DefaultMd5.class);
+    protected static final Constructor<? extends Sha1> DEFAULT_CONSTRUCTOR = selectConstructorFor(Sha1.class, DefaultSha1.class);
 
     @Nonnull
-    public static Md5 md5() {
+    public static Sha1 sha1() {
         return newInstanceOf(DEFAULT_CONSTRUCTOR);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable String with) {
-        return md5().update(with);
+    public static Sha1 sha1Of(@Nullable String with) {
+        return sha1().update(with);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable String with, @Nonnull Charset charset) {
-        return md5().update(with, charset);
+    public static Sha1 sha1Of(@Nullable String with, @Nonnull Charset charset) {
+        return sha1().update(with, charset);
     }
 
     @Nonnull
-    public static Md5 md5Of(byte with) {
-        return md5().update(with);
+    public static Sha1 sha1Of(byte with) {
+        return sha1().update(with);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable byte[] with) {
-        return md5().update(with);
+    public static Sha1 sha1Of(@Nullable byte[] with) {
+        return sha1().update(with);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length) {
-        return md5().update(with, offset, length);
+    public static Sha1 sha1Of(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length) {
+        return sha1().update(with, offset, length);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable @WillNotClose InputStream is) throws IOException {
-        return md5().update(is);
+    public static Sha1 sha1Of(@Nullable @WillNotClose InputStream is) throws IOException {
+        return sha1().update(is);
     }
 
     @Nonnull
-    public static Md5 md5Of(@Nullable File file) throws IOException {
-        return md5().update(file);
+    public static Sha1 sha1Of(@Nullable File file) throws IOException {
+        return sha1().update(file);
     }
 
-    private Md5Utils() {}
+    private Sha1Utils() {}
 
 }

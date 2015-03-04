@@ -20,16 +20,16 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class OstermillerMd5 extends Md5Support {
+public class OstermillerMd5 extends HashFunctionSupport<OstermillerMd5> implements Md5 {
 
     private final MD5 _delegate = new MD5();
 
     @Override
-    public Md5 update(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length) {
+    public OstermillerMd5 update(@Nullable byte[] with, @Nonnegative int offset, @Nonnegative int length) {
         if (with != null) {
             _delegate.update(with, offset, length);
         }
-        return this;
+        return thisObject();
     }
 
     @Nonnull
