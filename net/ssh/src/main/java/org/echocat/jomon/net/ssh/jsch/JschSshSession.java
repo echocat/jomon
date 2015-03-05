@@ -17,12 +17,12 @@ package org.echocat.jomon.net.ssh.jsch;
 import com.jcraft.jsch.Session;
 import org.echocat.jomon.net.ssh.SshRemote;
 import org.echocat.jomon.net.ssh.SshSession;
-import org.echocat.jomon.runtime.codec.Md5Utils;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import static org.echocat.jomon.runtime.codec.HashFunctionUtils.asHexString;
 import static org.echocat.jomon.runtime.reflection.ClassUtils.getFieldOf;
 
 public class JschSshSession implements SshSession {
@@ -63,14 +63,14 @@ public class JschSshSession implements SshSession {
     @Nonnull
     @Override
     public String getId() {
-        return Md5Utils.asHexString(getIdAsBytes());
+        return asHexString(getIdAsBytes());
     }
 
     @Nonnull
     public byte[] getIdAsBytes() {
         try {
             return (byte[]) ID_FIELD.get(getSession());
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new RuntimeException("Could not read id of session.", e);
         }
 
