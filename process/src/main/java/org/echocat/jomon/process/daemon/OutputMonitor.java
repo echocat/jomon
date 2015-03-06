@@ -62,9 +62,9 @@ public class OutputMonitor<E, ID, P extends GeneratedProcess<E, ID>, R extends P
                 streamListener.notifyOutput(_process, buffer, 0, read, _streamType);
                 read = _stream.read(buffer);
             }
-        } catch (InterruptedIOException ignored) {
+        } catch (final InterruptedIOException ignored) {
             Thread.currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // noinspection InstanceofCatchParameter
             if (!(e instanceof IOException) || !"Stream closed".equals(e.getMessage())) {
                 LOG.warn("Could not read from " + _stream + ".", e);

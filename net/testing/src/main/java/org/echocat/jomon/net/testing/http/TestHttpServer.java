@@ -48,7 +48,7 @@ public class TestHttpServer implements Closeable, TestRule {
         try {
             _address = getFreeLocalHostSocketAddress();
             _server = createServer(_address);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create server.", e);
         }
     }
@@ -57,7 +57,7 @@ public class TestHttpServer implements Closeable, TestRule {
         this();
         try {
             setHandler(handler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create server for " + handler + ".", e);
         }
     }
@@ -66,7 +66,7 @@ public class TestHttpServer implements Closeable, TestRule {
         this();
         try {
             setHandler(handler);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create server for " + handler + ".", e);
         }
     }
@@ -75,7 +75,7 @@ public class TestHttpServer implements Closeable, TestRule {
         this();
         try {
             setHandler(contextPath, servlet);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create server for " + servlet + " at '" + contextPath + "'.", e);
         }
     }
@@ -113,7 +113,7 @@ public class TestHttpServer implements Closeable, TestRule {
                 }
             } catch (IOException | ServletException e) {
                 throw e;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ServletException(e);
             }
             baseRequest.setHandled(true);
@@ -130,7 +130,7 @@ public class TestHttpServer implements Closeable, TestRule {
     public void close() {
         try {
             _server.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not close " + _server + ".", e);
         }
     }
@@ -153,7 +153,7 @@ public class TestHttpServer implements Closeable, TestRule {
             } finally {
                 try {
                     close();
-                } catch (Exception ignored) {}
+                } catch (final Exception ignored) {}
             }
         }};
     }

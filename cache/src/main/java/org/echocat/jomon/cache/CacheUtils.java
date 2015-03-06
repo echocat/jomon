@@ -26,7 +26,7 @@ public class CacheUtils {
             result = false;
         } else {
             result = true;
-            for (char c : id.toCharArray()) {
+            for (final char c : id.toCharArray()) {
                 if (!isLetterOrDigit(c) && c != '.' && c != '-' && c != '_' && c != ':') {
                     result = false;
                     break;

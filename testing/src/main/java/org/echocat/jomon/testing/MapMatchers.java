@@ -39,7 +39,7 @@ public class MapMatchers {
                     result = false;
                 } else {
                     result = true;
-                    for (Entry<K, V> expectedKeyAndValue : expected.entrySet()) {
+                    for (final Entry<K, V> expectedKeyAndValue : expected.entrySet()) {
                         final K expectedKey = expectedKeyAndValue.getKey();
                         final V expectedValue = expectedKeyAndValue.getValue();
                         final V foundValue = item.get(expectedKey);

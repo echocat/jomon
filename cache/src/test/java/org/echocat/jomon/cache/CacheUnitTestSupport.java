@@ -73,7 +73,7 @@ public abstract class CacheUnitTestSupport<T extends LimitedCache<Object, Object
 
     protected static void assertMapEntries(Map<Object, Object> expected, InMemoryBasedCacheSupport<Object, Object> cache) {
         assertEquals("Length not currect", expected.size(), cache.getEntries().size());
-        for (Object key : expected.keySet()) {
+        for (final Object key : expected.keySet()) {
             final CacheEntry<?, ?> entry = cache.getEntries().get(key);
             assertNotNull("Entry for key '" + key + "' is null!", entry);
             assertEquals("key '" + key + "'", expected.get(key), entry.getValue().getValue());

@@ -133,7 +133,7 @@ public abstract class ArtifactFactoryRequest {
             } else {
                 throw new InvalidArtifactIdentifierException(artifactIdentifierString);
             }
-        } catch (InvalidVersionSpecificationException e) {
+        } catch (final InvalidVersionSpecificationException e) {
             throw new InvalidArtifactIdentifierException(artifactIdentifierString, e);
         }
         return build;

@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.Callable;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.testing.Assert.assertWithRetries;
 import static org.echocat.jomon.testing.Assert.assertWithTimeout;
 import static org.echocat.jomon.testing.BaseMatchers.is;
@@ -96,7 +97,7 @@ public class AssertTest {
         private DelayedValueDeliver(int successValue, int failValue, @Nonnull String duration) {
             _successValue = successValue;
             _failValue = failValue;
-            _delayInMs = new Duration(duration).toMilliSeconds();
+            _delayInMs = new Duration(duration).in(MILLISECONDS);
             _startMillies = currentTimeMillis();
         }
 

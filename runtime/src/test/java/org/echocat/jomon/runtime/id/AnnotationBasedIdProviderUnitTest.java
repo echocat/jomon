@@ -47,7 +47,7 @@ public class AnnotationBasedIdProviderUnitTest {
         try {
             new AnnotationBasedIdProvider<>(TestBeanB.class);
             fail("Expected exception missing.");
-        } catch (IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
     }
 
     public static class TestBeanA {

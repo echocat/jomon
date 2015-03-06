@@ -31,14 +31,19 @@
           c:cacheProvider-ref="org.echocat.jomon.cache.management.CacheProvider">
         <constructor-arg index="0">
             <list>
+                <!--suppress SpringModelInspection -->
                 <ref bean="org.echocat.jomon.resources.optimizing.MakeCssResourcePathAbsoluteOptimizer" />
+                <!--suppress SpringModelInspection -->
                 <ref bean="org.echocat.jomon.resources.optimizing.YuiCssResourceOptimizer" />
+                <!--suppress SpringModelInspection -->
                 <ref bean="org.echocat.jomon.resources.optimizing.YuiJavaScriptResourceOptimizer" />
             </list>
         </constructor-arg>
         <property name="postResourcesOptimizers">
             <list>
+                <!--suppress SpringModelInspection -->
                 <ref bean="org.echocat.jomon.resources.optimizing.CombineCssResourcesOptimizer" />
+                <!--suppress SpringModelInspection -->
                 <ref bean="org.echocat.jomon.resources.optimizing.CombineJavaScriptResourcesOptimizer" />
             </list>
         </property>

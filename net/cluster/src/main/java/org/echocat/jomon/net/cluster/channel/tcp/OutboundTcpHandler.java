@@ -114,9 +114,9 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
         final Socket socket = new Socket();
         socket.setKeepAlive(true);
         socket.setReuseAddress(true);
-        socket.setSoTimeout((int) _soTimeout.toMilliSeconds());
+        socket.setSoTimeout((int) _soTimeout.in(MILLISECONDS));
         try {
-            socket.connect(target, (int) _connectionTimeout.toMilliSeconds());
+            socket.connect(target, (int) _connectionTimeout.in(MILLISECONDS));
         } catch (ConnectException | SocketTimeoutException e) {
             throw new ServiceTemporaryUnavailableException(e);
         }
@@ -145,7 +145,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
                         closeQuietly(os);
                     }
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new ServiceTemporaryUnavailableException(e);
             } finally {
                 if (!success) {
@@ -179,7 +179,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
     public void send(@Nonnull Message message) throws IOException, InterruptedException {
         final Object[] outputs = getOutputs();
         final Set<SendingTask> tasks = _waitForSendFinished ? new HashSet<SendingTask>(outputs.length) : null;
-        for (Object output : outputs) {
+        for (final Object output : outputs) {
             // noinspection SuspiciousMethodCalls
             final Sender sender = _nodeToSender.get(output);
             if (sender != null) {
@@ -190,10 +190,10 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
             }
         }
         if (tasks != null) {
-            for (SendingTask task : tasks) {
+            for (final SendingTask task : tasks) {
                 try {
                     task.get();
-                } catch (ExecutionException e) {
+                } catch (final ExecutionException e) {
                     handleExecutionException(e);
                 }
             }
@@ -204,7 +204,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
         final long timeoutAtInMillis = currentTimeMillis() + unit.toMillis(timeout);
         final Object[] outputs = getOutputs();
         final Set<SendingTask> tasks = _waitForSendFinished ? new HashSet<SendingTask>(outputs.length) : null;
-        for (Object output : outputs) {
+        for (final Object output : outputs) {
             // noinspection SuspiciousMethodCalls
             final Sender sender = _nodeToSender.get(output);
             if (sender != null) {
@@ -220,12 +220,12 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
             }
         }
         if (tasks != null) {
-            for (SendingTask task : tasks) {
+            for (final SendingTask task : tasks) {
                 final long currentTimeoutInMillis = timeoutAtInMillis - currentTimeMillis();
                 if (currentTimeoutInMillis > 0) {
                     try {
                         task.get(currentTimeoutInMillis, MILLISECONDS);
-                    } catch (ExecutionException e) {
+                    } catch (final ExecutionException e) {
                         handleExecutionException(e);
                     }
                 } else {
@@ -253,9 +253,9 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
     public void sendPing() {
         try {
             check();
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("It was not possible to send a ping to all nodes.", e);
         }
     }
@@ -272,7 +272,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
         try {
             sendUnsafe(message, to);
             success = true;
-        } catch (ServiceTemporaryUnavailableException e) {
+        } catch (final ServiceTemporaryUnavailableException e) {
             markAsGone(to, e.getMessage());
             errorHandled = true;
         } finally {
@@ -293,7 +293,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
                 os.write(lengthAsBytes);
                 os.write(message.getData(), message.getOffset(), message.getLength());
                 to.recordOutbound();
-            } catch (SocketException e) {
+            } catch (final SocketException e) {
                 throw new ServiceTemporaryUnavailableException(e);
             }
         }
@@ -319,7 +319,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
         final List<Container<OutboundTcpNode>> newContainers = containers.getContainersByLowersPriority();
         final Object[] outputs = new Object[newContainers.size()];
         int c = 0;
-        for (Container<OutboundTcpNode> container : newContainers) {
+        for (final Container<OutboundTcpNode> container : newContainers) {
             outputs[c++] = container.getOutput();
         }
         return outputs;
@@ -360,7 +360,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
     public Integer getCurrentMaximumQueueSize() {
         Integer currentMaximumQueueSize = null;
         final Object[] outputs = getOutputs();
-        for (Object output : outputs) {
+        for (final Object output : outputs) {
             // noinspection SuspiciousMethodCalls
             final Sender sender = _nodeToSender.get(output);
             if (sender != null) {
@@ -391,7 +391,7 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
                     final SendingTask task = _tasks.take();
                     task.execute();
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }
@@ -451,9 +451,9 @@ public class OutboundTcpHandler extends SrvEntryBasedServicesManager<InetSocketA
                 if (!_done) {
                     try {
                         send(_message, _to);
-                    } catch (InterruptedException e) {
+                    } catch (final InterruptedException e) {
                         throw e;
-                    } catch (Throwable e) {
+                    } catch (final Throwable e) {
                         _exception = e;
                     } finally {
                         _done = true;

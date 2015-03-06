@@ -40,7 +40,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
     public void put(@Nullable K key, @Nullable V value) {
         checkKey(key);
         checkValue(value);
-        for (Cache<? extends K, ? extends V> delegate : _delegates) {
+        for (final Cache<? extends K, ? extends V> delegate : _delegates) {
             cast(delegate).put(key, value);
         }
     }
@@ -49,7 +49,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
     public void put(@Nullable K key, @Nullable V value, @Nullable Duration expireAfter) {
         checkKey(key);
         checkValue(value);
-        for (Cache<? extends K, ? extends V> delegate : _delegates) {
+        for (final Cache<? extends K, ? extends V> delegate : _delegates) {
             cast(delegate).put(key, value, expireAfter);
         }
     }
@@ -59,7 +59,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
         checkKey(key);
         V result = null;
         final Set<Cache<K, V>> missedOn = new HashSet<>(_delegates.length);
-        for (Cache<? extends K, ? extends V> delegate : _delegates) {
+        for (final Cache<? extends K, ? extends V> delegate : _delegates) {
             final Cache<K, V> cache = cast(delegate);
             result = cache.get(key);
             if (result != null) {
@@ -72,7 +72,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
             result = new Lazy<>(key, cacheValueProducer, nonBlocking).getValue();
         }
         if (result != null) {
-            for (Cache<K, V> cache : missedOn) {
+            for (final Cache<K, V> cache : missedOn) {
                 cache.put(key, result, expireAfter);
             }
         }
@@ -93,7 +93,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
     public Value<V> remove(@Nullable K key) {
         checkKey(key);
         Value<V> result = null;
-        for (Cache<? extends K, ? extends V> delegate : _delegates) {
+        for (final Cache<? extends K, ? extends V> delegate : _delegates) {
             final Value<V> removed = cast(delegate).remove(key);
             if (removed != null) {
                 result = removed;
@@ -106,7 +106,7 @@ public class CombinedCache<K, V> extends CacheSupport<K, V> {
     public boolean contains(@Nullable K key) {
         checkKey(key);
         boolean result = false;
-        for (Cache<? extends K, ? extends V> delegate : _delegates) {
+        for (final Cache<? extends K, ? extends V> delegate : _delegates) {
             if (cast(delegate).contains(key)) {
                 result = true;
                 break;

@@ -53,7 +53,7 @@ public class JschUtils {
         try {
             // noinspection unchecked
             typeToName.put((Class<? extends Channel>) forName(className), typeName);
-        } catch (ClassNotFoundException ignored) {}
+        } catch (final ClassNotFoundException ignored) {}
     }
 
     @Nonnull
@@ -73,7 +73,7 @@ public class JschUtils {
         final Channel channel;
         try {
             channel = session.openChannel(typeName);
-        } catch (JSchException e) {
+        } catch (final JSchException e) {
             throw new SshSystemException("Could not open channel '" + typeName + "'.", e);
         }
         if (!type.isInstance(channel)) {
@@ -95,7 +95,7 @@ public class JschUtils {
                     IO_FIELD.set(on, notifyingIO);
                 }
                 notifyingIO.setEventConsumer(consumer);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not set the io field of '" + on + "'.", e);
             }
         }

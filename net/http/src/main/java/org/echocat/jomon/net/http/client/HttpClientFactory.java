@@ -149,7 +149,7 @@ public class HttpClientFactory {
     protected void configureAuth(@Nonnull DefaultHttpClientImpl client, @Nullable Iterable<HttpClientAuth> scopeAndCredentials) {
         final AuthCache authCache = new BasicAuthCache();
         if (scopeAndCredentials != null) {
-            for (HttpClientAuth auth : scopeAndCredentials) {
+            for (final HttpClientAuth auth : scopeAndCredentials) {
                 final AuthScope authScope = auth.getScope();
                 client.getCredentialsProvider().setCredentials(authScope, auth.getCredentials());
                 authCache.put(auth.getHost(), auth.getScheme());

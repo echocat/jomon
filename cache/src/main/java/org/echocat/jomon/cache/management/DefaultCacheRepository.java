@@ -114,7 +114,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
     @Override
     public void clear() {
         synchronized (_idToCache) {
-            for (Cache<?, ?> cache : _idToCache.values()) {
+            for (final Cache<?, ?> cache : _idToCache.values()) {
                 if (cache instanceof ClearableCache) {
                     ((ClearableCache) cache).clear();
                 }
@@ -138,7 +138,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
                         _idToCache.remove(id);
                     }
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not remove cache '" + id + "'.", e);
             }
         }
@@ -173,7 +173,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
                     } else {
                         i.remove();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException("Could not remove cache '" + id + "'.", e);
                 }
             }
@@ -219,9 +219,9 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
                 throw new IllegalCacheDefinitionException("Could not provide a cache by " + definition + ".");
             }
             return cache;
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create cache '" + id + "' by " + definition + ".", e);
         }
     }
@@ -230,7 +230,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
         final Iterable<CacheListener> listeners = _listeners;
         boolean result = true;
         if (listeners != null) {
-            for (CacheListener listener : listeners) {
+            for (final CacheListener listener : listeners) {
                 if (listener instanceof CreationCacheListener) {
                     if (!((CreationCacheListener)listener).beforeCreate(id, definition)) {
                         result = false;
@@ -245,7 +245,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
     protected <K, V> void afterCreate(@Nonnull String id, @Nonnull CacheDefinition<K, V, ?> definition, @Nonnull Cache<?, ?> cache) {
         final Iterable<CacheListener> listeners = _listeners;
         if (listeners != null) {
-            for (CacheListener listener : listeners) {
+            for (final CacheListener listener : listeners) {
                 if (listener instanceof CreationCacheListener) {
                     ((CreationCacheListener)listener).afterCreate(id, definition, cache);
                 }
@@ -257,7 +257,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
         final Iterable<CacheListener> listeners = _listeners;
         boolean result = true;
         if (listeners != null) {
-            for (CacheListener listener : listeners) {
+            for (final CacheListener listener : listeners) {
                 if (listener instanceof CreationCacheListener) {
                     if (!((DestroyCacheListener)listener).beforeDestroy(id, cache)) {
                         result = false;
@@ -272,7 +272,7 @@ public class DefaultCacheRepository implements CacheRepository, AutoCloseable {
     protected <K, V> void afterDestroy(@Nonnull String id, @Nonnull Cache<K, V> cache) throws Exception {
         final Iterable<CacheListener> listeners = _listeners;
         if (listeners != null) {
-            for (CacheListener listener : listeners) {
+            for (final CacheListener listener : listeners) {
                 if (listener instanceof DestroyCacheListener) {
                     ((DestroyCacheListener)listener).afterDestroy(id, cache);
                 }

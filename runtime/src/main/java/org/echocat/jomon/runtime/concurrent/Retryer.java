@@ -46,7 +46,7 @@ public class Retryer {
             try {
                 result = what.call();
                 retry = with.isRetryRequiredForResult(result, new RetryingStatus(currentTry, stopWatch.getCurrentDuration()));
-            } catch (Throwable e) {
+            } catch (final Throwable e) {
                 if (with.isRetryRequiredForException(e, new RetryingStatus(currentTry, stopWatch.getCurrentDuration()))) {
                     retry = true;
                 } else if (throwable.isInstance(e)) {

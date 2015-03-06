@@ -44,7 +44,7 @@ public abstract class LineBasedStartupListenerSupport<P extends GeneratedProcess
         while (!currentThread().isInterrupted() && _startupDone == null) {
             lock().lockInterruptibly();
             try {
-                if (!condition().await(_maxWaitTimeForStartupOfApplication.toMilliSeconds(), MILLISECONDS)) {
+                if (!condition().await(_maxWaitTimeForStartupOfApplication.in(MILLISECONDS), MILLISECONDS)) {
                     _startupDone = false;
                 }
             } catch (final InterruptedException ignored) {

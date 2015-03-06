@@ -80,7 +80,7 @@ public class EncodedSerialGenerator implements SerialGenerator<String> {
         do {
             try {
                 encodedSerial = nextInternal();
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 encodedSerial = null;
                 if (currentTry++ >= _creationRetries) {
                     throw e;

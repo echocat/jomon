@@ -60,7 +60,7 @@ public class RecordUtils {
     public static ARecord a(@Nonnull String name, @Nonnegative long ttl, @Nonnull byte[] address) {
         try {
             return a(fromConstantString(name), ttl, InetAddress.getByAddress(address));
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new IllegalArgumentException("Given address is invalid: " + Arrays.toString(address), e);
         }
     }

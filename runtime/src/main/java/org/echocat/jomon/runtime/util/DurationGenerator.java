@@ -20,6 +20,8 @@ import org.apache.commons.math3.random.RandomDataImpl;
 
 import javax.annotation.Nonnull;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 public class DurationGenerator implements Generator<Duration, DurationRequirement> {
 
     private static final RandomData RANDOM = new RandomDataImpl();
@@ -56,7 +58,7 @@ public class DurationGenerator implements Generator<Duration, DurationRequiremen
         final DurationRange range = requirement.getValue();
         final Duration from = range.getFrom();
         final Duration to = range.getTo();
-        final long milliseconds = RANDOM.nextSecureLong(from != null ? from.toMilliSeconds() : 0, to != null ? to.toMilliSeconds() : Long.MAX_VALUE);
+        final long milliseconds = RANDOM.nextSecureLong(from != null ? from.in(MILLISECONDS) : 0, to != null ? to.in(MILLISECONDS) : Long.MAX_VALUE);
         return new Duration(milliseconds);
     }
 

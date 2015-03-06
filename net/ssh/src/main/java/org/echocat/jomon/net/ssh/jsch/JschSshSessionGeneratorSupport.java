@@ -32,7 +32,7 @@ public abstract class JschSshSessionGeneratorSupport implements SshSessionGenera
         configureSession(session, requirement);
         try {
             session.connect();
-        } catch (JSchException e) {
+        } catch (final JSchException e) {
             throw new SshConnectionException("Could not connect to " + requirement.getRemote() + ".", e);
         }
         return new JschSshSession(requirement.getRemote(), session);
@@ -44,7 +44,7 @@ public abstract class JschSshSessionGeneratorSupport implements SshSessionGenera
         final InetSocketAddress address = remote.getAddress();
         try {
             return jsch.getSession(remote.getUser(), address.getHostName(), address.getPort());
-        } catch (JSchException e) {
+        } catch (final JSchException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }

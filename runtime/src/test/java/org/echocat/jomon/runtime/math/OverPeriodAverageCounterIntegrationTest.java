@@ -21,6 +21,7 @@ import org.junit.Test;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -64,7 +65,7 @@ public class OverPeriodAverageCounterIntegrationTest {
     @Test
     public void testWithChaningValueAfterMeasurePeriod() throws Exception {
         final Impl counter = new Impl(new Duration("5s"), new Duration("1s"));
-        final Duration timeOfRecord = new Duration(counter.getMeasurePeriod().toMilliSeconds() * 2);
+        final Duration timeOfRecord = new Duration(counter.getMeasurePeriod().in(MILLISECONDS) * 2);
         assertThat(counter.getNumberOfMeasureSlots(), is(5));
         final StopWatch stopWatch = new StopWatch();
         while (stopWatch.getCurrentDuration().isLessThan(timeOfRecord)) {
@@ -82,8 +83,8 @@ public class OverPeriodAverageCounterIntegrationTest {
     @Test
     public void testWithChangingValueInMeasurePeriod() throws Exception {
         final Impl counter = new Impl(new Duration("5s"), new Duration("1s"));
-        final Duration timeOfRecord = new Duration(counter.getMeasurePeriod().toMilliSeconds() * 2);
-        final Duration timeAfterChangeBehavior = new Duration((long) ((double)counter.getMeasurePeriod().toMilliSeconds() * 1.5d));
+        final Duration timeOfRecord = new Duration(counter.getMeasurePeriod().in(MILLISECONDS) * 2);
+        final Duration timeAfterChangeBehavior = new Duration((long) ((double)counter.getMeasurePeriod().in(MILLISECONDS) * 1.5d));
         assertThat(counter.getNumberOfMeasureSlots(), is(5));
         final StopWatch stopWatch = new StopWatch();
         while (stopWatch.getCurrentDuration().isLessThan(timeOfRecord)) {

@@ -101,9 +101,9 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             _lock.unlock();
         }
         final SrvDnsEntryEvaluator evaluator = new SrvDnsEntryEvaluator(_resolver);
-        for (I input : inputs) {
+        for (final I input : inputs) {
             final List<Container<O>> containers = getContainersFor(input, evaluator, oldHostServices);
-            for (Container<O> container : containers) {
+            for (final Container<O> container : containers) {
                 newContainers.add(container);
             }
         }
@@ -127,14 +127,14 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
 
     protected void onContainersSwitch(@Nullable Containers<O> oldContainers, @Nullable Containers<O> newContainers) {
         if (oldContainers != null) {
-            for (Container<O> oldContainer : oldContainers) {
+            for (final Container<O> oldContainer : oldContainers) {
                 if (newContainers == null || !newContainers.containsOutput(oldContainer.getOutput())) {
                     onContainerGone(oldContainer);
                 }
             }
         }
         if (newContainers != null) {
-            for (Container<O> newContainer : newContainers) {
+            for (final Container<O> newContainer : newContainers) {
                 if (oldContainers == null || !oldContainers.containsOutput(newContainer.getOutput())) {
                     onContainerEnter(newContainer);
                 }
@@ -166,7 +166,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
         if (inetSocketAddress != null) {
             boolean success = false;
             try {
-                for (HostService service : getServicesFor(evaluator, inetSocketAddress)) {
+                for (final HostService service : getServicesFor(evaluator, inetSocketAddress)) {
                     final State oldState = getOldSateFor(service, oldHostServices);
                     final Container<O> container = getContainerFor(input, oldState, service);
                     if (container != null) {
@@ -188,13 +188,13 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
         List<HostService> services;
         try {
             services = evaluator.lookup(_service, _protocol, inetSocketAddress.getHostName());
-        } catch (NoSuchSrvRecordException ignored) {
+        } catch (final NoSuchSrvRecordException ignored) {
             if (inetSocketAddress.getAddress() != null) {
                 services = singletonList(new HostService(inetSocketAddress, 0, 100, 1));
             } else {
                 services = emptyList();
             }
-        } catch (UnknownHostException ignored) {
+        } catch (final UnknownHostException ignored) {
             services = emptyList();
         }
         return services;
@@ -230,7 +230,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
             } else {
                 reportGone(service, null, oldState);
             }
-        } catch (ServiceTemporaryUnavailableException e) {
+        } catch (final ServiceTemporaryUnavailableException e) {
             reportGone(service, e.getMessage(), oldState);
         }
         return result;
@@ -323,7 +323,7 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
         String output;
         try {
             output = address.getAddress().getCanonicalHostName() + ":" + address.getPort();
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
             output = address.toString();
         }
         return output;
@@ -333,12 +333,12 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
     protected Object[] rebuildOutputs(@Nonnull Containers<O> containers) {
         final List<Container<O>> newContainers = containers.getContainersByLowersPriority();
         int newArraySize = 0;
-        for (Container<O> container : newContainers) {
+        for (final Container<O> container : newContainers) {
             newArraySize += container.getService().getWeight();
         }
         final Object[] outputs = new Object[newArraySize];
         int c = 0;
-        for (Container<O> container : newContainers) {
+        for (final Container<O> container : newContainers) {
             final int weight = container.getService().getWeight();
             for (int i = 0; i < weight; i++) {
                 outputs[c++] = container.getOutput();
@@ -432,8 +432,8 @@ public abstract class SrvEntryBasedServicesManager<I, O> extends ServicesManager
         @Nonnull
         public Collection<HostService> getCopyOfAllServices() {
             final Collection<HostService> all = new HashSet<>();
-            for (List<Container<O>> containers : _priorityToContainers.values()) {
-                for (Container<O> container : containers) {
+            for (final List<Container<O>> containers : _priorityToContainers.values()) {
+                for (final Container<O> container : containers) {
                     all.add(container.getService());
                 }
             }

@@ -54,7 +54,7 @@ public abstract class CacheStressTestSupport<T extends LimitedCache<Integer, Str
                         keys.add(i);
                     }
                     Collections.shuffle(keys);
-                    for (Integer key : keys) {
+                    for (final Integer key : keys) {
                         assertThat(cache.get(key, producer), is(key.toString()));
                     }
                 }

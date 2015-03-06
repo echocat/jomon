@@ -34,9 +34,9 @@ public class SigarFacade implements AutoCloseable {
     public void kill(long l, int i) {
         try {
             _sigar.kill(l, i);
-        } catch (SigarPermissionDeniedException e) {
+        } catch (final SigarPermissionDeniedException e) {
             throw new AccessDeniedException("Could not kill: " + l, e);
-        } catch (SigarException e) {
+        } catch (final SigarException e) {
             throw new IllegalArgumentException("Could not kill: " + l, e);
         }
     }

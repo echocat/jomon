@@ -27,7 +27,7 @@ class TestDnsServer extends TemporaryDnsServer implements TestRule {
         } finally {
             try {
                 close();
-            } catch (Exception ignored) {}
+            } catch (final Exception ignored) {}
         }
     }};}
 }

@@ -84,7 +84,7 @@ public class MavenEnvironmentFactory {
             protected void customizeContainer(PlexusContainer container) {
                 try {
                     oldMaven.set((DefaultMaven) container.lookup(Maven.class));
-                } catch (ComponentLookupException e) {
+                } catch (final ComponentLookupException e) {
                     throw new RuntimeException(e);
                 }
                 container.addComponent(maven, Maven.class, "");

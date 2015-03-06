@@ -51,7 +51,7 @@ public abstract class CachedResourcesOptimizer implements ResourcesOptimizer {
 
     protected boolean allExists(@Nonnull Collection<Resource> outputs) throws IOException {
         boolean allExists = true;
-        for (Resource output : outputs) {
+        for (final Resource output : outputs) {
             if (!output.isExisting()) {
                 allExists = false;
                 break;

@@ -56,7 +56,7 @@ public class CompoundStreamListenerProvider implements StreamListenerProvider {
     @Override
     public <P extends GeneratedProcess<?, ?>> StreamListener<P> provideFor(@Nonnull Class<P> referenceType, @Nonnull String configuration) {
         StreamListener<P> result = null;
-        for (StreamListenerProvider delegate : _delegates) {
+        for (final StreamListenerProvider delegate : _delegates) {
             result = delegate.provideFor(referenceType, configuration);
             if (result != null) {
                 break;

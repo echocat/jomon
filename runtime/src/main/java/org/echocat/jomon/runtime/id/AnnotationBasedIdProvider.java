@@ -48,7 +48,7 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
     @Nonnull
     protected Map<Class<?>, Method> getTypeToGetIdMethodForInternal(@Nonnull Iterable<Class<?>> types) {
         final Map<Class<?>, Method> typeToGetIdMethod = new HashMap<>();
-        for (Class<?> type : types) {
+        for (final Class<?> type : types) {
             typeToGetIdMethod.put(type, getGetIdMethodForInternal(type));
         }
         return unmodifiableMap(typeToGetIdMethod);
@@ -58,7 +58,7 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
     protected Method getGetIdMethodForInternal(@Nonnull Class<?> type) {
         final BeanInfo beanInfo = getBeanInfoFor(type);
         Method getIdMethod = null;
-        for (PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
+        for (final PropertyDescriptor descriptor : beanInfo.getPropertyDescriptors()) {
             final Method readMethod = descriptor.getReadMethod();
             if (readMethod != null) {
                 if (hasIdAnnotation(type, descriptor)) {
@@ -79,7 +79,7 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
     protected BeanInfo getBeanInfoFor(@Nonnull Class<?> type) {
         try {
             return Introspector.getBeanInfo(type, Object.class);
-        } catch (IntrospectionException e) {
+        } catch (final IntrospectionException e) {
             throw new RuntimeException("Could not read beanInfo of " + type.getName() + ".", e);
         }
     }
@@ -97,7 +97,7 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
 
     protected boolean hasIdAnnotation(@Nonnull Method method) {
         boolean result = false;
-        for (Class<? extends Annotation> annotationType : getIdAnnotationTypes()) {
+        for (final Class<? extends Annotation> annotationType : getIdAnnotationTypes()) {
             if (method.getAnnotation(annotationType) != null) {
                 result = true;
                 break;
@@ -117,9 +117,9 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
         try {
             // noinspection unchecked
             return (ID) getIdMethod.invoke(bean);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new RuntimeException("Could not access " + getIdMethod + ".", e);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof Error) {
                 // noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
@@ -142,7 +142,7 @@ public class AnnotationBasedIdProvider<ID, B> implements IdProvider<ID, B> {
     protected Method getGetIdMethodFor(@Nonnull Class<?> type) {
         Method method = _typeToGetIdMethod.get(type);
         if (method == null) {
-            for (Entry<Class<?>, Method> typeAndMethod : _typeToGetIdMethod.entrySet()) {
+            for (final Entry<Class<?>, Method> typeAndMethod : _typeToGetIdMethod.entrySet()) {
                 if (typeAndMethod.getKey().isAssignableFrom(type)) {
                     method = typeAndMethod.getValue();
                     break;

@@ -46,11 +46,11 @@ public class Log4JUtils {
             final LogManager logManager = LogManager.getLogManager();
             logManager.reset();
             final Logger logger = logManager.getLogger("");
-            for (Handler oldHandlers : logger.getHandlers()) {
+            for (final Handler oldHandlers : logger.getHandlers()) {
                 logger.removeHandler(oldHandlers);
             }
             logger.addHandler(handler);
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
     protected static void tryFixMdcInSlf4j() {
@@ -65,7 +65,7 @@ public class Log4JUtils {
                 final Object fixed = classLoader.loadClass("org.echocat.jomon.runtime.FixingSlf4jMDCAdapter").getConstructor(mdcAdapter).newInstance(delegate);
                 mdcAdapterField.set(null, fixed);
             }
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
     public static void configureRuntime(@Nullable URL defaultXmlConfigUrl) {
@@ -73,7 +73,7 @@ public class Log4JUtils {
         final InputStream is = openConfig(xmlConfigUrl);
         try {
             configureRuntime(is);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not configureRuntime log4j with " + xmlConfigUrl + ".", e);
         } finally {
             closeQuietly(is);
@@ -103,7 +103,7 @@ public class Log4JUtils {
         }
         try {
             return new URL(plainConfigUrl);
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new IllegalArgumentException("The given xmlConfig '" + plainConfigUrl + "' is no valid url.", e);
         }
     }
@@ -113,7 +113,7 @@ public class Log4JUtils {
         final InputStream is;
         try {
             is = xmlConfigUrl.openStream();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Could not open xmlConfig '" + xmlConfigUrl + "'.", e);
         }
         return is;

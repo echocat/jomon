@@ -26,7 +26,7 @@ public class MainMethodBooter {
         final Method method;
         try {
             method = mainClass.getMethod(MAIN_METHOD_NAME, String[].class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
             throw new IllegalStateException("Could not found the method '" + MAIN_METHOD_NAME + "' at the mainClass '" + mainClass.getName() + "'.");
         }
@@ -36,7 +36,7 @@ public class MainMethodBooter {
     private void invokeMethod(@Nonnull String[] arguments, @Nonnull Method method) throws Exception {
         try {
             method.invoke(null, new Object[]{arguments});
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable target = e.getTargetException();
             if (target instanceof Error) {
                 //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
@@ -50,7 +50,7 @@ public class MainMethodBooter {
             } else {
                 throw e;
             }
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new IllegalStateException("Could not access the method " + method + ".", e);
         }
     }

@@ -53,13 +53,13 @@ public class JschSshProcessRepository implements SshProcessRepository {
                 final JschSshGeneratedProcess result = createAndConfigureProcess(requirement, exec, sshSession, closeSession);
                 success = true;
                 return result;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new CouldNotStartException("Could not start or configure process.", e);
             } finally {
                 if (!success) {
                     try {
                         exec.disconnect();
-                    } catch (Exception ignored) {}
+                    } catch (final Exception ignored) {}
                 }
             }
         } finally {
@@ -77,12 +77,12 @@ public class JschSshProcessRepository implements SshProcessRepository {
         if (pty != null) {
             exec.setPtyType(pty.getType(), pty.getCharacterWidth(), pty.getCharacterHeight(), pty.getPixelWidth(), pty.getPixelWidth());
         }
-        for (Entry<String, String> entry : requirement.getEnvironment().entrySet()) {
+        for (final Entry<String, String> entry : requirement.getEnvironment().entrySet()) {
             exec.setEnv(entry.getKey(), entry.getValue());
         }
         try {
             exec.connect();
-        } catch (JSchException e) {
+        } catch (final JSchException e) {
             throw new SshException(e.getMessage(), e);
         }
         return new JschSshGeneratedProcess(requirement, exec, id(null, session.getRemote()), closeContext);

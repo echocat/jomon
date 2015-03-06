@@ -90,7 +90,7 @@ public class LogEnvironment extends BaseEnvironment implements TestRule {
     protected Class<?> findTopFromCallStack() {
         final StackTraceElement[] stackTrace = currentThread().getStackTrace();
         Class<?> found = null;
-        for (StackTraceElement stackTraceElement : stackTrace) {
+        for (final StackTraceElement stackTraceElement : stackTrace) {
             final Class<?> currentClass = findClass(stackTraceElement.getClassName());
             if (currentClass != Thread.class && !currentClass.isAssignableFrom(LogEnvironment.class)) {
                 found = currentClass;

@@ -39,7 +39,7 @@ public class BeanEnvironment extends BaseEnvironment {
             if (!success) {
                 try {
                     applicationContext.close();
-                } catch (Exception ignored) {}
+                } catch (final Exception ignored) {}
             }
         }
         _applicationContext = applicationContext;

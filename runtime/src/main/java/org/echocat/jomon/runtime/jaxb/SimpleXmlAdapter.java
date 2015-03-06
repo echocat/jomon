@@ -48,7 +48,7 @@ public class SimpleXmlAdapter extends XmlAdapter<String, Object> {
     @Nonnull
     private static Map<String, XmlAdapter<String, ?>> createPrefixedAdaptersFor(@Nonnull Class<?>... types) {
         final Map<String, XmlAdapter<String, ?>> prefixToAdapter = new HashMap<>();
-        for (Class<?> type : types) {
+        for (final Class<?> type : types) {
             XmlAdapter<String, ?> adapter;
             if (Character.class.equals(type)) {
                 adapter = new CharacterBasedXmlAdapter();
@@ -125,7 +125,7 @@ public class SimpleXmlAdapter extends XmlAdapter<String, Object> {
                 if (!result.getReturnType().equals(type) || !isStatic(modifiers)) {
                     result = null;
                 }
-            } catch (NoSuchMethodException ignored) {
+            } catch (final NoSuchMethodException ignored) {
                 result = null;
             }
             return result;
@@ -162,7 +162,7 @@ public class SimpleXmlAdapter extends XmlAdapter<String, Object> {
             Constructor<T> result;
             try {
                 result = type.getConstructor(String.class);
-            } catch (NoSuchMethodException ignored) {
+            } catch (final NoSuchMethodException ignored) {
                 result = null;
             }
             return result;

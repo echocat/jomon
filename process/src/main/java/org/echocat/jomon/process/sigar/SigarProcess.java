@@ -71,7 +71,7 @@ public class SigarProcess implements LocalProcess {
                 if (file.isFile()) {
                     _executable = file;
                 }
-            } catch (SigarException ignored) {}
+            } catch (final SigarException ignored) {}
             _execResolved = true;
         }
     }
@@ -80,7 +80,7 @@ public class SigarProcess implements LocalProcess {
         if (!_argsResolved) {
             try {
                 _commandLine = asImmutableList(_sigar.getProcArgs(_pid));
-            } catch (SigarException ignored) {}
+            } catch (final SigarException ignored) {}
             _argsResolved = true;
         }
     }

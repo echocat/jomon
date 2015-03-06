@@ -42,7 +42,7 @@ public class ProcessMonitor<E, ID, P extends GeneratedProcess<E, ID>, R extends 
                 _requirement.getStartupListener().notifyProcessTerminated(_process, success);
                 _requirement.getStreamListener().notifyProcessTerminated(_process, success);
                 regularEnd = true;
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 // We are required to ignore an interrupt here for now because we are required to wait for the end of the process.
                 // Otherwise we have the risk, that not all events are covered. We will reset the interrupted flag after this.
                 gotInterrupted = true;

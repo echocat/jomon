@@ -412,7 +412,7 @@ public class ByteCount implements Comparable<ByteCount>, Serializable {
         final StringBuilder sb = new StringBuilder();
         sb.append("\\s*(?:");
         boolean first = true;
-        for (ByteUnit byteUnit : BYTE_UNITS) {
+        for (final ByteUnit byteUnit : BYTE_UNITS) {
             if (first) {
                 first = false;
             } else {

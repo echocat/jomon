@@ -411,7 +411,7 @@ public interface Value<T> {
             try {
                 _value = _producer.produce(_key);
                 _valueState = produced;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 _producingException = e;
                 _valueState = producingFailed;
             } finally {
@@ -429,7 +429,7 @@ public interface Value<T> {
                             try {
                                 // noinspection unchecked
                                 ((PostProducing) _producer).postProducing(_key, _value);
-                            } catch (Exception e) {
+                            } catch (final Exception e) {
                                 _producingException = e;
                                 _valueState = producingFailed;
                             }
@@ -448,7 +448,7 @@ public interface Value<T> {
             while (_valueState == producing) {
                 try {
                     _producer.wait(1000);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new GotInterruptedException("Got interrupted while waiting for production of cache value for key " + _key + ".", e);
                 }

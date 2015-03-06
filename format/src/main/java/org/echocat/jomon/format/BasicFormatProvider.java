@@ -34,13 +34,13 @@ public class BasicFormatProvider extends FormatProviderSupport {
     @Nonnull
     public static <F extends Format> Map<String, F> readFormatsOf(@Nonnull Class<F> formatType) {
         final Map<String, F> result = new LinkedHashMap<>();
-        for (Field field : formatType.getDeclaredFields()) {
+        for (final Field field : formatType.getDeclaredFields()) {
             final int modifiers = field.getModifiers();
             if (isStatic(modifiers) && isPublic(modifiers) && formatType.isAssignableFrom(field.getType())) {
                 final F format;
                 try {
                     format = formatType.cast(field.get(null));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException("Could not read value of " + field + ".", e);
                 }
                 result.put(format.getName(), format);

@@ -113,7 +113,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
     @Nonnull
     protected List<Worker> createWorkersFor(@Nonnegative int numberOfWorkers, @Nonnegative int numberOfMessagesPerWorker, @Nonnull Collection<String> addSendMessages, @Nonnull Iterable<? extends C> sendMessageWith, @Nullable OverPeriodCounter counter) {
         final List<Worker> workers = new ArrayList<>();
-        for (C channel : sendMessageWith) {
+        for (final C channel : sendMessageWith) {
             workers.addAll(createWorkersFor(numberOfWorkers, numberOfMessagesPerWorker, addSendMessages, channel, counter));
         }
         return workers;
@@ -124,7 +124,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
         final Duration maxWaitTime = new Duration(channels.size() * 1500);
         return new StateCondition<C>(maxWaitTime) { @Override public boolean check(@Nonnull C clusterChannel) throws Exception {
             boolean result = true;
-            for (C channel : channels) {
+            for (final C channel : channels) {
                 if (channel instanceof PingEnabledClusterChannel) {
                     ((PingEnabledClusterChannel) channel).ping();
                 }
@@ -139,7 +139,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
     @Nonnull
     protected Map<String, AtomicInteger> getMessageToCount() {
         final Map<String, AtomicInteger> messageToCount = new HashMap<>();
-        for (Pair<C, ReceivedMessage<N>> pair : getMessageHandler().getReceivedMessages()) {
+        for (final Pair<C, ReceivedMessage<N>> pair : getMessageHandler().getReceivedMessages()) {
             final String message = pair.getValue().getDataAsString(CHARSET);
             AtomicInteger count = messageToCount.get(message);
             if (count == null) {
@@ -172,11 +172,11 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
         final List<C> channels = new ArrayList<>();
         boolean success = false;
         try {
-            for (UUID uuid : uuids) {
+            for (final UUID uuid : uuids) {
                 channels.add(channel(uuid));
             }
             afterAllChannelsCreated(channels);
-            for (C channel : channels) {
+            for (final C channel : channels) {
                 if (channel instanceof PingEnabledClusterChannel) {
                     ((PingEnabledClusterChannel) channel).ping();
                 }
@@ -185,7 +185,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
             success = true;
         } finally {
             if (!success) {
-                for (C channel : channels) {
+                for (final C channel : channels) {
                     closeQuietly(channel);
                 }
             }
@@ -195,7 +195,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
 
     protected void closeQuietly(@Nullable Iterable<? extends C> channels) {
         if (channels != null) {
-            for (C channel : channels) {
+            for (final C channel : channels) {
                 closeQuietly(channel);
             }
         }

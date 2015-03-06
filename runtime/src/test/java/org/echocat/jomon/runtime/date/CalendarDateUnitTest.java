@@ -181,7 +181,7 @@ public class CalendarDateUnitTest {
                         new CalendarDate(values[0], values[1], values[2]);
                     }
                     exceptionThrown = false;
-                } catch (IllegalArgumentException ignored) {
+                } catch (final IllegalArgumentException ignored) {
                     exceptionThrown = true;
                 }
                 return exceptionThrown;

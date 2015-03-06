@@ -98,7 +98,7 @@ public class MavenBoot {
         if (mainClassName != null) {
             try {
                 result = classLoader.loadClass(mainClassName);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 throw new RuntimeException("Could not find the specified main class: " + mainClassName, e);
             }
         } else {

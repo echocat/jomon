@@ -34,7 +34,7 @@ public class ClientConnectionManagerFactory {
 
     @Nonnull
     public ClientConnectionManager create() {
-        final PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(_schemeRegistry, _timeToLife.toMilliSeconds(), MILLISECONDS);
+        final PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(_schemeRegistry, _timeToLife.in(MILLISECONDS), MILLISECONDS);
         connectionManager.setDefaultMaxPerRoute(_maximumNumberOfConnectionsPerRoute);
         connectionManager.setMaxTotal(_maximumNumberOfConnections);
         return connectionManager;

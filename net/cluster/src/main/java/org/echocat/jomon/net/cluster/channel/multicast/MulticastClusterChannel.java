@@ -228,7 +228,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                 if (address != null) {
                     try {
                         _in.leaveGroup(address, networkInterface);
-                    } catch (Exception ignored) {}
+                    } catch (final Exception ignored) {}
                 }
             } finally {
                 closeQuietly(_in);
@@ -298,7 +298,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
     public void send(@Nonnull Message message) {
         try {
             _messageQueue.put(message);
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
             throw new GotInterruptedException();
         }
@@ -308,7 +308,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
     public void send(@Nonnull Message message, @Nonnegative long timeout, @Nonnull TimeUnit unit) {
         try {
             _messageQueue.offer(message, timeout, unit);
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
         }
     }
@@ -321,7 +321,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                 try {
                     out.send(packet);
                     recordMessageSend();
-                } catch (SocketException e) {
+                } catch (final SocketException e) {
                     final String messageOfException = e.getMessage();
                     if (messageOfException == null && !messageOfException.equalsIgnoreCase("socket closed")) {
                         throw e;
@@ -392,8 +392,8 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                 message.getFrom().recordOutbound();
                 read(message);
             }
-        } catch (SocketTimeoutException ignored) {
-        } catch (SocketException e) {
+        } catch (final SocketTimeoutException ignored) {
+        } catch (final SocketException e) {
             final String message = e.getMessage();
             if (message == null && !message.equalsIgnoreCase("socket closed")) {
                 throw e;
@@ -480,7 +480,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                 } else {
                     _idToNode.put(node.getId(), node);
                     LOG.info("Node " + node + " entered the cluster.");
-                    for (Handler handler : getHandlers()) {
+                    for (final Handler handler : getHandlers()) {
                         if (handler instanceof PresenceHandler) {
                             ((PresenceHandler) handler).nodeEnter(this, current);
                         }
@@ -508,7 +508,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
     }
 
     protected final void cleanUpNodes() {
-        final long expiresAt = currentTimeMillis() - (long) (getPingInterval().toMilliSeconds() * _pingIntervalToTimeoutRatio);
+        final long expiresAt = currentTimeMillis() - (long) (getPingInterval().in(MILLISECONDS) * _pingIntervalToTimeoutRatio);
         synchronized (_idToNode) {
             final Iterator<MulticastNode> i = _idToNode.values().iterator();
             while (i.hasNext()) {
@@ -516,7 +516,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                 if (node.getLastSeenInMillis() <= expiresAt) {
                     i.remove();
                     LOG.info("Node " + node + " left the cluster. (Timeout)");
-                    for (Handler handler : getHandlers()) {
+                    for (final Handler handler : getHandlers()) {
                         if (handler instanceof PresenceHandler) {
                             ((PresenceHandler) handler).nodeLeft(this, node);
                         }
@@ -542,9 +542,9 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
         cleanUpNodes();
         try {
             getId(true);
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not send ping.", e);
         }
     }
@@ -554,7 +554,7 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
         super.recordMessageSend();
         final Collection<MulticastNode> nodes = _nodes;
         if (nodes != null) {
-            for (MulticastNode node : nodes) {
+            for (final MulticastNode node : nodes) {
                 node.recordOutbound();
             }
         }
@@ -569,11 +569,11 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                     try {
                         final short id = getId(false);
                         sendInternal(id, message);
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         LOG.warn("Could not write message '" + message + "' to " + _address + getNetworkInterfaceSuffix() + ". This message is lost.", e);
                     }
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }
@@ -591,11 +591,11 @@ public class MulticastClusterChannel extends NetBasedClusterChannel<Short, Multi
                         } else {
                             sleep(1000);
                         }
-                    } catch (IOException e) {
+                    } catch (final IOException e) {
                         LOG.warn("Could not read message from " + _address + getNetworkInterfaceSuffix() + ".", e);
                     }
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }

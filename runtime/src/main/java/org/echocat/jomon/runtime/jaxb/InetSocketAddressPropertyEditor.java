@@ -32,7 +32,7 @@ public class InetSocketAddressPropertyEditor extends PropertyEditorSupport {
                     final int port;
                     try {
                         port = Integer.parseInt(plainPort);
-                    } catch (NumberFormatException ignored) {
+                    } catch (final NumberFormatException ignored) {
                         throw new IllegalArgumentException("Illegal port: " + plainPort);
                     }
                     address = new InetSocketAddress(host, port);

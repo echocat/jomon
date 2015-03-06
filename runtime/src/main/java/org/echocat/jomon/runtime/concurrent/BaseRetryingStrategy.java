@@ -106,7 +106,7 @@ public abstract class BaseRetryingStrategy<T, S extends BaseRetryingStrategy<T, 
 
     protected boolean isExceptionThatForceRetry(@Nonnull Throwable e) {
         boolean result = false;
-        for (Class<? extends Throwable> exceptionType : _exceptionsThatForceRetry) {
+        for (final Class<? extends Throwable> exceptionType : _exceptionsThatForceRetry) {
             if (exceptionType.isInstance(e)) {
                 result = true;
                 break;

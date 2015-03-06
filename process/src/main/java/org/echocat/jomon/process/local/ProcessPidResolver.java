@@ -17,7 +17,6 @@ package org.echocat.jomon.process.local;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.*;
-import java.lang.Process;
 import java.lang.reflect.Field;
 import java.util.ServiceLoader;
 
@@ -36,7 +35,7 @@ public abstract class ProcessPidResolver {
     protected static ProcessPidResolver createInstance() {
         final ServiceLoader<ProcessPidResolver> found = ServiceLoader.load(ProcessPidResolver.class);
         ProcessPidResolver resolver = null;
-        for (ProcessPidResolver candidate : found) {
+        for (final ProcessPidResolver candidate : found) {
             if (candidate.couldHandleThisVirtualMachine()) {
                 resolver = candidate;
                 break;
@@ -59,7 +58,7 @@ public abstract class ProcessPidResolver {
         Class<?> result;
         try {
             result = ProcessPidResolver.class.getClassLoader().loadClass(className);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = null;
         }
         return result;
@@ -75,7 +74,7 @@ public abstract class ProcessPidResolver {
                     field = null;
                 }
                 field.setAccessible(true);
-            } catch (NoSuchFieldException ignored) {
+            } catch (final NoSuchFieldException ignored) {
                 field = null;
             }
         } else {
@@ -88,7 +87,7 @@ public abstract class ProcessPidResolver {
     protected Object getFieldValue(@Nonnull Field field, @Nonnull Object instance) {
         try {
             return field.get(instance);
-        } catch (IllegalAccessException e) {
+        } catch (final IllegalAccessException e) {
             throw new RuntimeException("Could not read value of " + field + " from " + instance + ".", e);
         }
     }

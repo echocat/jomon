@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.ArrayUtils.toObject;
 
 public class PatternAdapter extends XmlAdapter<String, Pattern> {
 
-    private static final Pattern EXTRACT_PATTERN = Pattern.compile("^\\/(.*)\\/([imsx]*)$");
+    private static final Pattern EXTRACT_PATTERN = Pattern.compile("^/(.*)/([imsx]*)$");
 
     @Override
     public Pattern unmarshal(String v) throws Exception {

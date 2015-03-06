@@ -35,7 +35,7 @@ public enum NetworkInterfaceType {
     public static NetworkInterfaceType typeOf(@Nonnull NetworkInterface what) {
         final String name = what.getName();
         NetworkInterfaceType result = other;
-        for (NetworkInterfaceType current : values()) {
+        for (final NetworkInterfaceType current : values()) {
             final Pattern pattern = current._namePattern;
             if (pattern != null && pattern.matcher(name).matches()) {
                 result = current;

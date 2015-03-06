@@ -148,7 +148,7 @@ public class BatchedHitWriter {
                                 _cyclerThread.interrupt();
                             }
                         }
-                    } catch (InterruptedException ignored) {
+                    } catch (final InterruptedException ignored) {
                         currentThread().interrupt();
                         LOG.debug("Could not wait for termination of " + _cyclerThread + ". This thread was interrupted.");
                     }
@@ -199,9 +199,9 @@ public class BatchedHitWriter {
     @Nonnull
     protected Map<HitWriter<?>, Set<Hits<?>>> groupByWriter(@Nonnull Map<Object, Hits<?>> keyToHits) {
         final Map<HitWriter<?>, Set<Hits<?>>> result = new HashMap<>();
-        for (Entry<Object, Hits<?>> keyAndHits : keyToHits.entrySet()) {
+        for (final Entry<Object, Hits<?>> keyAndHits : keyToHits.entrySet()) {
             final Hits<?> hits = keyAndHits.getValue();
-            for (HitWriter<?> writer : hits.getWriters()) {
+            for (final HitWriter<?> writer : hits.getWriters()) {
                 Set<Hits<?>> groupedKeyToHits = result.get(writer);
                 if (groupedKeyToHits == null) {
                     groupedKeyToHits = new HashSet<>();
@@ -222,14 +222,14 @@ public class BatchedHitWriter {
     public void cycle() {
         try {
             final Map<HitWriter<?>, Set<Hits<?>>> writerToKeyToHits = getWriterToHitsForNextCycle();
-            for (Entry<HitWriter<?>, Set<Hits<?>>> writerAndHits : writerToKeyToHits.entrySet()) {
+            for (final Entry<HitWriter<?>, Set<Hits<?>>> writerAndHits : writerToKeyToHits.entrySet()) {
                 // noinspection unchecked
                 final HitWriter<Object> writer = (HitWriter<Object>) writerAndHits.getKey();
                 // noinspection unchecked
                 final Set<Hits<Object>> hits = (Set<Hits<Object>>)(Set) writerAndHits.getValue();
                     writer.write(hits);
             }
-        } catch (ServiceTemporaryUnavailableException e) {
+        } catch (final ServiceTemporaryUnavailableException e) {
             LOG.warn("Could not record the hits. This hits are lost now and will not be rescheduled. This is only a problem for statistics.", e);
         }
     }
@@ -254,11 +254,11 @@ public class BatchedHitWriter {
                     }
                     _lock.lockInterruptibly();
                     try {
-                        _condition.await(interval.toMilliSeconds() - (currentTimeMillis() - lastUpdate), MILLISECONDS);
+                        _condition.await(interval.in(MILLISECONDS) - (currentTimeMillis() - lastUpdate), MILLISECONDS);
                     } finally {
                         _lock.unlock();
                     }
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                     currentThread().interrupt();
                 }
             }
@@ -266,8 +266,8 @@ public class BatchedHitWriter {
 
         protected void waitForSpecifiedInterval() {
             try {
-                Thread.sleep(_cycleInterval.toMilliSeconds());
-            } catch (InterruptedException ignored) {
+                Thread.sleep(_cycleInterval.in(MILLISECONDS));
+            } catch (final InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
         }
@@ -282,7 +282,7 @@ public class BatchedHitWriter {
         }
 
         protected boolean isLastUpdateLongAgo(@Nonnull Duration touchFilesNotLaterThan, @Nonnegative long lastUpdate) {
-            return lastUpdate + touchFilesNotLaterThan.toMilliSeconds() <= currentTimeMillis();
+            return lastUpdate + touchFilesNotLaterThan.in(MILLISECONDS) <= currentTimeMillis();
         }
 
     }

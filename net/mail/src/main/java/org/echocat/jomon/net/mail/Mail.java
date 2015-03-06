@@ -79,7 +79,7 @@ public class Mail {
             for (int i = 0; i < recipients.length; i++) {
                 try {
                     addAll(recipientsAsAddress, InternetAddress.parse(recipients[i], true));
-                } catch (AddressException e) {
+                } catch (final AddressException e) {
                     throw new IllegalArgumentException("Illegal recipient: " + recipients[i], e);
                 }
             }
@@ -198,7 +198,7 @@ public class Mail {
     @Nonnull
     public List<InternetAddress> getAllRecipients() {
         final List<InternetAddress> addresses = new ArrayList<>();
-        for (List<InternetAddress> that : _recipients.values()) {
+        for (final List<InternetAddress> that : _recipients.values()) {
             addresses.addAll(that);
         }
         return unmodifiableList(addresses);
@@ -206,7 +206,7 @@ public class Mail {
 
     public boolean hasRecipients() {
         boolean result = false;
-        for (List<InternetAddress> that : _recipients.values()) {
+        for (final List<InternetAddress> that : _recipients.values()) {
             if (!that.isEmpty()) {
                 result = true;
                 break;
@@ -249,7 +249,7 @@ public class Mail {
 
     public boolean hasBody() {
         boolean result = false;
-        for (String body : _body.values()) {
+        for (final String body : _body.values()) {
             if (!StringUtils.isEmpty(body)) {
                 result = true;
                 break;

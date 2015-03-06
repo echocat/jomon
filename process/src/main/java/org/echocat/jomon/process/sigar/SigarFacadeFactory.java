@@ -60,10 +60,10 @@ public class SigarFacadeFactory {
         try {
             initializeSigar();
             result = true;
-        } catch (SigarBinariesException e) {
+        } catch (final SigarBinariesException e) {
             result = false;
             LOG.info("The sigar process repository implementation is not available. Could not find the sigar binaries in the classpath or the provided sigar binaries are not compatible with your current JVM and/or operation system.", e);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             if (containsClassNotFoundException(e, "org.hyperic.sigar.")) {
                 result = false;
                 LOG.info("The sigar process repository implementation is not available. Could not find the sigar implementation in the classpath present. If you use Maven add the org.fusesource:sigar:1.6.4+ dependency. You can ignore this message if you do not want to use the sigar process implementation.");
@@ -80,7 +80,7 @@ public class SigarFacadeFactory {
         final File directory = getDirectory();
         try {
             copyFilesTo(directory);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SigarBinariesException("Could not copy " + BINARIES_PACKAGE_FILE_NAME + " to " + directory + ".", e);
         }
         setLibraryPath(directory);

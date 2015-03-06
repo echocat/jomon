@@ -35,7 +35,7 @@ public class ClusterChannelUtils {
     @Nonnull
     public static String formatNodesStatusOf(@Nonnull Iterable<? extends Node<?>> nodes) {
         final StringBuilder sb = new StringBuilder();
-        for (Node<?> node : nodes) {
+        for (final Node<?> node : nodes) {
             if (sb.length() > 0) {
                 sb.append('\n');
             }

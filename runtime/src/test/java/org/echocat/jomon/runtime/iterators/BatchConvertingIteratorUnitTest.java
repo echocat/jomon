@@ -31,7 +31,7 @@ public class BatchConvertingIteratorUnitTest {
         // Not a valid operation when iteration is not even started, yet.
         try {
             outputIterator.remove();
-        } catch (NoSuchElementException ignore) {}
+        } catch (final NoSuchElementException ignore) {}
 
         assertThat(outputIterator.hasNext(), is(true));
         for (int a = 1; a < 3 && outputIterator.hasNext() ; a++) {
@@ -48,7 +48,7 @@ public class BatchConvertingIteratorUnitTest {
         // Not a valid operation when iteration is empty
         try {
             outputIterator.next();
-        } catch (NoSuchElementException ignore) {}
+        } catch (final NoSuchElementException ignore) {}
     }
 
     @Test
@@ -59,7 +59,7 @@ public class BatchConvertingIteratorUnitTest {
             // Not a valid operation when iteration is empty
             try {
                 outputIterator.next();
-            } catch (NoSuchElementException ignore) {}
+            } catch (final NoSuchElementException ignore) {}
         }
         {
             final List<Long> input = asList(1L);
@@ -83,7 +83,7 @@ public class BatchConvertingIteratorUnitTest {
         protected Iterator<String> convert(Collection<Long> input) {
             _invokes++;
             final List<String> results = new ArrayList<>();
-            for (Long aLong : input) {
+            for (final Long aLong : input) {
                 results.add("" + aLong);
             }
             return results.iterator();

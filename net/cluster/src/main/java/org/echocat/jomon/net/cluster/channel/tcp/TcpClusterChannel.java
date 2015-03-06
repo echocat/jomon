@@ -37,6 +37,7 @@ import java.util.concurrent.locks.Lock;
 
 import static java.lang.Thread.currentThread;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.net.NetworkInterfaceUtils.assertThatContainsAddress;
 import static org.echocat.jomon.net.NetworkInterfaceUtils.findFirstAddressOf;
 import static org.echocat.jomon.net.cluster.channel.Node.ADDRESS_BASED_COMPARATOR;
@@ -65,7 +66,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                 } finally {
                     lock.unlock();
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }
@@ -144,7 +145,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                     _outbound.setInputs(remoteAddresses);
                     try {
                         _outbound.check();
-                    } catch (InterruptedException ignored) {
+                    } catch (final InterruptedException ignored) {
                         currentThread().interrupt();
                     }
                 }
@@ -160,7 +161,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
         final String result;
         if (remoteAddresses != null) {
             final StringBuilder sb = new StringBuilder();
-            for (InetSocketAddress address : remoteAddresses) {
+            for (final InetSocketAddress address : remoteAddresses) {
                 if (sb.length() > 0) {
                     sb.append(',');
                 }
@@ -179,7 +180,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
         if (remoteAddressesAsString != null) {
             addresses = new ArrayList<>();
             final String[] remoteAddressesAsStrings = StringUtils.split(remoteAddressesAsString, ",;\n\r\t", false, true);
-            for (String remoteAddressAsString : remoteAddressesAsStrings) {
+            for (final String remoteAddressAsString : remoteAddressesAsStrings) {
                 final InetSocketAddressPropertyEditor editor = new InetSocketAddressPropertyEditor();
                 editor.setAsText(remoteAddressAsString);
                 final Object value = editor.getValue();
@@ -386,7 +387,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                 _in = new ServerSocket();
                 _in.bind(_address);
                 _in.setReuseAddress(true);
-                _in.setSoTimeout((int) getSoTimeout().toMilliSeconds());
+                _in.setSoTimeout((int) getSoTimeout().in(MILLISECONDS));
                 LOG.info("Start to listen at " + _address.getAddress().getCanonicalHostName() + ":" + _address.getPort() + " for " + _service + "...");
             }
             return _in;
@@ -442,9 +443,9 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
         try {
             getOutbound().send(message);
             recordMessageSend();
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("It was not possible to send " + message + ".", e);
         }
     }
@@ -454,9 +455,9 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
         try {
             getOutbound().send(message, timeout, unit);
             recordMessageSend();
-        } catch (RuntimeException e) {
+        } catch (final RuntimeException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("It was not possible to send " + message + ".", e);
         }
     }
@@ -487,7 +488,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
             if (_outbound != null) {
                 outboundTcpNodes.set(_outbound.getOutputs());
             }
-            for (InboundTcpWorker worker : _inboundWorkers) {
+            for (final InboundTcpWorker worker : _inboundWorkers) {
                 inboundTcpNodes.add(worker.getNode());
             }
             return null;
@@ -499,7 +500,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
     protected Set<TcpNodeInfo> merge(@Nullable Object[] outboundTcpNodes, @Nullable Set<InboundTcpNode> inboundTcpNodes) {
         final Map<UUID, TcpNodeInfo> uuidToNode = new HashMap<>();
         if (outboundTcpNodes != null) {
-            for (Object plainNode : outboundTcpNodes) {
+            for (final Object plainNode : outboundTcpNodes) {
                 final OutboundTcpNode node = (OutboundTcpNode) plainNode;
                 final UUID uuid = node.getUuid();
                 TcpNodeInfo info = uuidToNode.get(uuid);
@@ -511,7 +512,7 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
             }
         }
         if (inboundTcpNodes != null) {
-            for (InboundTcpNode node : inboundTcpNodes) {
+            for (final InboundTcpNode node : inboundTcpNodes) {
                 final UUID uuid = node.getUuid();
                 TcpNodeInfo info = uuidToNode.get(uuid);
                 if (info == null) {
@@ -547,14 +548,14 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                                 try {
                                     handleIncoming(socket);
                                     success = true;
-                                } catch (SocketException e) {
+                                } catch (final SocketException e) {
                                     LOG.info("Could not accept connection from " + socket.getRemoteSocketAddress() + ". Got: " + e.getMessage());
                                 } finally {
                                     if (!success) {
                                         closeQuietly(socket);
                                     }
                                 }
-                            } catch (SocketException e) {
+                            } catch (final SocketException e) {
                                 if (!in.isClosed()) {
                                     // noinspection ThrowCaughtLocally
                                     throw e;
@@ -563,18 +564,18 @@ public class TcpClusterChannel extends NetBasedClusterChannel<UUID, TcpNode> imp
                         } else {
                             RETRY_DURATION.sleep();
                         }
-                    } catch (InterruptedException ignored) {
+                    } catch (final InterruptedException ignored) {
                         currentThread().interrupt();
-                    } catch (SocketTimeoutException ignored) {
-                    } catch (IOException e) {
+                    } catch (final SocketTimeoutException ignored) {
+                    } catch (final IOException e) {
                         LOG.warn("Got error while waiting for an incoming connection. Go to sleep and retry it after " + RETRY_DURATION + "...", e);
                         RETRY_DURATION.sleep();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOG.error("Got error while waiting for an incoming connection. Go to sleep and retry it after " + RETRY_DURATION + "...", e);
                         RETRY_DURATION.sleep();
                     }
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }

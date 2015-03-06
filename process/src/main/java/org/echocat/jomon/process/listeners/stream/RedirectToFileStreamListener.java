@@ -60,7 +60,7 @@ public class RedirectToFileStreamListener<P extends GeneratedProcess<?, ?>> exte
             synchronized (this) {
                 writeThrowingIOException(content);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not write message to file: " + _file, e);
         }
     }
@@ -71,13 +71,13 @@ public class RedirectToFileStreamListener<P extends GeneratedProcess<?, ?>> exte
             final Writer writer = getWriter();
             try {
                 writer.write(content);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 _writer = null;
                 throw e;
             }
             try {
                 writer.flush();
-            } catch (IOException ignored) {}
+            } catch (final IOException ignored) {}
             return null;
         }}, _strategy, IOException.class);
     }

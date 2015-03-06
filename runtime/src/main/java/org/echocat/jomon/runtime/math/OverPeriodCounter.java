@@ -20,6 +20,7 @@ import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class OverPeriodCounter {
 
@@ -35,8 +36,8 @@ public class OverPeriodCounter {
         if (measurePeriod.isLessThan(resolution)) {
             throw new IllegalArgumentException("The given measure period have to be larger or equal than the resolution.");
         }
-        _measurePeriod = measurePeriod.toMilliSeconds();
-        _resolution = resolution.toMilliSeconds() - (measurePeriod.toMilliSeconds() % resolution.toMilliSeconds());
+        _measurePeriod = measurePeriod.in(MILLISECONDS);
+        _resolution = resolution.in(MILLISECONDS) - (measurePeriod.in(MILLISECONDS) % resolution.in(MILLISECONDS));
         final long measurePointsCount = _measurePeriod / _resolution;
         if (measurePointsCount > MAX_NUMBER_OF_MEASURE_POINTS) {
             throw new IllegalArgumentException("The difference between measurePeriod and resolution is to high. Do not reach measurePeriod/resolution > " + MAX_NUMBER_OF_MEASURE_POINTS + ".");

@@ -69,7 +69,7 @@ public abstract class ChainedIterator<I, O> implements CloseableIterator<O>  {
         if (current instanceof AutoCloseable) {
             try {
                 ((AutoCloseable)current).close();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not close the other iterator '" + getCurrent() + "' before redirecting to the next iterator.", e);
             }
         }
@@ -93,7 +93,7 @@ public abstract class ChainedIterator<I, O> implements CloseableIterator<O>  {
         if (current instanceof AutoCloseable) {
             try {
                 ((AutoCloseable)current).close();
-            } catch (Exception ignored) {}
+            } catch (final Exception ignored) {}
         }
     }
 
@@ -101,7 +101,7 @@ public abstract class ChainedIterator<I, O> implements CloseableIterator<O>  {
     protected void finalize() throws Throwable {
         try {
             close();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.warn("Could not clean close the iterator '" + this + "'. "
                 + " But now this object will be cleaned by the garbage collector.", e);
         } finally {

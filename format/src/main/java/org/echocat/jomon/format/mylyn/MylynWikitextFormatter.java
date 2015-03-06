@@ -64,7 +64,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
         _setBuilder = _markupParserType != null && _documentBuilderType != null ? loadMethod(_markupParserType, "setBuilder", _documentBuilderType) : null;
         _parse = _markupParserType != null ? loadMethod(_markupParserType, "parse", Reader.class, boolean.class) : null;
 
-        _validLoaded = _documentBuilderType != null && _markupLanguageType != null && _markupLanguageType != null && _setMarkupLanguage != null && _setBuilder != null && _parse != null;
+        _validLoaded = _documentBuilderType != null && _markupLanguageType != null && _setMarkupLanguage != null && _setBuilder != null && _parse != null;
     }
 
     public MylynWikitextFormatter() {
@@ -91,7 +91,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
     protected void formatWith(@Nonnull Reader reader, @Nonnull Object markupParser) throws IOException {
         try {
             _parse.invoke(markupParser, reader, false);
-        } catch (InvocationTargetException e) {
+        } catch (final InvocationTargetException e) {
             final Throwable target = e.getTargetException();
             if (target instanceof IOException) {
                 //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
@@ -105,7 +105,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
             } else {
                 throw new RuntimeException("Could not parse.", target != null ? target : e);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not parse.", e);
         }
     }
@@ -117,7 +117,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
             _setMarkupLanguage.invoke(markupParser, markupLanguage);
             _setBuilder.invoke(markupParser, documentBuilder);
             return markupParser;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("Could not create parser.", e);
         }
     }
@@ -135,7 +135,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
         }
         try {
             return type.newInstance();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create a new instance of " + type.getName() + " to handle source of format " + format + ".", e);
         }
     }
@@ -149,7 +149,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
         try {
             final Constructor<?> constructor = type.getConstructor(Writer.class);
             return constructor.newInstance(writer);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create a new instance of " + type.getName() + " to handle target of format " + format + ".", e);
         }
     }
@@ -173,7 +173,7 @@ public class MylynWikitextFormatter extends FormatterSupport {
     protected static Method loadMethod(@Nonnull Class<?> from, @Nonnull String name, @Nullable Class<?>... parameterTypes) {
         try {
             return from.getMethod(name, parameterTypes);
-        } catch (NoSuchMethodException ignored) {
+        } catch (final NoSuchMethodException ignored) {
             throw new IllegalStateException("Could not find the method " + name + "(" + join(parameterTypes)  + ") at " + from.getName() + ".");
         }
     }

@@ -51,7 +51,7 @@ public class ResourceType {
             enrichWithValuesFromProperties(types);
             enrichWithValuesFromStaticFields(types);
             SYSTEM_TYPES = unmodifiableSet(types);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not retrieve default types.", e);
         }
     }
@@ -64,14 +64,14 @@ public class ResourceType {
             try (final InputStream is = resourceUrl.openStream()) {
                 properties.load(is);
             }
-            for (Entry<Object, Object> keyAndValue : properties.entrySet()) {
+            for (final Entry<Object, Object> keyAndValue : properties.entrySet()) {
                 types.add(new ResourceType(keyAndValue.getKey().toString(), keyAndValue.getValue().toString()));
             }
         }
     }
 
     private static void enrichWithValuesFromStaticFields(@Nonnull Set<ResourceType> types) throws Exception {
-        for (Field field : ResourceType.class.getDeclaredFields()) {
+        for (final Field field : ResourceType.class.getDeclaredFields()) {
             final int modifiers = field.getModifiers();
             if (isStatic(modifiers) && isFinal(modifiers) && isPublic(modifiers) && ResourceType.class.equals(field.getType())) {
                 types.add((ResourceType) field.get(null));
@@ -91,7 +91,7 @@ public class ResourceType {
     private static MimeType parseMimeType(@Nonnull String rawMimeType) throws IllegalArgumentException {
         try {
             return new MimeType(rawMimeType);
-        } catch (MimeTypeParseException e) {
+        } catch (final MimeTypeParseException e) {
             throw new IllegalArgumentException("Could not parse: " + rawMimeType, e);
         }
     }

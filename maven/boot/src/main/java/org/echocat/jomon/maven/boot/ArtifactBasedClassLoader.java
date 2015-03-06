@@ -44,10 +44,10 @@ public class ArtifactBasedClassLoader extends URLClassLoader {
     @Nonnull
     private Set<Artifact> initArtifacts(@Nonnull ArtifactWithDependencies... artifacts) throws Exception {
         final Set<Artifact> result = initArtifacts(asList(artifacts));
-        for (Artifact artifact : result) {
+        for (final Artifact artifact : result) {
             try {
                 addURL(artifact.getFile().toURI().toURL());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new ArtifactResolutionException("Could not create file url for artifact.", artifact, e);
             }
         }
@@ -62,7 +62,7 @@ public class ArtifactBasedClassLoader extends URLClassLoader {
     }
 
     private void initArtifacts(@Nonnull Iterable<ArtifactWithDependencies> artifacts, @Nonnull Set<Artifact> alreadyUsedArtifacts) throws Exception {
-        for (ArtifactWithDependencies artifact : artifacts) {
+        for (final ArtifactWithDependencies artifact : artifacts) {
             alreadyUsedArtifacts.add(artifact);
             alreadyUsedArtifacts.addAll(artifact.getDependencies());
         }
@@ -73,7 +73,7 @@ public class ArtifactBasedClassLoader extends URLClassLoader {
         Class<?> result;
         try {
             result = super.loadClass(name);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = _parent.loadClass(name);
         }
         return result;

@@ -102,7 +102,7 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
     protected RandomAccessFile openIdsFile(@Nonnull File file) {
         try {
             return new RandomAccessFile(file, "rw");
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new IllegalArgumentException("Could not open ids file (" + file + ").", e);
         }
     }
@@ -133,7 +133,7 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
         try {
             _access.seek(position);
             writeIdToChunk(id);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not write id " + id + " at position " + position + " in " + _access + ".", e);
         }
         _processIdToFilePosition.put(id, position);
@@ -169,12 +169,12 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
                         final ID id = readIdFromChunk();
                         result.add(id);
                         hasNext = true;
-                    } catch (EOFException ignored) {
+                    } catch (final EOFException ignored) {
                         hasNext = false;
                     }
                 } while (hasNext);
                 return unmodifiableSet(result);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Could not read stored ids from " + _access + ".", e);
             }
         }
@@ -193,7 +193,7 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
             try {
                 _access.seek(position);
                 writeZeros(_idSerializer.getChunkSize(), _access);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Could not delete id " + id + " at position " + position + " from " + _access + ".", e);
             }
             _processIdToFilePosition.remove(id);
@@ -211,7 +211,7 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
         } else {
             try {
                 result = _access.length();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new RuntimeException("Could not retrieve the length of " + _access + ".", e);
             }
         }
@@ -247,7 +247,7 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
                         try {
                             Long.valueOf(name);
                             result = true;
-                        } catch (NumberFormatException ignored) {
+                        } catch (final NumberFormatException ignored) {
                             result = false;
                         }
                         return result;
@@ -309,9 +309,9 @@ public class GeneratedProcessRegistry<ID, P extends GeneratedProcess<?, ID>> imp
             try {
                 _process.waitFor();
                 unregister(_process);
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
-            } catch (Exception ignored) {}
+            } catch (final Exception ignored) {}
         }
     }
 }

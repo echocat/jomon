@@ -169,7 +169,7 @@ public class CacheListenerInvoker implements PutCacheListener, GetCacheListener,
     protected <T extends CacheListener> T[] filter(@Nonnull Class<T> requiredType, @Nullable Collection<CacheListener> all) {
         final List<T> result = new ArrayList<>();
         if (all != null) {
-            for (CacheListener listener : all) {
+            for (final CacheListener listener : all) {
                 if (requiredType.isInstance(listener)) {
                     result.add(requiredType.cast(listener));
                 }

@@ -152,7 +152,7 @@ public class JschSshGeneratedProcess implements SshGeneratedProcess {
                 out.flush();
                 waitFor();
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         } finally {
             kill();
         }
@@ -163,7 +163,7 @@ public class JschSshGeneratedProcess implements SshGeneratedProcess {
         try {
             try {
                 _exec.disconnect();
-            } catch (Exception ignored) {
+            } catch (final Exception ignored) {
             }
         } finally {
             if (_closeContext) {

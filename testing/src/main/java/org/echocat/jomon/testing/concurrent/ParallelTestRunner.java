@@ -37,7 +37,7 @@ public class ParallelTestRunner {
         public void run() {
             try {
                 _worker.run();
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 _throwable = t;
             }
         }
@@ -60,16 +60,16 @@ public class ParallelTestRunner {
     public void run() {
         final List<WorkerThread> threads = new ArrayList<>(_workers.size());
         int i = 1;
-        for (Worker worker : _workers) {
+        for (final Worker worker : _workers) {
             final WorkerThread thread = new WorkerThread("WorkerThread #" + i, worker);
             ++i;
             threads.add(thread);
             thread.start();
         }
-        for (WorkerThread thread : threads) {
+        for (final WorkerThread thread : threads) {
             try {
                 thread.join();
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 interrupt(threads);
             }
             final Throwable e = thread.getThrowable();
@@ -86,7 +86,7 @@ public class ParallelTestRunner {
     }
 
     private void interrupt(List<WorkerThread> threads) {
-        for (WorkerThread thread : threads) {
+        for (final WorkerThread thread : threads) {
             thread.interrupt();
         }
     }

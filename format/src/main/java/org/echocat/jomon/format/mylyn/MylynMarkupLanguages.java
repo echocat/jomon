@@ -50,7 +50,7 @@ public class MylynMarkupLanguages extends MylynAssignmentsSupport<Source.Format>
         Class<?> result;
         try {
             result = classLoader.loadClass(MARKUP_LANGUAGE_CLASS_NAME);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = null;
         }
         return result;

@@ -154,7 +154,7 @@ public class HttpUtils {
         final String charsetName = mimeType != null ? mimeType.getParameter("charset") : null;
         try {
             return charsetName != null ? forName(charsetName) : null;
-        } catch (UnsupportedCharsetException e) {
+        } catch (final UnsupportedCharsetException e) {
             throw new IOException("In contentType '" + mimeType + "' was an unsupported charset provided.", e);
         }
     }
@@ -166,7 +166,7 @@ public class HttpUtils {
         final String contentType = contentTypeHeader != null ? contentTypeHeader.getValue() : null;
         try {
             mimeType = contentType != null ? new MimeType(contentType) : null;
-        } catch (MimeTypeParseException e) {
+        } catch (final MimeTypeParseException e) {
             throw new IOException("Illegal contentType: " + contentType, e);
         }
         return mimeType;
@@ -176,7 +176,7 @@ public class HttpUtils {
     public static String urlDecode(@Nonnull String encodedString) {
         try {
             return URLDecoder.decode(encodedString, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             // Should never happen.
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -186,7 +186,7 @@ public class HttpUtils {
     public static String encodeUrl(@Nonnull String s) {
         try {
             return encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             // Should never happen.
             throw new RuntimeException("UTF-8 not supported.", e);
         }
@@ -202,7 +202,7 @@ public class HttpUtils {
         final HttpPost httpPost = new HttpPost(uri);
         final List<NameValuePair> pairs = new ArrayList<>(parameters != null ? parameters.size() : 0);
         if (parameters != null) {
-            for (Entry<String, String> keyToValue : parameters.entrySet()) {
+            for (final Entry<String, String> keyToValue : parameters.entrySet()) {
                 pairs.add(new BasicNameValuePair(keyToValue.getKey(), keyToValue.getValue()));
             }
         }
@@ -222,7 +222,7 @@ public class HttpUtils {
             final StringBuilder sb = new StringBuilder();
             sb.append(uri);
             boolean questionMarkAdded = uri.getQuery() != null;
-            for (Entry<String, String> keyToValue : parameters.entrySet()) {
+            for (final Entry<String, String> keyToValue : parameters.entrySet()) {
                 if (questionMarkAdded) {
                     sb.append('&');
                 } else {

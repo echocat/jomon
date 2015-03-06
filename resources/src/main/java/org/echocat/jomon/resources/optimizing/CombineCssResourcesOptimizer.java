@@ -47,7 +47,7 @@ public class CombineCssResourcesOptimizer implements ResourcesOptimizer {
         final Collection<Resource> outputs = new ArrayList<>();
         try (final ResourceGenerator generator = new MemoryResourceGenerator(css, "/combined/")) {
             boolean cssWritten = false;
-            for (Resource input : inputs) {
+            for (final Resource input : inputs) {
                 if (css.equals(input.getType()) && !context.isFeatureEnabled(SKIP_CSS_COMBINATION)) {
                     cssWritten = true;
                     try (final InputStream inputStream = input.openInputStream()) {

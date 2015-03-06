@@ -74,7 +74,7 @@ public class LazyEntry<K, V> extends Entry.BaseImpl<K, V> implements WritableEnt
         try {
             _value = _producer.produce(getKey());
             _valueState = produced;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             _producingException = e;
             _valueState = producingFailed;
         } finally {
@@ -88,7 +88,7 @@ public class LazyEntry<K, V> extends Entry.BaseImpl<K, V> implements WritableEnt
                         try {
                             // noinspection unchecked
                             ((PostProducing) _producer).postProducing(getKey(), _value);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             _producingException = e;
                             _valueState = producingFailed;
                         }
@@ -108,7 +108,7 @@ public class LazyEntry<K, V> extends Entry.BaseImpl<K, V> implements WritableEnt
                 if (_valueState == producing) {
                     LOG.warn("Still waiting for valueProducer " + _producer + " to produce value for key " + getKey() + "...");
                 }
-            } catch (InterruptedException e) {
+            } catch (final InterruptedException e) {
                 Thread.currentThread().interrupt();
                 throw new GotInterruptedException("Got interrupted while waiting for production of cache value for key " + getKey() + ".", e);
             }

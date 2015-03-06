@@ -49,7 +49,7 @@ public class JschSsh extends Ssh {
         JschSshSessionGenerator result;
         try {
             result = new JschSshSessionGenerator();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result = null;
             checkException(e, SshSessionGenerator.class);
         }
@@ -61,7 +61,7 @@ public class JschSsh extends Ssh {
         JschSshProcessRepository result;
         try {
             result = new JschSshProcessRepository(sessionGenerator);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result = null;
             checkException(e, SshProcessRepository.class);
         }

@@ -46,7 +46,7 @@ public class ArtifactManifest extends Manifest {
             if (mainClassName != null) {
                 try {
                     result = classLoader.loadClass(mainClassName);
-                } catch (ClassNotFoundException e) {
+                } catch (final ClassNotFoundException e) {
                     //noinspection ThrowInsideCatchBlockWhichIgnoresCaughtException
                     throw new IllegalStateException("The mainClass '" + mainClassName + "' specified in manifest of " + _artifact + " could not be found in " + classLoader + ".");
                 }

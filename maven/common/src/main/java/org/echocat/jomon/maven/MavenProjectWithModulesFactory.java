@@ -52,7 +52,7 @@ public class MavenProjectWithModulesFactory {
     @Nonnull
     protected MavenProjectWithModules resultsToProject(@Nonnull File basePomFile, @Nonnull List<ProjectBuildingResult> results) throws Exception {
         final Map<MavenProject, MavenProjectWithModules> projectToProjectWithModules = new HashMap<>();
-        for (ProjectBuildingResult result : results) {
+        for (final ProjectBuildingResult result : results) {
             if (!result.getProblems().isEmpty()) {
                 throw new ProjectBuildingException(results);
             }
@@ -64,7 +64,7 @@ public class MavenProjectWithModulesFactory {
 
     private MavenProjectWithModules selectBaseProject(File by, Map<MavenProject, MavenProjectWithModules> from) throws Exception {
         MavenProjectWithModules result = null;
-        for (Entry<MavenProject, MavenProjectWithModules> projectAndProjectWithModules : from.entrySet()) {
+        for (final Entry<MavenProject, MavenProjectWithModules> projectAndProjectWithModules : from.entrySet()) {
             final MavenProject project = projectAndProjectWithModules.getKey();
             if (project.getFile() != null && by.equals(project.getFile().getCanonicalFile())) {
                 result = projectAndProjectWithModules.getValue();
@@ -79,11 +79,11 @@ public class MavenProjectWithModulesFactory {
 
     @Nonnull
     protected void resolveModulesFor(@Nonnull MavenProjectWithModules of, @Nonnull ProjectBuildingResult forResult, @Nonnull List<ProjectBuildingResult> fromResults, @Nonnull Map<MavenProject, MavenProjectWithModules> withProjectToProjectWithModules) throws Exception {
-        for (ProjectBuildingResult result : fromResults) {
+        for (final ProjectBuildingResult result : fromResults) {
             if (!result.getProblems().isEmpty()) {
                 throw new ProjectBuildingException(fromResults);
             }
-            for (String moduleName : forResult.getProject().getModules()) {
+            for (final String moduleName : forResult.getProject().getModules()) {
                 final File pomFile = result.getPomFile();
                 final File expectedFile = new File(forResult.getPomFile().getParentFile(), moduleName + File.separator + pomFile.getName());
                 if (expectedFile.getCanonicalFile().equals(pomFile.getCanonicalFile())) {

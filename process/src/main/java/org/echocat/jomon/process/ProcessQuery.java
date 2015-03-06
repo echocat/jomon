@@ -46,7 +46,7 @@ public abstract class ProcessQuery<E, ID, T extends ProcessQuery<E, ID, T>> impl
     @Nonnull
     public T withIds(@Nonnull Iterable<ID> ids) {
         final List<ID> idsAsList = new ArrayList<>();
-        for (ID id : ids) {
+        for (final ID id : ids) {
             idsAsList.add(id);
         }
         return withIds(idsAsList);
@@ -74,7 +74,7 @@ public abstract class ProcessQuery<E, ID, T extends ProcessQuery<E, ID, T>> impl
     public T withCommandLineLike(@Nonnull String commandLineGlobPattern) {
         try {
             return withCommandLineLike(new Glob(commandLineGlobPattern));
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new IllegalArgumentException("Illegal pattern: " + commandLineGlobPattern, e);
         }
     }

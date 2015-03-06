@@ -25,7 +25,7 @@ public class Wrapper implements WrapperListener {
     public Integer start(String[] args) {
         try {
             MavenBoot.main(args);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Fatal error in main thread.", e);
         }
         return null;

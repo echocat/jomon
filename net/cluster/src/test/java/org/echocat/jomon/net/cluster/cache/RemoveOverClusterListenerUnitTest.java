@@ -34,8 +34,6 @@ import static org.echocat.jomon.net.cluster.cache.CacheClusterChannelConstants.c
 import static org.echocat.jomon.net.cluster.cache.CacheClusterChannelConstants.removeCommand;
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.is;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class RemoveOverClusterListenerUnitTest extends ClusterListenerTestSupport {

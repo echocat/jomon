@@ -41,7 +41,7 @@ public class CombineJavaScriptResourcesOptimizer implements ResourcesOptimizer {
         final Collection<Resource> outputs = new ArrayList<>();
         try (final ResourceGenerator generator = new MemoryResourceGenerator(js, "/combined/")) {
             boolean jsWritten = false;
-            for (Resource input : inputs) {
+            for (final Resource input : inputs) {
                 if (js.equals(input.getType()) && !context.isFeatureEnabled(SKIP_JAVA_SCRIPT_COMBINATION)) {
                     jsWritten = true;
                     try (final InputStream inputStream = input.openInputStream()) {

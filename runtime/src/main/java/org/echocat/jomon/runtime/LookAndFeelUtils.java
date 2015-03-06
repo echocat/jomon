@@ -22,7 +22,7 @@ public class LookAndFeelUtils {
     public static void tryToSetSystemLookAndFeel() {
         try {
             setLookAndFeel(getSystemLookAndFeelClassName());
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
     }
 
     private LookAndFeelUtils() {}

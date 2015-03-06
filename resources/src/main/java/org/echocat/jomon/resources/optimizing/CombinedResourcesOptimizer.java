@@ -83,7 +83,7 @@ public class CombinedResourcesOptimizer extends CachedResourcesOptimizer {
     protected Collection<Resource> preProcess(@Nonnull Collection<Resource> inputs, @Nonnull OptimizationContext context) throws Exception {
         Collection<Resource> outputs = inputs;
         if (_preResourcesOptimizers != null) {
-            for (ResourcesOptimizer preResourcesOptimizer : _preResourcesOptimizers) {
+            for (final ResourcesOptimizer preResourcesOptimizer : _preResourcesOptimizers) {
                 outputs = preResourcesOptimizer.optimize(outputs, context);
             }
         }
@@ -93,9 +93,9 @@ public class CombinedResourcesOptimizer extends CachedResourcesOptimizer {
     @Nonnull
     protected Collection<Resource> process(@Nonnull Collection<Resource> inputs, @Nonnull OptimizationContext context) throws Exception {
         final Collection<Resource> outputs = new ArrayList<>();
-        for (Resource input : inputs) {
+        for (final Resource input : inputs) {
             Resource resource = input;
-            for (ResourceOptimizer resourceOptimizer : _resourceOptimizers) {
+            for (final ResourceOptimizer resourceOptimizer : _resourceOptimizers) {
                 if (resourceOptimizer.isSupporting(resource.getType())) {
                     resource = resourceOptimizer.optimize(resource, context);
                 }
@@ -109,7 +109,7 @@ public class CombinedResourcesOptimizer extends CachedResourcesOptimizer {
     protected Collection<Resource> postProcess(@Nonnull Collection<Resource> inputs, @Nonnull OptimizationContext context) throws Exception {
         Collection<Resource> outputs = inputs;
         if (_postResourcesOptimizers != null) {
-            for (ResourcesOptimizer postResourcesOptimizer : _postResourcesOptimizers) {
+            for (final ResourcesOptimizer postResourcesOptimizer : _postResourcesOptimizers) {
                 outputs = postResourcesOptimizer.optimize(outputs, context);
             }
         }
@@ -118,16 +118,16 @@ public class CombinedResourcesOptimizer extends CachedResourcesOptimizer {
 
     protected void rebuildTypes() {
         final Set<ResourceType> types = new HashSet<>();
-        for (ResourceOptimizer resourceOptimizer : _resourceOptimizers) {
+        for (final ResourceOptimizer resourceOptimizer : _resourceOptimizers) {
             types.addAll(resourceOptimizer.getSupportedResourceTypes());
         }
         if (_preResourcesOptimizers != null) {
-            for (ResourcesOptimizer preResourcesOptimizer : _preResourcesOptimizers) {
+            for (final ResourcesOptimizer preResourcesOptimizer : _preResourcesOptimizers) {
                 types.addAll(preResourcesOptimizer.getSupportedResourceTypes());
             }
         }
         if (_postResourcesOptimizers != null) {
-            for (ResourcesOptimizer postResourcesOptimizer : _postResourcesOptimizers) {
+            for (final ResourcesOptimizer postResourcesOptimizer : _postResourcesOptimizers) {
                 types.addAll(postResourcesOptimizer.getSupportedResourceTypes());
             }
         }

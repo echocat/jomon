@@ -71,7 +71,7 @@ public abstract class LocalProcessDaemon<R extends LocalProcessDaemonRequirement
                 if (_temporaryDirectory != null) {
                     FileUtils.deleteDirectory(_temporaryDirectory);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.warn("Could not delete the temporary directory '" + _temporaryDirectory + "' with the data values of the process. The files will remain on the disk and still will use disk space. You have to delete it manually.", e);
             } finally {
                 _temporaryDirectory = null;

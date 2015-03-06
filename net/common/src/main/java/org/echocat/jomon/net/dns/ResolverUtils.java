@@ -93,7 +93,7 @@ public class ResolverUtils {
         if (lookup != null && LOOKUP_RESOLVER_FIELD != null) {
             try {
                 resolver = (Resolver) LOOKUP_RESOLVER_FIELD.get(lookup);
-            } catch (IllegalAccessException ignored) {}
+            } catch (final IllegalAccessException ignored) {}
         }
         return resolver;
     }

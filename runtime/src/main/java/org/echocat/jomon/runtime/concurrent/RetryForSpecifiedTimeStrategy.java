@@ -81,7 +81,7 @@ public class RetryForSpecifiedTimeStrategy<T> extends BaseRetryingStrategy<T, Re
                     } else {
                         leftDuration.sleep();
                     }
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                     currentThread().interrupt();
                 }
             }

@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class Daemon implements AutoCloseable {
@@ -109,7 +110,7 @@ public class Daemon implements AutoCloseable {
         try {
             final ObjectName objectName = createObjectName();
             M_BEAN_SERVER.registerMBean(new MBeanDaemonWrapper(this), objectName);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.warn("Could not register " + _task + " in JMX. This daemon will be available but is not manageable over JMX.", e);
         }
         if (_initiallyActive) {
@@ -131,7 +132,7 @@ public class Daemon implements AutoCloseable {
             try {
                 final ObjectName objectName = createObjectName();
                 M_BEAN_SERVER.unregisterMBean(objectName);        
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 LOG.warn("Could not unregister " + _task + " in JMX. This daemon will be destroy but is still visitable over JMX.", e);
             }
         }
@@ -160,7 +161,7 @@ public class Daemon implements AutoCloseable {
                                         LOG.info("Still wait for termination of task '" + _task + "'...");
                                     }
                                 }
-                            } catch (InterruptedException ignored) {
+                            } catch (final InterruptedException ignored) {
                                 currentThread().interrupt();
                                 LOG.debug("Could not wait for termination of '" + _task + "'. This thread was interrupted.");
                             }
@@ -206,7 +207,7 @@ public class Daemon implements AutoCloseable {
         if (_minStartDelay == null) {
             result = startDelayInMillis;
         } else {
-            final long n = startDelayInMillis.toMilliSeconds() - _minStartDelay.toMilliSeconds() + 1;
+            final long n = startDelayInMillis.in(MILLISECONDS) - _minStartDelay.in(MILLISECONDS) + 1;
             final long plainValue = nextPositiveValue() % n;
             result = _minStartDelay.plus(plainValue);
         }
@@ -267,10 +268,10 @@ public class Daemon implements AutoCloseable {
         public void run() {
             try {
                 if (_initialDelay != null) {
-                    _nextExecution.set(new Date(System.currentTimeMillis() + _initialDelay.toMilliSeconds()));
+                    _nextExecution.set(new Date(System.currentTimeMillis() + _initialDelay.in(MILLISECONDS)));
                     _initialDelay.sleep();
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             } finally {
                 _nextExecution.set(null);
@@ -279,12 +280,12 @@ public class Daemon implements AutoCloseable {
                 boolean success = false;
                 try {
                     Daemon.this.run();
-                    _nextExecution.set(new Date(System.currentTimeMillis() + _delayBetweenEachRun.toMilliSeconds()));
+                    _nextExecution.set(new Date(System.currentTimeMillis() + _delayBetweenEachRun.in(MILLISECONDS)));
                     _delayBetweenEachRun.sleep();
                     success = true;
-                } catch (InterruptedException ignored) {
+                } catch (final InterruptedException ignored) {
                     currentThread().interrupt();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     LOG.error("Task " + _task + " failed with an error. This daemon will now stop and this task will not be executed again.", e);
                     if (e instanceof Error) {
                         throw (Error)e;

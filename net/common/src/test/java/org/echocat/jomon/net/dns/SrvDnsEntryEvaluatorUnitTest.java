@@ -75,10 +75,11 @@ public class SrvDnsEntryEvaluatorUnitTest {
         setupPrimaryZoneOf(_dnsServer);
         try {
             lookup("unknown-service", tcp, DOMAIN);
-        } catch (final NoSuchSrvRecordException expected) {}
+        } catch (final NoSuchSrvRecordException ignored) {}
         try {
             lookup(SERVICE_NAME, tcp, "unknown-domain.test.");
         } catch (final UnknownHostException expected) {
+            // noinspection InstanceofCatchParameter
             assertThat(expected instanceof NoSuchSrvRecordException, is(false));
         }
     }
@@ -87,7 +88,7 @@ public class SrvDnsEntryEvaluatorUnitTest {
     public void testIllegalServerLookup() throws Exception {
         try {
             createEvaluator(new InetSocketAddress(InetAddress.getLocalHost(), 6666)).lookup(SERVICE_NAME, tcp, DOMAIN);
-        } catch (final ServiceTemporaryUnavailableException expected) {}
+        } catch (final ServiceTemporaryUnavailableException ignored) {}
     }
 
     protected static void setupPrimaryZoneOf(@Nonnull DnsServer dnsServer) throws IOException {

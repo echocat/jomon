@@ -71,7 +71,7 @@ public class TestPom extends TemporaryFolder {
         final Method method;
         try {
             method = description.getTestClass().getDeclaredMethod(description.getMethodName());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new RuntimeException(description + " does not contain a valid test definition.", e);
         }
         return method;

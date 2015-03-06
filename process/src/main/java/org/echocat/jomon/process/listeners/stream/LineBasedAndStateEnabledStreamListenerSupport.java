@@ -84,7 +84,7 @@ public abstract class LineBasedAndStateEnabledStreamListenerSupport<P extends Ge
         Integer result;
         try {
             result = process.exitValue();
-        } catch (IllegalStateException ignored) {
+        } catch (final IllegalStateException ignored) {
             result = null;
         }
         return result;

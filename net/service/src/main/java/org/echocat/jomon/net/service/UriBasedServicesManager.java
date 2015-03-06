@@ -46,7 +46,7 @@ public abstract class UriBasedServicesManager extends SrvEntryBasedServicesManag
         InetSocketAddress result;
         try {
             result = new InetSocketAddress(getByName(host), port);
-        } catch (UnknownHostException ignored) {
+        } catch (final UnknownHostException ignored) {
             result = createUnresolved(host, port);
         }
         return result;

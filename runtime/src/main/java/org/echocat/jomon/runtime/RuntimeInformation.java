@@ -36,7 +36,7 @@ public class RuntimeInformation {
         InetAddress result;
         try {
             result = InetAddress.getLocalHost();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result = null;
             LOG.warn("Could not resolve local host.", e);
         }
@@ -48,7 +48,7 @@ public class RuntimeInformation {
         String result;
         try {
             result = host.getCanonicalHostName();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             result = null;
             LOG.warn("Could not resolve host name..", e);
         }

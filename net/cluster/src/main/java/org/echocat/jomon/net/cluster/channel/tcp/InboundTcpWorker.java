@@ -56,10 +56,10 @@ public class InboundTcpWorker extends Thread implements AutoCloseable {
                 _reader.read(message);
                 _node.recordInbound();
             }
-        } catch (InterruptedIOException ignored) {
+        } catch (final InterruptedIOException ignored) {
             currentThread().interrupt();
-        } catch (EOFException ignored) {
-        } catch (Exception e) {
+        } catch (final EOFException ignored) {
+        } catch (final Exception e) {
             if (!(e instanceof IOException) || _node.isConnected()) {
                 LOG.warn("Got unexpected error while handling connection from " + _node.getAddress() + ". Close this connection now.", e);
             }

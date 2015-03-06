@@ -43,13 +43,13 @@ public class ConsumerUnitTest {
     public void testConsumeAndThrowExceptionWithWrongParameters() throws Exception {
         try {
             consumeAndThrow(OnlyWithEmptyConstructorException.class, "foo").consume(null);
-        } catch (final IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
         try {
             consumeAndThrow(OnlyWithIntegerConstructorException.class).consume(null);
-        } catch (final IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
         try {
             consumeAndThrow(OnlyWithIntegerConstructorException.class, "foo").consume(null);
-        } catch (final IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
     }
 
 

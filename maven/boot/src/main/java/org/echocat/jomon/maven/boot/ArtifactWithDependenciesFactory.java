@@ -33,12 +33,12 @@ public class ArtifactWithDependenciesFactory {
     static {
         try {
             EQUALS_METHOD = Object.class.getDeclaredMethod("equals", Object.class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Could not find " + Object.class.getName() + ".equals().", e);
         }
         try {
             GET_DEPENDENCIES_METHOD = ArtifactWithDependencies.class.getDeclaredMethod("getDependencies");
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Could not find " + ArtifactWithDependencies.class.getName() + ".getDependencies().", e);
         }
         if (!Set.class.equals(GET_DEPENDENCIES_METHOD.getReturnType())) {
@@ -46,7 +46,7 @@ public class ArtifactWithDependenciesFactory {
         }
         try {
             GET_DELEGATE_METHOD = ProxyHelper.class.getDeclaredMethod("getDelegate");
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new IllegalStateException("Could not find " + ProxyHelper.class.getName() + ".getDelegate().", e);
         }
         if (!Artifact.class.equals(GET_DELEGATE_METHOD.getReturnType())) {

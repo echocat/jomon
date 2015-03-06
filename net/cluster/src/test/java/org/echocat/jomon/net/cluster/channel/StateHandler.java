@@ -58,7 +58,7 @@ public class StateHandler<C extends ClusterChannel<?, ?>> implements MessageHand
         AssertionError lastAssertionError = null;
         try {
             finished = condition.check(null);
-        } catch (AssertionError e) {
+        } catch (final AssertionError e) {
             lastAssertionError = e;
         }
         while (next.isGreaterThan(0) && !finished) {
@@ -66,7 +66,7 @@ public class StateHandler<C extends ClusterChannel<?, ?>> implements MessageHand
             if (channel != null) {
                 try {
                     finished = condition.check(channel);
-                } catch (AssertionError e) {
+                } catch (final AssertionError e) {
                     lastAssertionError = e;
                 }
             }
@@ -75,7 +75,7 @@ public class StateHandler<C extends ClusterChannel<?, ?>> implements MessageHand
         if (!finished) {
             try {
                 finished = condition.check(null);
-            } catch (AssertionError e) {
+            } catch (final AssertionError e) {
                 lastAssertionError = e;
             }
         }
@@ -90,15 +90,15 @@ public class StateHandler<C extends ClusterChannel<?, ?>> implements MessageHand
 
     @Nonnull
     protected Duration getLeftDuration(@Nonnull Duration maxDuration, @Nonnull StopWatch basedOn) {
-        final long current = basedOn.getCurrentDuration().toMilliSeconds();
-        final long max = maxDuration.toMilliSeconds();
+        final long current = basedOn.getCurrentDuration().in(MILLISECONDS);
+        final long max = maxDuration.in(MILLISECONDS);
         return new Duration(max > current ? max - current : 0);
     }
 
     protected void put(@Nonnull ClusterChannel<?, ?> channel) {
         try {
             _events.put(_expectedChannelType.cast(channel));
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new GotInterruptedException(e);
         }

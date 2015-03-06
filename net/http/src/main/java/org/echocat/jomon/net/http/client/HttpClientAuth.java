@@ -34,7 +34,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @SuppressWarnings("ClassWithTooManyConstructors")
 public class HttpClientAuth {
 
-    protected static final Pattern PLAIN_PARSE_PATTERN = Pattern.compile("([a-zA-Z0-9]+:\\/\\/[^&]+)&([^&]*)&([^&]*)(?:&(.*)|)");
+    protected static final Pattern PLAIN_PARSE_PATTERN = Pattern.compile("([a-zA-Z0-9]+://[^&]+)&([^&]*)&([^&]*)(?:&(.*)|)");
 
     private final AuthScope _scope;
     private final HttpHost _host;
@@ -57,7 +57,7 @@ public class HttpClientAuth {
         try {
             final URI uri = new URI(matcher.group(1));
             return HttpClientUtils.toHttpHost(uri);
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Could not parse uri part of: " + matcher.group(), e);
         }
     }

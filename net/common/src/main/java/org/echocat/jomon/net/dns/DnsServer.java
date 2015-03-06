@@ -43,9 +43,9 @@ public class DnsServer implements AutoCloseable {
     static final int FLAG_DNSSECOK = 1;
     static final int FLAG_SIGONLY = 2;
 
-    private Map<Integer, Cache> _caches;
-    private Map<Name, Zone> _znames;
-    private Map<Name, TSIG> _tsigs;
+    private final Map<Integer, Cache> _caches;
+    private final Map<Name, Zone> _znames;
+    private final Map<Name, TSIG> _tsigs;
 
     private static String addrport(InetAddress addr, int port) {
         return addr.getHostAddress() + "#" + port;
@@ -310,7 +310,7 @@ public class DnsServer implements AutoCloseable {
             final Name newname;
             try {
                 newname = name.fromDNAME(dname);
-            } catch (NameTooLongException ignored) {
+            } catch (final NameTooLongException ignored) {
                 return Rcode.YXDOMAIN;
             }
             rrset = new RRset(new CNAMERecord(name, dclass, 0, newname));
@@ -366,7 +366,7 @@ public class DnsServer implements AutoCloseable {
                 dataOut.writeShort(out.length);
                 dataOut.write(out);
             }
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             LOG.info("AXFR failed");
         }
         closeQuietly(s);
@@ -475,7 +475,7 @@ public class DnsServer implements AutoCloseable {
         final Header header;
         try {
             header = new Header(in);
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             return null;
         }
         return buildErrorMessage(header, Rcode.FORMERR, null);
@@ -506,18 +506,18 @@ public class DnsServer implements AutoCloseable {
                 if (response == null) {
                     return;
                 }
-            } catch (IOException ignored) {
+            } catch (final IOException ignored) {
                 response = formerrMessage(in);
             }
             dataOut = new DataOutputStream(s.getOutputStream());
             dataOut.writeShort(response.length);
             dataOut.write(response);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.warn("TCPclient(" + addrport(s.getLocalAddress(), s.getLocalPort()) + ").", e);
         } finally {
             try {
                 s.close();
-            } catch (IOException ignored) {}
+            } catch (final IOException ignored) {}
         }
     }
 
@@ -536,9 +536,9 @@ public class DnsServer implements AutoCloseable {
                 _threads.add(thread);
                 thread.start();
             }
-        } catch (InterruptedIOException ignored) {
+        } catch (final InterruptedIOException ignored) {
             currentThread().interrupt();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.warn("serveTCP(" + addrport(address.getAddress(), address.getPort()) + ")", e);
         }
     }
@@ -547,7 +547,7 @@ public class DnsServer implements AutoCloseable {
     private Socket accept(@Nonnull ServerSocket sock) throws IOException {
         try {
             return sock.accept();
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             if (sock.isClosed()) {
                 final InterruptedIOException toThrow = new InterruptedIOException();
                 toThrow.initCause(e);
@@ -581,7 +581,7 @@ public class DnsServer implements AutoCloseable {
                     if (response == null) {
                         continue;
                     }
-                } catch (IOException ignored) {
+                } catch (final IOException ignored) {
                     response = formerrMessage(in);
                 }
                 if (outdp == null) {
@@ -597,9 +597,9 @@ public class DnsServer implements AutoCloseable {
                 }
                 sock.send(outdp);
             }
-        } catch (InterruptedIOException ignored) {
+        } catch (final InterruptedIOException ignored) {
             currentThread().interrupt();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.warn("serveUDP(" + addrport(address.getAddress(), address.getPort()) + ")", e);
         }
     }
@@ -607,7 +607,7 @@ public class DnsServer implements AutoCloseable {
     private static void receive(@Nonnull DatagramSocket sock, @Nonnull DatagramPacket indp) throws IOException {
         try {
             sock.receive(indp);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             if (sock.isClosed()) {
                 final InterruptedIOException toThrow = new InterruptedIOException();
                 toThrow.initCause(e);
@@ -653,16 +653,16 @@ public class DnsServer implements AutoCloseable {
         synchronized (this) {
             _closed = true;
             synchronized (_closeables) {
-                for (Closeable closeable : _closeables) {
+                for (final Closeable closeable : _closeables) {
                     closeQuietly(closeable);
                 }
             }
-            for (Thread thread : _threads) {
+            for (final Thread thread : _threads) {
                 do {
                     thread.interrupt();
                     try {
                         thread.join(10);
-                    } catch (InterruptedException ignored) {
+                    } catch (final InterruptedException ignored) {
                         LOG.info("Got interrupted and could not wait for end of '" + thread + "'.");
                         currentThread().interrupt();
                     }

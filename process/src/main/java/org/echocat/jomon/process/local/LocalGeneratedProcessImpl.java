@@ -78,7 +78,7 @@ public class LocalGeneratedProcessImpl implements LocalGeneratedProcess {
     public int exitValue() {
         try {
             return _original.exitValue();
-        } catch (IllegalThreadStateException e) {
+        } catch (final IllegalThreadStateException e) {
             throw new IllegalStateException("Process is still running.", e);
         }
     }
@@ -88,7 +88,7 @@ public class LocalGeneratedProcessImpl implements LocalGeneratedProcess {
         boolean result;
         try {
             result = _original.exitValue() >= 0;
-        } catch (IllegalThreadStateException ignored) {
+        } catch (final IllegalThreadStateException ignored) {
             result = false;
         }
         return result;

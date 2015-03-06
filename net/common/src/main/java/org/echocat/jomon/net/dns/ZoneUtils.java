@@ -49,7 +49,7 @@ public class ZoneUtils {
     public static Zone zone(@Nonnull Name name, @Nullable Record... records) {
         try {
             return new Zone(name, records != null ? records : new Record[0]);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalArgumentException("Could not create a zone from " + name + " and " + Arrays.toString(records) + ".", e);
         }
     }

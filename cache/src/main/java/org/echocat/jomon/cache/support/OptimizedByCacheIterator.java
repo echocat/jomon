@@ -51,7 +51,7 @@ public abstract class OptimizedByCacheIterator<K, T extends IdEnabled<K>> implem
         if (_fromCache == null) {
             final List<T> fromCache = new ArrayList<>();
             final List<K> idsNotInCache = new ArrayList<>();
-            for (K id : _ids) {
+            for (final K id : _ids) {
                 final T cached = _cache.get(id);
                 if (cached != null) {
                     fromCache.add(cached);

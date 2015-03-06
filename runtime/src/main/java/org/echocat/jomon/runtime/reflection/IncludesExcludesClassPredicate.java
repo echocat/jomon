@@ -41,9 +41,7 @@ public class IncludesExcludesClassPredicate<V> extends BaseIncludesExcludesPredi
     protected boolean isIncluded(@Nonnull Class<? extends V> input) {
         final Collection<? extends Class<? extends V>> includes = getIncludes();
         boolean result;
-        if (includes == null) {
-            result = true;
-        } else if (includes.contains(input)) {
+        if (includes == null || includes.contains(input)) {
             result = true;
         } else {
             result = false;

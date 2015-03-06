@@ -49,9 +49,9 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
     protected MylynAssignmentsSupport(@Nonnull Class<F> formatType, @Nullable Map<F, Class<?>> formatToType) {
         _formatToType = formatToType != null ? formatToType : Collections.<F, Class<?>>emptyMap();
         _nameToFormat = new LinkedHashMap<>(_formatToType.size(), 1f);
-        for (F format : formatToType.keySet()) {
+        for (final F format : formatToType.keySet()) {
             if ((Source.Format.class.isAssignableFrom(formatType) && NAME_TO_SOURCE_FORMAT.containsKey(format.getName())) || (Target.Format.class.isAssignableFrom(formatType) && NAME_TO_TARGET_FORMAT.containsKey(format.getName()))) {
-                // Ignore
+                // ignored
             } else {
                 _nameToFormat.put(format.getName(), format);
             }
@@ -96,7 +96,7 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
         while (i.hasNext()) {
             final URL resource = i.next();
             final Map<String, String> plainAssignments = readPlainAssignmentsFrom(resource);
-            for (Entry<String, String> nameToType : plainAssignments.entrySet()) {
+            for (final Entry<String, String> nameToType : plainAssignments.entrySet()) {
                 final String formatName = nameToType.getKey().trim();
                 final String typeName = nameToType.getValue().trim();
                 if (!formatName.isEmpty() && !typeName.isEmpty()) {
@@ -133,7 +133,7 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
         Class<?> result;
         try {
             result = classLoader.loadClass(typeName);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = null;
         }
         return result;
@@ -144,7 +144,7 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
         Iterator<URL> resources;
         try {
             resources = forEnumeration(classLoader.getResources(ASSIGNMENTS_RESOURCE_NAME_PREFIX + basicType.getName()));
-        } catch (IOException ignored) {
+        } catch (final IOException ignored) {
             resources = emptyIterator();
         }
         return resources;
@@ -159,7 +159,7 @@ public class MylynAssignmentsSupport<F extends Format> extends FormatProviderSup
                     assignments.load(reader);
                 }
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException("Could not read " + resource + ".", e);
         }
         //noinspection unchecked,RedundantCast

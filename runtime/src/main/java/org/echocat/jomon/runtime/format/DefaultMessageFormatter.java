@@ -79,7 +79,7 @@ public class DefaultMessageFormatter implements MessageFormatter {
     @Nonnull
     protected Object[] toParameterValues(@Nonnull Map<String, Object> parameters, @Nonnull Map<String, Integer> parameterKeyToIndex) {
         final Object[] result = new Object[parameterKeyToIndex.size() + 1];
-        for (Entry<String, Integer> parameterKeyAndIndex : parameterKeyToIndex.entrySet()) {
+        for (final Entry<String, Integer> parameterKeyAndIndex : parameterKeyToIndex.entrySet()) {
             result[parameterKeyAndIndex.getValue()] = parameters.get(parameterKeyAndIndex.getKey());
         }
         result[result.length - 1] = null;
@@ -91,7 +91,7 @@ public class DefaultMessageFormatter implements MessageFormatter {
         final Map<String, Integer> result = new HashMap<>();
         if (keys != null) {
             int i = 0;
-            for (String key : keys) {
+            for (final String key : keys) {
                 result.put(key, i++);
             }
         }

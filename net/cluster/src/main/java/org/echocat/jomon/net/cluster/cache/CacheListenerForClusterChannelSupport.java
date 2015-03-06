@@ -81,7 +81,7 @@ public abstract class CacheListenerForClusterChannelSupport implements LocalTrac
     @Override
     public Collection<? extends Report> getReports() {
         final Set<ReportImpl> reports = new TreeSet<>();
-        for (ReportKey reportKey : _localTrackingCache) {
+        for (final ReportKey reportKey : _localTrackingCache) {
             final ReportImpl report = _localTrackingCache.get(reportKey);
             reports.add(report);
         }
@@ -205,7 +205,7 @@ public abstract class CacheListenerForClusterChannelSupport implements LocalTrac
         public String toString() {
             final StringBuilder sb = new StringBuilder();
             sb.append(_event);
-            for (StackTraceElement stackTraceElement : _stackTrace) {
+            for (final StackTraceElement stackTraceElement : _stackTrace) {
                 sb.append("\n\tat ").append(stackTraceElement);
             }
             return sb.toString();

@@ -232,7 +232,7 @@ public class CalendarDate implements Predicate<CalendarDate> {
         } else {
             try {
                 result = parseInt(plain);
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 throw new IllegalArgumentException("Could not parse " + name + " of pattern: " + string, e);
             }
         }

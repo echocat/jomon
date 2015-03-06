@@ -74,7 +74,7 @@ class BrowserDefinitionParser implements Iterable<Row> {
                 try {
                     _next = _csvReader.readNext();
                     _hasNext = _next != null;
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new RuntimeException("Could not read next line from " + _csvReader + ".", e);
                 }
                 if (_hasNext && _next.length != _columnNamesToIndex.size()) {
@@ -177,11 +177,11 @@ class BrowserDefinitionParser implements Iterable<Row> {
         Rows result;
         try {
             result = getFromUrl(_browserDefinitionFile);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.warn("Could not open the browserDefinition file '" + _browserDefinitionFile + "' which was bufferred from original remote location. Fallback to default version.", e);
             try {
                 result = getFromUrl(DEFAULT_BROWSER_DEFINITION_FILE);
-            } catch (Exception secondException) {
+            } catch (final Exception secondException) {
                 throw new RuntimeException("Could not load default browserDefinition file from: " + DEFAULT_BROWSER_DEFINITION_FILE, secondException);
             }
         }

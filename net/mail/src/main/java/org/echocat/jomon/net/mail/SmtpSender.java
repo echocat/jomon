@@ -76,7 +76,7 @@ public class SmtpSender implements MailSender {
         final Message message = toMessage(mail, session);
         try {
             Transport.send(message);
-        } catch (MessagingException e) {
+        } catch (final MessagingException e) {
             throw new MailSenderException("Could not send message, please check contained exception for details.", e);
         }
     }
@@ -109,7 +109,7 @@ public class SmtpSender implements MailSender {
             setRecipients(mail, message);
             message.setSubject(mail.getSubject());
             message.setText(body);
-        } catch (MessagingException e) {
+        } catch (final MessagingException e) {
             throw new MailSenderException("Could not send message, see enclosed exception.", e);
         }
         return message;

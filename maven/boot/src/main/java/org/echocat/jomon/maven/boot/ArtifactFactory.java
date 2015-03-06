@@ -82,7 +82,7 @@ public class ArtifactFactory {
             } finally {
                 System.setOut(old);
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         }
     }
 
@@ -212,7 +212,7 @@ public class ArtifactFactory {
             final ArtifactRepositoryMetadata repositoryMetadata = new ArtifactRepositoryMetadata(artifact);
             _repositoryMetadataManager.resolve(repositoryMetadata, project.getRemoteArtifactRepositories(), getLocalRepository());
             latestVersion = selectLatestMatchingVersion(repositoryMetadata, artifact);
-        } catch (Exception ignored) {}
+        } catch (final Exception ignored) {}
 
         if (latestVersion == null || latestVersion.isEmpty()) {
             throw new ArtifactResolutionException("Could not find a version in the remote repositories but also no latestVersion in the local repository. Stop resolving now.", artifact);
@@ -250,7 +250,7 @@ public class ArtifactFactory {
         final ArtifactFilter filter = toArtifactFilter(request);
 
         final Set<ArtifactWithDependencies> dependencies = new LinkedHashSet<>();
-        for (Artifact dependency : resolutionResult.getArtifacts()) {
+        for (final Artifact dependency : resolutionResult.getArtifacts()) {
             if (!project.getGroupId().equals(dependency.getGroupId()) || !project.getArtifactId().equals(dependency.getArtifactId())) {
                 if (filter.include(dependency)) {
                     resolve(project, dependency, request, false);
@@ -268,7 +268,7 @@ public class ArtifactFactory {
             public Set<ArtifactWithDependencies> call() {
                 try {
                     return getDependencies(project, artifact, request);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new RuntimeException("Could not get the dependencies of " + artifact + ".", e);
                 }
             }
@@ -325,7 +325,7 @@ public class ArtifactFactory {
             protected void customizeContainer(PlexusContainer container) {
                 try {
                     oldMaven.set((DefaultMaven)container.lookup(Maven.class));
-                } catch (ComponentLookupException e) {
+                } catch (final ComponentLookupException e) {
                     throw new RuntimeException(e);
                 }
                 container.addComponent(maven, Maven.class, "");

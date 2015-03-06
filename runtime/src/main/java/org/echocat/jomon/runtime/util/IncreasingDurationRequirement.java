@@ -26,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 
 import static java.lang.Math.round;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.runtime.numbers.DoubleGenerator.generateDouble;
 
 @ThreadSafe
@@ -78,8 +79,8 @@ public class IncreasingDurationRequirement implements DurationRequirement, Incre
     @Nonnull
     protected Duration generateNext(@Nonnull Duration current, @Nonnull NumberRequirement<Double> factorRequirement) {
         final Double factor = generateDouble(factorRequirement);
-        final long milis = current.toMilliSeconds();
-        final long toAdd = round((double) milis * factor);
+        final long millis = current.in(MILLISECONDS);
+        final long toAdd = round((double) millis * factor);
         return current.plus(toAdd);
     }
 

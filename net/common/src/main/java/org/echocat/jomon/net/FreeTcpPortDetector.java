@@ -88,8 +88,8 @@ public class FreeTcpPortDetector {
                     socket.bind(new InetSocketAddress(_address, currentPort));
                     socket.close();
                     port = currentPort;
-                } catch (BindException ignored) {
-                } catch (IOException e) {
+                } catch (final BindException ignored) {
+                } catch (final IOException e) {
                     throw new RuntimeException("Could not find a free port on '" + _address + "' between ports " + _from + " and " + _to + ".", e);
                 }
             }

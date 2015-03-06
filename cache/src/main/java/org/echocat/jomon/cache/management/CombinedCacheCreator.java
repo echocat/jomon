@@ -74,7 +74,7 @@ public class CombinedCacheCreator implements CacheCreator {
         final Cache<K, V>[] delegates = new Cache[definitions != null ? definitions.size() : 0];
         if (definitions != null) {
             int i = 0;
-            for (IdentifiersToDefinition<? extends K, ? extends V> definition : definitions) {
+            for (final IdentifiersToDefinition<? extends K, ? extends V> definition : definitions) {
                 if (provider == null) {
                     // noinspection unchecked
                     delegates[i++] = create(null, master, (CacheDefinition<K, V, ?>) definition.getDefinition());
@@ -97,7 +97,7 @@ public class CombinedCacheCreator implements CacheCreator {
         final Iterable<CacheCreator> delegates = _delegates;
         CacheCreator result = null;
         if (delegates != null) {
-            for (CacheCreator delegate : delegates) {
+            for (final CacheCreator delegate : delegates) {
                 if (delegate.canHandleType(by)) {
                     result = delegate;
                     break;
@@ -105,7 +105,7 @@ public class CombinedCacheCreator implements CacheCreator {
             }
         }
         if (result == null) {
-            for (CacheCreator delegate : DEFAULT_DELEGATES) {
+            for (final CacheCreator delegate : DEFAULT_DELEGATES) {
                 if (delegate.canHandleType(by)) {
                     result = delegate;
                     break;

@@ -39,7 +39,7 @@ public class IteratorUtils {
             if (i instanceof AutoCloseable) {
                 try {
                     ((AutoCloseable) i).close();
-                } catch (Exception ignored) {
+                } catch (final Exception ignored) {
                 }
             }
         }

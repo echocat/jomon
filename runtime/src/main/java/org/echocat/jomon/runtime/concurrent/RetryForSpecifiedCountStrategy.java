@@ -81,7 +81,7 @@ public class RetryForSpecifiedCountStrategy<T> extends BaseRetryingStrategy<T, R
         if (status.getCurrentTry() > 1) {
             try {
                 generateDuration(getWaitBetweenEachTry()).sleep();
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }

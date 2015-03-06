@@ -33,7 +33,7 @@ public class AddressUtils {
     public static InetAddress toInetAddress(@Nullable String hostName, @Nonnull byte[] address) {
         try {
             return getByAddress(hostName, address);
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new IllegalArgumentException(e);
         }
     }

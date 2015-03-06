@@ -58,7 +58,7 @@ public abstract class ProcessDaemon<
         _requirement = requirement;
         try {
             _process = generateProcess(dependencies, requirement);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create process.", e);
         }
         boolean success = false;
@@ -70,14 +70,14 @@ public abstract class ProcessDaemon<
                 createOutputMonitorThreadFor(requirement, _process, _process.getStdout(), StreamType.stdout),
                 createProcessMonitorThreadFor(requirement, _process)
             );
-            for (Thread monitor : _monitors) {
+            for (final Thread monitor : _monitors) {
                 monitor.start();
             }
             waitForStart(requirement);
             success = true;
             requirement.getStartupListener().notifyProcessStartupDone(_process);
             requirement.getStreamListener().notifyProcessStartupDone(_process);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new CouldNotStartException("Could not control the process " + _process + ".", e);
         } finally {
             if (!success) {
@@ -120,7 +120,7 @@ public abstract class ProcessDaemon<
                     throw new CouldNotStartException("Could not successful start process. Output while waiting:\n" + startupListener.getRecordedContentWhileWaitingAsString(), e);
                 }
             }
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
         }
     }
@@ -146,7 +146,7 @@ public abstract class ProcessDaemon<
             try {
                 _process.close();
                 _process.waitFor();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // noinspection InstanceofCatchParameter
                 if (e instanceof InterruptedException) {
                     currentThread().interrupt();

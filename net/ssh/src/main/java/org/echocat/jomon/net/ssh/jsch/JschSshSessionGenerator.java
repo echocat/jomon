@@ -38,7 +38,7 @@ public class JschSshSessionGenerator extends JschSshSessionGeneratorSupport {
     protected Connector createConnection() throws SshSystemException {
         try {
             return getDefault().createConnector();
-        } catch (AgentProxyException e) {
+        } catch (final AgentProxyException e) {
             throw new SshSystemException("Could not create connector for ssh session.", e);
         }
     }

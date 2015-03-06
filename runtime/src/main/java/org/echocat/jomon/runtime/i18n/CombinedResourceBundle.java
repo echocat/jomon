@@ -44,7 +44,7 @@ public class CombinedResourceBundle extends ResourceBundle {
     @Override
     public Enumeration<String> getKeys() {
         final Set<String> keys = new HashSet<>();
-        for (ResourceBundle resourceBundle : _resourceBundles) {
+        for (final ResourceBundle resourceBundle : _resourceBundles) {
             keys.addAll(resourceBundle.keySet());
         }
         return asEnumeration(keys.iterator());

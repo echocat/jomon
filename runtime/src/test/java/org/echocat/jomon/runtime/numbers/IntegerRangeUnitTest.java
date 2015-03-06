@@ -27,7 +27,7 @@ public class IntegerRangeUnitTest {
         try {
             new IntegerRange(2, 1);
             fail("Expected exception missing");
-        } catch (IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
     }
 
     @Test

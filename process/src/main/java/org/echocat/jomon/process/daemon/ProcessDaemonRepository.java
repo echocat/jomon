@@ -22,7 +22,6 @@ import org.echocat.jomon.process.GeneratedProcess;
 import org.echocat.jomon.runtime.CollectionUtils;
 import org.echocat.jomon.runtime.generation.Generator;
 import org.echocat.jomon.runtime.iterators.CloseableIterator;
-import org.echocat.jomon.runtime.repository.InsertingRepository;
 import org.echocat.jomon.runtime.repository.QueryableRepository;
 import org.echocat.jomon.runtime.repository.RemovingRepository;
 
@@ -48,7 +47,7 @@ public class ProcessDaemonRepository<
     R extends ProcessDaemonRequirement<E, ID, P, ? extends D>,
     Q extends BaseProcessDaemonQuery<E, ID, ?, ? extends D>,
     G extends Generator<P, ?>
-> implements QueryableRepository<Q, ID, D>, Iterable<D>, RemovingRepository<Q, ID>, InsertingRepository<D>, Generator<D, R>, AutoCloseable {
+> implements QueryableRepository<Q, ID, D>, Iterable<D>, RemovingRepository<Q, ID>, Generator<D, R>, AutoCloseable {
 
     @Nonnull
     private static final Comparator<Constructor<?>> BY_PARAMETER_COUNT = new Comparator<Constructor<?>>() { @Override public int compare(Constructor<?> o1, Constructor<?> o2) {
@@ -75,11 +74,6 @@ public class ProcessDaemonRepository<
         final D daemon = createInstanceFor(requirement);
         _idToProcess.put(daemon.getProcess().getId(), daemon);
         return daemon;
-    }
-
-    @Override
-    public void insert(@Nonnull D daemon) {
-        _idToProcess.put(daemon.getProcess().getId(), daemon);
     }
 
     @Nullable

@@ -44,7 +44,7 @@ public class CombinedFormatter extends FormatterSupport {
     public static List<Formatter> getSystemFormatters(@Nullable ClassLoader classLoader) {
         final ServiceLoader<Formatter> formatters = classLoader != null ? load(Formatter.class, classLoader) : load(Formatter.class);
         final List<Formatter> result = new ArrayList<>();
-        for (Formatter formatter : formatters) {
+        for (final Formatter formatter : formatters) {
             result.add(formatter);
         }
         return unmodifiableList(result);
@@ -67,7 +67,7 @@ public class CombinedFormatter extends FormatterSupport {
 
     @Override
     public void format(@Nonnull Source source, @Nonnull Target target, @Nullable Hints hints) throws IllegalArgumentException, IOException {
-        for (Formatter delegate : _delegates) {
+        for (final Formatter delegate : _delegates) {
             if (delegate.canHandle(source, target, hints)) {
                 delegate.format(source, target, hints);
             }
@@ -77,7 +77,7 @@ public class CombinedFormatter extends FormatterSupport {
     @Override
     public boolean canHandle(@Nonnull Source source, @Nonnull Target target, @Nullable Hints hints) {
         boolean result = false;
-        for (Formatter delegate : _delegates) {
+        for (final Formatter delegate : _delegates) {
             if (delegate.canHandle(source, target, hints)) {
                 result = true;
                 break;

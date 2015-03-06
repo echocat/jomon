@@ -64,7 +64,7 @@ public class SrvDnsEntryEvaluator {
         checkResult(query, lookup);
         final SRVRecord[] records = getSrvRecordsOf(lookup);
         final List<HostService> result = new ArrayList<>();
-        for (SRVRecord record : records) {
+        for (final SRVRecord record : records) {
             final HostService service = toHostService(record);
             if (service != null) {
                 result.add(service);
@@ -91,7 +91,7 @@ public class SrvDnsEntryEvaluator {
         InetAddress address;
         try {
             address = getByAddress(name);
-        } catch (UnknownHostException ignored) {
+        } catch (final UnknownHostException ignored) {
             final Record [] records = createLookupFor(name, Type.A).run();
             if (records != null && records.length > 0) {
                 address = toInetAddress(name, (ARecord) records[0]);
@@ -106,7 +106,7 @@ public class SrvDnsEntryEvaluator {
     protected static InetAddress toInetAddress(@Nonnull String name, @Nonnull ARecord record) {
         try {
             return InetAddress.getByAddress(name, record.getAddress().getAddress());
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             throw new IllegalStateException("Could not convert " + record + " to address.", e);
         }
     }
@@ -153,7 +153,7 @@ public class SrvDnsEntryEvaluator {
         final Lookup lookup;
         try {
             lookup = new Lookup(query, type);
-        } catch (TextParseException e) {
+        } catch (final TextParseException e) {
             throw new IllegalArgumentException("Could not parse query: " + query, e);
         }
         final Resolver resolver = _resolver;

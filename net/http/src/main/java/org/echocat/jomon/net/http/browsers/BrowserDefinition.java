@@ -44,7 +44,7 @@ public class BrowserDefinition {
         _parent = parent;
         try {
             _glob = new Glob(userAgent, true);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new IllegalArgumentException("Could not parse the userAgent as glob pattern: " + userAgent, e);
         }
     }

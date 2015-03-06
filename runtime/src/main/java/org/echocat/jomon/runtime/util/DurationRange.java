@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 @ThreadSafe
 @Immutable
 @XmlJavaTypeAdapter(Adapter.class)
@@ -108,8 +110,8 @@ public class DurationRange extends RangeSupport<Duration> {
                 result = new Container();
                 final Duration from = v.getFrom();
                 final Duration to = v.getTo();
-                result.setFrom(from != null ? from.toMilliSeconds() : null);
-                result.setTo(to != null ? to.toMilliSeconds() : null);
+                result.setFrom(from != null ? from.in(MILLISECONDS) : null);
+                result.setTo(to != null ? to.in(MILLISECONDS) : null);
             } else {
                 result = null;
             }

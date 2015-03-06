@@ -44,6 +44,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.nio.ByteBuffer.wrap;
 import static java.nio.charset.Charset.defaultCharset;
 import static java.nio.charset.Charset.forName;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.runtime.format.DefaultMessageFormatter.messageFormatterFor;
 import static org.echocat.jomon.runtime.util.ByteCount.byteCount;
 import static org.echocat.jomon.runtime.util.Duration.duration;
@@ -219,7 +220,7 @@ public abstract class LineBasedStreamListenerSupport<P extends GeneratedProcess<
     protected void flush(boolean force) {
         final Duration maximumAllowedTimeWithoutFlush = _maximumAllowedTimeWithoutFlush;
         synchronized (_outputBuffers) {
-            for (Entry<BufferKey<P>, ByteBuffer> keyAndBuffer : _outputBuffers.entrySet()) {
+            for (final Entry<BufferKey<P>, ByteBuffer> keyAndBuffer : _outputBuffers.entrySet()) {
                 final BufferKey<P> key = keyAndBuffer.getKey();
                 final ByteBuffer buffer = keyAndBuffer.getValue();
                 // noinspection SynchronizationOnLocalVariableOrMethodParameter
@@ -339,7 +340,7 @@ public abstract class LineBasedStreamListenerSupport<P extends GeneratedProcess<
         }
 
         public boolean isFlushNeeded(@Nonnull Duration maximumAllowedTimeWithoutFlush) {
-            final long flushRequiredAt = _lastFlushAtInMillis + maximumAllowedTimeWithoutFlush.toMilliSeconds();
+            final long flushRequiredAt = _lastFlushAtInMillis + maximumAllowedTimeWithoutFlush.in(MILLISECONDS);
             return flushRequiredAt <= currentTimeMillis();
         }
 

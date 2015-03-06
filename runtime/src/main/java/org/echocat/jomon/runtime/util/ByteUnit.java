@@ -154,7 +154,7 @@ public enum ByteUnit {
 
     @Nonnull
     public static ByteUnit getByDisplay(@Nonnull String display) throws IllegalArgumentException {
-        for (ByteUnit unit : values()) {
+        for (final ByteUnit unit : values()) {
             if (unit.getDisplay().equals(display) || (unit == BYTE && "".equals(display))) {
                 return unit;
             }
@@ -164,7 +164,7 @@ public enum ByteUnit {
 
     @Nonnull
     public static ByteUnit getByShortDisplay(@Nonnull String shortDisplay) throws IllegalArgumentException {
-        for (ByteUnit unit : values()) {
+        for (final ByteUnit unit : values()) {
             if (unit.getShortDisplay().equals(shortDisplay) || (unit == BYTE && "".equals(shortDisplay))) {
                 return unit;
             }

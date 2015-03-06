@@ -74,7 +74,7 @@ public class ClassPathResourceFactory {
         final ResourceType resourceType;
         try {
             resourceType = _resourceTypeProvider.getBy(extension);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             throw new IllegalArgumentException("Found an path with an unknown extension: " + path, e);
         }
         return resourceType;

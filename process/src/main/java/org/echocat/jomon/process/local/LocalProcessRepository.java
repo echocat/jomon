@@ -75,7 +75,7 @@ public abstract class LocalProcessRepository implements QueryableRepository<Loca
         final Process original;
         try {
             original = pb.start();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new UncheckedIOException(e);
         }
         final long id = getIdOf(original);
@@ -101,7 +101,7 @@ public abstract class LocalProcessRepository implements QueryableRepository<Loca
     protected static LocalProcessRepository createInstance() {
         final ServiceLoader<LocalProcessRepository> found = ServiceLoader.load(LocalProcessRepository.class);
         LocalProcessRepository processRepository = null;
-        for (LocalProcessRepository candidate : found) {
+        for (final LocalProcessRepository candidate : found) {
             if (candidate.isAvailable()) {
                 processRepository = candidate;
                 break;

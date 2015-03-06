@@ -48,7 +48,7 @@ public class NetworkInterfaceRepository implements QueryableRepository<NetworkIn
     public NetworkInterface findOneBy(@Nonnull String name) {
         try {
             return NetworkInterface.getByName(name);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             throw new RuntimeException("Could not query interface by name: " + name, e);
         }
     }
@@ -64,7 +64,7 @@ public class NetworkInterfaceRepository implements QueryableRepository<NetworkIn
     public CloseableIterator<NetworkInterface> findBy(@Nonnull NetworkInterfaceQuery query) {
         try {
             return filter(forEnumeration(getNetworkInterfaces()), query);
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             throw new RuntimeException("Could not query interface by query.", e);
         }
     }

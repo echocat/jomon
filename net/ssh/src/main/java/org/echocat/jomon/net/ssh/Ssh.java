@@ -54,7 +54,7 @@ public abstract class Ssh {
     @Nonnull
     protected static Ssh createInstance() {
         Ssh processRepository = null;
-        for (Ssh candidate : load(Ssh.class)) {
+        for (final Ssh candidate : load(Ssh.class)) {
             if (candidate.isAvailable()) {
                 processRepository = candidate;
                 break;

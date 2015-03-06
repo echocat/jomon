@@ -59,7 +59,7 @@ public abstract class BaseGeneratedProcessRequirement<E, T extends BaseGenerated
 
     @Nonnull
     public T withArguments(@Nonnull Iterable<String> arguments) {
-        for (String argument : arguments) {
+        for (final String argument : arguments) {
             _arguments.add(argument);
         }
         return thisObject();

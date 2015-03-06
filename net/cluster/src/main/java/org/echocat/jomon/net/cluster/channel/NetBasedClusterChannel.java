@@ -31,6 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.System.currentTimeMillis;
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelConstants.pingCommand;
 import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietly;
 
@@ -119,7 +120,7 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
             closeQuietly(this);
             try {
                 init();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not reinitialize " + this + ".", e);
             }
         }
@@ -130,7 +131,7 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
         try {
             try {
                 return by.call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not execute set.", e);
             } finally {
                 reInitIfNeeded();
@@ -145,9 +146,9 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
         try {
             try {
                 return by.call();
-            } catch (RuntimeException e) {
+            } catch (final RuntimeException e) {
                 throw e;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new RuntimeException("Could not execute set.", e);
             }
         } finally {
@@ -290,7 +291,7 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
         if (message.getCommand() == pingCommand) {
             readPing(message);
         } else {
-            for (Handler handler : getHandlers()) {
+            for (final Handler handler : getHandlers()) {
                 if (handler instanceof MessageHandler) {
                     ((MessageHandler)handler).handle(this, message);
                 }
@@ -301,7 +302,7 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
     protected abstract void readPing(@Nonnull ReceivedMessage<N> message);
 
     protected boolean isPingRequired() {
-        return _lastPingSend + _pingInterval.toMilliSeconds() < currentTimeMillis();
+        return _lastPingSend + _pingInterval.in(MILLISECONDS) < currentTimeMillis();
     }
 
     @Nonnull
@@ -319,12 +320,12 @@ public abstract class NetBasedClusterChannel<ID, N extends Node<ID>> implements 
                 while (!currentThread().isInterrupted()) {
                     try {
                         ping();
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         LOG.warn("Ping failed. Ping will be retried in " + _pingInterval + ".", e);
                     }
                     _pingInterval.sleep();
                 }
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
             }
         }

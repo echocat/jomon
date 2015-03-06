@@ -25,7 +25,7 @@ public class ByteCountUnitTest {
 
     @Test
     public void testToByteCount() throws Exception {
-        for (ByteUnit unit : values()) {
+        for (final ByteUnit unit : values()) {
             assertThat(toByteCount("7" + unit.getDisplay()), is(unit.toBytes(7)));
             assertThat(toByteCount("7" + unit.getDisplay().toLowerCase()), is(unit.toBytes(7)));
             assertThat(new ByteCount("7" + unit.getDisplay()), is(new ByteCount(7, unit)));
@@ -37,13 +37,13 @@ public class ByteCountUnitTest {
         assertThat(new ByteCount("0b"), is(new ByteCount(0)));
         assertThat(toByteCount("0"), is(MEGA_BYTE.toBytes(0)));
         assertThat(new ByteCount("0"), is(new ByteCount(0)));
-        try { toByteCount("1mb 2s"); } catch (IllegalArgumentException expected) {}
-        try { toByteCount("2v"); } catch (IllegalArgumentException expected) {}
+        try { toByteCount("1mb 2s"); } catch (final IllegalArgumentException ignored) {}
+        try { toByteCount("2v"); } catch (final IllegalArgumentException ignored) {}
     }
 
     @Test
     public void testToCombinedByteCount() throws Exception {
-        for (ByteUnit unit : values()) {
+        for (final ByteUnit unit : values()) {
             assertThat(toCombinedByteCount(unit.toBytes(7)), is("7" + unit.getDisplay()));
             assertThat(new ByteCount(7, unit).toCombinedByteCount(), is("7" + unit.getDisplay()));
         }

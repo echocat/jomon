@@ -34,7 +34,7 @@ import static org.apache.commons.io.FilenameUtils.normalizeNoEndSeparator;
 public class MakeCssResourcePathAbsoluteOptimizer implements ResourcePathOptimizer {
 
     public static final Pattern PATTERN = compile("url\\s*\\((\\s*['\"]?((?:.*?|\\s*?))['\"]?\\s*)\\)|src\\s*=\\s*['\"]((?:.|\\s)*?)['\"]", CASE_INSENSITIVE);
-    public static final Pattern PATH_FIX_PATTERN = compile("\\/\\/+");
+    public static final Pattern PATH_FIX_PATTERN = compile("//+");
 
     @Nonnull
     @Override
@@ -84,7 +84,7 @@ public class MakeCssResourcePathAbsoluteOptimizer implements ResourcePathOptimiz
         try {
             new URL(resourceUri);
             result = resourceUri;
-        } catch (MalformedURLException ignored) {
+        } catch (final MalformedURLException ignored) {
             if (resourceUri.startsWith("/")) {
                 result = resourceUri;
             } else {

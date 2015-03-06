@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static java.lang.System.currentTimeMillis;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 public class DateTimeUtils {
 
@@ -70,7 +71,7 @@ public class DateTimeUtils {
 
     @Nonnull
     public static Date nowBefore(@Nonnull Duration duration) {
-        return new Date(currentTimeMillis() - duration.toMilliSeconds());
+        return new Date(currentTimeMillis() - duration.in(MILLISECONDS));
     }
 
     @Nonnull
@@ -80,14 +81,14 @@ public class DateTimeUtils {
 
     @Nonnull
     public static Date nowIn(@Nonnull Duration duration) {
-        return new Date(currentTimeMillis() + duration.toMilliSeconds());
+        return new Date(currentTimeMillis() + duration.in(MILLISECONDS));
     }
 
     @Nonnull
     public static Date parseIsoDate(@Nonnull String asString) throws IllegalArgumentException {
         try {
             return new SimpleDateFormat(ISO_PATTERN).parse(asString);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new IllegalArgumentException("Could not parse: " + asString + ", it does not match pattern: " + ISO_PATTERN, e);
         }
     }

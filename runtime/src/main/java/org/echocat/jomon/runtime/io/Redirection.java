@@ -193,14 +193,14 @@ public interface Redirection extends Closeable {
 
             @Override
             public void send(@Nonnull byte[] bytes, @Nonnegative int offset, @Nonnegative int length) throws IOException {
-                for (Out delegate : getDelegates()) {
+                for (final Out delegate : getDelegates()) {
                     delegate.send(bytes, offset, length);
                 }
             }
 
             @Override
             public void flush() throws IOException {
-                for (Out delegate : getDelegates()) {
+                for (final Out delegate : getDelegates()) {
                     delegate.flush();
                 }
             }
@@ -313,10 +313,10 @@ public interface Redirection extends Closeable {
         @Override
         public void close() throws IOException {
             final List<Throwable> throwables = new ArrayList<>();
-            for (T delegate : _delegates) {
+            for (final T delegate : _delegates) {
                 try {
                     delegate.close();
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     throwables.add(e);
                 }
             }

@@ -28,6 +28,7 @@ import java.net.Socket;
 import java.util.UUID;
 
 import static java.lang.Thread.currentThread;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.echocat.jomon.net.Protocol.tcp;
 import static org.echocat.jomon.net.cluster.channel.ByteUtils.putLong;
 import static org.echocat.jomon.net.cluster.channel.ClusterChannelConstants.pingCommand;
@@ -69,15 +70,15 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
         final Socket socket = new Socket();
         socket.setKeepAlive(true);
         socket.setReuseAddress(true);
-        socket.setSoTimeout((int) _soTimeout.toMilliSeconds());
-        socket.connect(target, (int) _connectionTimeout.toMilliSeconds());
+        socket.setSoTimeout((int) _soTimeout.in(MILLISECONDS));
+        socket.connect(target, (int) _connectionTimeout.in(MILLISECONDS));
         boolean success = false;
         try {
             OutputStream os = socket.getOutputStream();
             try {
                 sendPing(os);
                 success = true;
-            } catch (InterruptedException ignored) {
+            } catch (final InterruptedException ignored) {
                 currentThread().interrupt();
                 os = null;
             } finally {
@@ -95,7 +96,7 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
 
     @SuppressWarnings("DuplicateThrows")
     public void send(@Nonnull Message message) throws Exception, InterruptedException {
-        for (Object output : getOutputs()) {
+        for (final Object output : getOutputs()) {
             send(message, (OutputStream) output);
         }
     }
@@ -103,7 +104,7 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
     public void sendPing() throws Exception {
         try {
             send(createPingMessage());
-        } catch (InterruptedException ignored) {
+        } catch (final InterruptedException ignored) {
             currentThread().interrupt();
         }
     }
@@ -115,7 +116,7 @@ public class TcpInput extends SrvEntryBasedServicesManager<InetSocketAddress, Ou
         try {
             sendUnsafe(message, to);
             success = true;
-        } catch (ServiceTemporaryUnavailableException e) {
+        } catch (final ServiceTemporaryUnavailableException e) {
             markAsGone(to, e.getMessage());
             errorHandled = true;
         } finally {

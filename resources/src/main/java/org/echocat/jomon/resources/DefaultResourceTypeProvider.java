@@ -35,7 +35,7 @@ public class DefaultResourceTypeProvider implements ResourceTypeProvider {
     }
 
     public DefaultResourceTypeProvider(@Nullable Set<ResourceType> resourceTypeExtensions) {
-        for (ResourceType resourceType : ResourceType.getSystemTypes()) {
+        for (final ResourceType resourceType : ResourceType.getSystemTypes()) {
             if (!_nameToResourceType.containsKey(resourceType.getName())) {
                 _nameToResourceType.put(resourceType.getName(), resourceType);
             }
@@ -44,7 +44,7 @@ public class DefaultResourceTypeProvider implements ResourceTypeProvider {
             }
         }
         if (resourceTypeExtensions != null) {
-            for (ResourceType resourceType : resourceTypeExtensions) {
+            for (final ResourceType resourceType : resourceTypeExtensions) {
                 if (!_nameToResourceType.containsKey(resourceType.getName())) {
                     _nameToResourceType.put(resourceType.getName(), resourceType);
                 }

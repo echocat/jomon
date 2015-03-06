@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 
 import static org.echocat.jomon.net.ssh.SshRemote.Impl.remote;
+import static org.echocat.jomon.runtime.util.ValueProviderUtils.setAll;
 
 public class SshSessionRequirement implements Requirement {
 
@@ -67,7 +68,7 @@ public class SshSessionRequirement implements Requirement {
 
     @Nonnull
     public SshSessionRequirement withHints(@Nonnull Hints hints) {
-        _hints.setAll(hints);
+        setAll(_hints, hints);
         return this;
     }
 

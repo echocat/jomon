@@ -56,7 +56,7 @@ public class BasicFormatterUnitTest {
         try {
             format(sourceFormat("foo"), "<b> *foo* </b>", Target.Format.textPlain);
             fail("Expected exception missing.");
-        } catch (IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
     }
 
     @Test
@@ -64,7 +64,7 @@ public class BasicFormatterUnitTest {
         try {
             format(Source.Format.textPlain, "<b> *foo* </b>", targetFormat("foo"));
             fail("Expected exception missing.");
-        } catch (IllegalArgumentException expected) {}
+        } catch (final IllegalArgumentException ignored) {}
     }
 
     @Nonnull

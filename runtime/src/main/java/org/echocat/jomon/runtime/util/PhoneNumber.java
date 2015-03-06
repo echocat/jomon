@@ -53,7 +53,7 @@ public class PhoneNumber {
     public PhoneNumber(@Nonnull String value, @Nullable String region) throws IllegalArgumentException {
         try {
             _value = UTIL.parse(value, region != null ? region.toUpperCase() : null);
-        } catch (NumberParseException e) {
+        } catch (final NumberParseException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }

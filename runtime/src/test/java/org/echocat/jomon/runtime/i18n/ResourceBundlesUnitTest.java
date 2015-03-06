@@ -76,10 +76,10 @@ public class ResourceBundlesUnitTest {
     public void testGetBundleWithMissingBundles() throws Exception {
         try {
             BUNDLES.getBundle(new Locale("foo"));
-        } catch (final NoSuchElementException expected) {}
+        } catch (final NoSuchElementException ignored) {}
         try {
             BUNDLES.getBundle(new Locale("bar"));
-        } catch (final NoSuchElementException expected) {}
+        } catch (final NoSuchElementException ignored) {}
     }
 
     @Test
@@ -124,19 +124,19 @@ public class ResourceBundlesUnitTest {
         try {
             BUNDLES.localize(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, "x");
             fail("Exception missing.");
-        } catch (final MissingResourceException expected) {}
+        } catch (final MissingResourceException ignored) {}
         try {
             BUNDLES.localize(LOCALE_B_WITH_LANGUAGE_AND_COUNTRY, "x");
             fail("Exception missing.");
-        } catch (final MissingResourceException expected) {}
+        } catch (final MissingResourceException ignored) {}
         try {
             BUNDLES.localize(LOCALE_C_WITH_LANGUAGE, "x");
             fail("Exception missing.");
-        } catch (final MissingResourceException expected) {}
+        } catch (final MissingResourceException ignored) {}
         try {
             BUNDLES.localize(LOCALE_D_WHICH_IS_BLANK, "x");
             fail("Exception missing.");
-        } catch (final MissingResourceException expected) {}
+        } catch (final MissingResourceException ignored) {}
     }
 
     @Test
@@ -149,6 +149,7 @@ public class ResourceBundlesUnitTest {
         assertThat(i.next(), isLocaleAndBundle(LOCALE_A_WITH_LANGUAGE_COUNTRY_AND_VARIANT, BUNDLE_A));
     }
 
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
     @Nonnull
     private static Matcher<Entry<Locale, ResourceBundle>> isLocaleAndBundle(@Nonnull final Locale locale, @Nonnull final ResourceBundle bundle) { return new TypeSafeMatcher<Entry<Locale, ResourceBundle>>() {
         @Override

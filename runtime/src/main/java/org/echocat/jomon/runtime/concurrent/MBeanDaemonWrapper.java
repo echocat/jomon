@@ -46,11 +46,11 @@ public class MBeanDaemonWrapper implements  DynamicMBean {
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(clazz);
-        } catch (IntrospectionException e) {
+        } catch (final IntrospectionException e) {
             throw new RuntimeException("Could not load beanInfo of " + clazz.getName() + ".", e);
         }
         final PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+        for (final PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             propertyNameToDescriptor.put(propertyDescriptor.getName(), propertyDescriptor);
         }
         propertyNameToDescriptor.remove("class");
@@ -88,7 +88,7 @@ public class MBeanDaemonWrapper implements  DynamicMBean {
                     } else {
                         result = value.toString();
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new ReflectionException(e);
                 }
             } else {
@@ -127,7 +127,7 @@ public class MBeanDaemonWrapper implements  DynamicMBean {
                 final Method writeMethod = descriptor.getWriteMethod();
                 try {
                     writeMethod.invoke(_task, targetValue);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     throw new ReflectionException(e);
                 }
             } else {
@@ -141,12 +141,12 @@ public class MBeanDaemonWrapper implements  DynamicMBean {
         final Constructor<?> constructor;
         try {
             constructor = propertyType.getConstructor(String.class);
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new ReflectionException(e, "Could not find a constructor of " + propertyType.getName() + " to create a instance of it with: " + value);
         }
         try {
             return constructor.newInstance(value);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new ReflectionException(e, "Could not create a new instance of " + propertyType.getName() + " with: " + value);
         }
     }
@@ -182,7 +182,7 @@ public class MBeanDaemonWrapper implements  DynamicMBean {
         attributes.add(new MBeanAttributeInfo("lastExecutionDuration", String.class.getName(), null, true, false, false));
         attributes.add(new MBeanAttributeInfo("overallExecutionDuration", String.class.getName(), null, true, false, false));
         attributes.add(new MBeanAttributeInfo("overallExecutionCount", Long.class.getName(), null, true, false, false));
-        for (PropertyDescriptor descriptor : _propertyNameToDescriptor.values()) {
+        for (final PropertyDescriptor descriptor : _propertyNameToDescriptor.values()) {
             final Method readMethod = descriptor.getReadMethod();
             final Method writeMethod = descriptor.getWriteMethod();
             if (readMethod != null || writeMethod != null) {

@@ -31,14 +31,11 @@ public class BeanPostConfigurerUnitTest {
 
     @Test
     public void testWithOutSystemProperties() throws Exception {
-        final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("BeanPostConfigurerUnitTest.beans.xml", getClass());
-        try {
+        try (ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("BeanPostConfigurerUnitTest.beans.xml", getClass())) {
             final TestBean testBean = applicationContext.getBean(TestBean.class);
             assertThat(testBean.getFoo(), is("fooValueFromFile"));
             assertThat(testBean.getOther(), is("originalOtherValue"));
             assertThat(testBean.getBar(), is(667));
-        } finally {
-            applicationContext.close();
         }
     }
 
@@ -47,14 +44,11 @@ public class BeanPostConfigurerUnitTest {
         final String oldPropertyValue = getProperty(SYSTEM_PROPERTY_NAME);
         try {
             setProperty(SYSTEM_PROPERTY_NAME, "otherValueFromSystemProperties");
-            final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("BeanPostConfigurerUnitTest.beans.xml", getClass());
-            try {
+            try (ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("BeanPostConfigurerUnitTest.beans.xml", getClass())) {
                 final TestBean testBean = applicationContext.getBean(TestBean.class);
                 assertThat(testBean.getFoo(), is("fooValueFromFile"));
                 assertThat(testBean.getOther(), is("otherValueFromSystemProperties"));
                 assertThat(testBean.getBar(), is(667));
-            } finally {
-                applicationContext.close();
             }
         } finally {
             if (oldPropertyValue != null) {

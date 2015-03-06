@@ -32,7 +32,7 @@ public class TemporaryDnsServer extends DnsServer {
             _address = getFreeLocalHostSocketAddress();
             addTCP(_address);
             addUDP(_address);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create server.", e);
         }
     }

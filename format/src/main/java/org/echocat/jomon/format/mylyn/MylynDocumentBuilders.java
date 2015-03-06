@@ -50,7 +50,7 @@ public class MylynDocumentBuilders extends MylynAssignmentsSupport<Target.Format
         Class<?> result;
         try {
             result = classLoader.loadClass(DOCUMENT_BUILDER_TYPE_NAME);
-        } catch (ClassNotFoundException ignored) {
+        } catch (final ClassNotFoundException ignored) {
             result = null;
         }
         return result;

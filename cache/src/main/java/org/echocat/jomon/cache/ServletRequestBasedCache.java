@@ -131,7 +131,7 @@ public class ServletRequestBasedCache<K, V> extends CacheSupport<K, V> implement
         try {
             //noinspection unchecked
             return (Cache<K, V>) _cacheCreator.create(null, _cacheCreator, _delegateDefinition);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new RuntimeException("Could not create cache for request with " + _delegateDefinition + ".", e);
         }
     }

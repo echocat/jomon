@@ -201,7 +201,7 @@ public class Serializers {
                     if (serializerType != null) {
                         try {
                             result = serializerType.newInstance();
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             throw new RuntimeException("Could not create an instance of " + serializerType.getName() + " to serialize " + type.getName() + ".", e);
                         }
                         TYPE_TO_SERIALIZER_CACHE.put(type, result);

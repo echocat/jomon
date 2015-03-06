@@ -70,7 +70,7 @@ public class LockFactoryAdapter implements LockFactory {
     @Nullable
     @Override
     public Lock tryLock(@Nonnull Duration timeout) throws InterruptedException {
-        return _delegate.tryLock(timeout.toMilliSeconds(), MILLISECONDS) ? _lock : null;
+        return _delegate.tryLock(timeout.in(MILLISECONDS), MILLISECONDS) ? _lock : null;
     }
 
     @Nonnull

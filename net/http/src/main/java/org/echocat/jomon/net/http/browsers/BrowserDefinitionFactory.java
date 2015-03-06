@@ -115,7 +115,7 @@ public class BrowserDefinitionFactory {
     }
 
     private void enrichWithPropertiesFromRow(@Nonnull Map<String, String> properties, @Nonnull Row row) {
-        for (Entry<String, String> entry : row) {
+        for (final Entry<String, String> entry : row) {
             final String value = entry.getValue();
             if (!"default".equals(value) && !isEmpty(value)) {
                 properties.put(entry.getKey(), value);

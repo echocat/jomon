@@ -77,7 +77,7 @@ public interface SshRemote extends SshContext {
             int port;
             try {
                 port = hasPortPart ? parseInt(hostAndPort.substring(lastDoubleDot + 1)) : DEFAULT_PORT;
-            } catch (NumberFormatException ignored) {
+            } catch (final NumberFormatException ignored) {
                 host = hostAndPort;
                 port = DEFAULT_PORT;
             }
@@ -86,7 +86,7 @@ public interface SshRemote extends SshContext {
             }
             try {
                 return remote(new InetSocketAddress(InetAddress.getByName(host), port), user);
-            } catch (UnknownHostException e) {
+            } catch (final UnknownHostException e) {
                 throw new IllegalArgumentException("Illegal remote provided - illegal host: " + remoteAsString, e);
             }
         }

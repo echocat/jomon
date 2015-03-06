@@ -64,7 +64,7 @@ public class RetryingMailSender implements MailSender {
                 }
 
             }, _retryingStrategy, MailSenderException.class);
-        } catch (MailSenderException e) {
+        } catch (final MailSenderException e) {
             if (_fallback != null) {
                 if (_logWarnIfFallbackIsUsed) {
                     LOG.warn("Could not send " + mail + " with " + _delegate + " after several retries (based on " + _retryingStrategy + "). Please check the following exception. Will now fallback to " + _fallback + ".", e);

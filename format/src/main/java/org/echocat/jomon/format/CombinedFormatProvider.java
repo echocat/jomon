@@ -43,7 +43,7 @@ public class CombinedFormatProvider extends FormatProviderSupport {
     public static List<FormatProvider> getSystemProviders(@Nullable ClassLoader classLoader) {
         final ServiceLoader<FormatProvider> providers = classLoader != null ? load(FormatProvider.class, classLoader) : load(FormatProvider.class);
         final List<FormatProvider> result = new ArrayList<>();
-        for (FormatProvider provider : providers) {
+        for (final FormatProvider provider : providers) {
             result.add(provider);
         }
         return unmodifiableList(result);
@@ -68,7 +68,7 @@ public class CombinedFormatProvider extends FormatProviderSupport {
     @Override
     public Source.Format findSourceFormatBy(@Nonnull String name, @Nullable Hints hints) {
         Source.Format result = null;
-        for (FormatProvider delegate : _delegates) {
+        for (final FormatProvider delegate : _delegates) {
             result = delegate.findSourceFormatBy(name, hints);
             if (result != null) {
                 break;
@@ -80,7 +80,7 @@ public class CombinedFormatProvider extends FormatProviderSupport {
     @Override
     public Target.Format findTargetFormatBy(@Nonnull String name, @Nullable Hints hints) {
         Target.Format result = null;
-        for (FormatProvider delegate : _delegates) {
+        for (final FormatProvider delegate : _delegates) {
             result = delegate.findTargetFormatBy(name, hints);
             if (result != null) {
                 break;

@@ -97,7 +97,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
                 }
                 if (resultFile == null) {
                     if (resourceRoots != null) {
-                        for (File resourceRoot : resourceRoots) {
+                        for (final File resourceRoot : resourceRoots) {
                             final File potentialResource = new File(resourceRoot, name);
                             if (potentialResource.isFile()) {
                                 resultFile = potentialResource;
@@ -110,7 +110,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
             if (resultFile != null) {
                 try {
                     result = new CacheEntry(resultFile, resultFile.toURI().toURL());
-                } catch (MalformedURLException e) {
+                } catch (final MalformedURLException e) {
                     throw new RuntimeException(e);
                 }
             } else {
@@ -130,7 +130,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
         final Enumeration<URL> result;
         if (resourceRoots != null) {
             final List<URL> foundStaticUrls = new ArrayList<>();
-            for (File resourceRoot : resourceRoots) {
+            for (final File resourceRoot : resourceRoots) {
                 final File potentialResource = new File(resourceRoot, name);
                 if (potentialResource.isFile()) {
                     foundStaticUrls.add(potentialResource.toURI().toURL());
@@ -149,11 +149,11 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
         final List<MavenProjectWithModules> projects = new ArrayList<>();
         final MavenEnvironment environment = new MavenEnvironmentFactory().create();
         final MavenProjectWithModulesFactory factory = new MavenProjectWithModulesFactory();
-        for (File rootPom : rootPoms) {
+        for (final File rootPom : rootPoms) {
             try {
                 final MavenProjectWithModules project = factory.createFor(environment, rootPom);
                 enrichWithAllModulesRecursively(projects, project);
-            } catch (ProjectBuildingException e) {
+            } catch (final ProjectBuildingException e) {
                 LOG.warn("Could not build the project list for " + rootPom + ". Will ignore it now but this means that we could not erich the paths with it.", e);
             }
         }
@@ -165,7 +165,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
             what.add(withProject);
             final Collection<MavenProjectWithModules> modules = withProject.getModules();
             if (modules != null) {
-                for (MavenProjectWithModules module : modules) {
+                for (final MavenProjectWithModules module : modules) {
                     enrichWithAllModulesRecursively(what, module);
                 }
             }
@@ -175,7 +175,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
     @Nonnull
     protected List<File> toResourceRoots(@Nonnull List<MavenProjectWithModules> projects) throws Exception {
         final List<File> resourceRoots = new ArrayList<>();
-        for (MavenProjectWithModules project : projects) {
+        for (final MavenProjectWithModules project : projects) {
             final MavenProject mavenProject = project.getProject();
             enrichWithResources(resourceRoots, mavenProject);
         }
@@ -185,7 +185,7 @@ public class OverwriteWithMavenResourcesClassLoader extends ClassLoader implemen
     protected void enrichWithResources(@Nonnull Collection<File> what, @Nonnull MavenProject of) throws Exception {
         final List<Resource> resources = of.getResources();
         if (resources != null) {
-            for (Resource resource : resources) {
+            for (final Resource resource : resources) {
                 final String plainDirectory = resource.getDirectory();
                 if (plainDirectory != null) {
                     final File directory = new File(plainDirectory).getCanonicalFile();

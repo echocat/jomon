@@ -44,7 +44,7 @@ public abstract class StreamListenerProviderSupport implements StreamListenerPro
 
     @SuppressWarnings("rawtypes")
     public StreamListenerProviderSupport(@Nonnull Class<? extends LineBasedStreamListenerSupport> type, @Nonnull String name, @Nullable Iterable<String> requiredParameters) {
-        //noinspection unchecked
+        //noinspection unchecked,RedundantCast
         _type = (Class<? extends LineBasedStreamListenerSupport<?, ?>>) (Object) type;
         _name = name;
         _requiredParameters = asImmutableSet(requiredParameters);
@@ -123,7 +123,7 @@ public abstract class StreamListenerProviderSupport implements StreamListenerPro
 
     protected void checkForRequiredParameters(@Nonnull Map<String, String> parameters) {
         final Set<String> missingParameters = new TreeSet<>();
-        for (String requiredParameter : _requiredParameters) {
+        for (final String requiredParameter : _requiredParameters) {
             if (!parameters.containsKey(requiredParameter)) {
                 missingParameters.add(requiredParameter);
             }

@@ -38,7 +38,7 @@ public abstract class ResultSetIterator<R> implements CloseableIterator<R> {
         if (_hasNext == null) {
             try {
                 _hasNext = _resultSet.next();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 throw new RuntimeException("Could not retrieve next row of " + _resultSet + ".", e);
             }
         }
@@ -53,7 +53,7 @@ public abstract class ResultSetIterator<R> implements CloseableIterator<R> {
         final R result;
         try {
             result = convert(_resultSet);
-        } catch (SQLException e) {
+        } catch (final SQLException e) {
             throw new RuntimeException("Could not convert current row of " + _resultSet + ".", e);
         }
         _hasNext = null;

@@ -35,7 +35,7 @@ public class SshProcessUtils {
     @Nonnull
     public static String getCompleteCommandLineArguments(@Nullable Iterable<String> commandLine) {
         final StringBuilder sb = new StringBuilder();
-        for (String arg :commandLine) {
+        for (final String arg :commandLine) {
             if (sb.length() > 0) {
                 sb.append(' ');
             }

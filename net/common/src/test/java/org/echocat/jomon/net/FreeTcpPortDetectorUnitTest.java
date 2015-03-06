@@ -42,7 +42,7 @@ public class FreeTcpPortDetectorUnitTest {
             try {
                 detector2.detect();
                 fail("Exception missing.");
-            } catch (NoSuchElementException expected) {}
+            } catch (final NoSuchElementException ignored) {}
         } finally {
             socket.close();
         }

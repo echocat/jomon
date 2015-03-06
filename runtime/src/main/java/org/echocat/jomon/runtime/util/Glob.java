@@ -52,7 +52,7 @@ public class Glob {
         try {
             final Glob glob = new Glob(pattern);
             result = glob.containsGlob();
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             // Ignored
         }
         return result;
@@ -295,7 +295,7 @@ public class Glob {
     public Pattern toPattern() {
         final StringBuilder sb = new StringBuilder();
         sb.append("^");
-        for (GlobPattern pattern : _compiledPattern) {
+        for (final GlobPattern pattern : _compiledPattern) {
             final char type = pattern.getType();
             if (type == GLOB_MULTIPLE) {
                 sb.append(".*");

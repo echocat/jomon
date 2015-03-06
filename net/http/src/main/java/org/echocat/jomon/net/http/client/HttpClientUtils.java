@@ -28,7 +28,7 @@ public class HttpClientUtils {
     public static HttpHost toHttpHost(@Nonnull URL host) {
         try {
             return toHttpHost(host.toURI());
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             throw new IllegalArgumentException("Could not transform " + host + " to an valid uri.", e);
         }
     }

@@ -39,7 +39,7 @@ public abstract class StatementBasedQueryResultSetIterator<R> extends ResultSetI
         if (fetchSize != null) {
             try {
                 statement.setFetchSize(fetchSize);
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
                 throw new RuntimeException("Could not set fetchSize to " + fetchSize + " at " + statement + ".", e);
             }
         }

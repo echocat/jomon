@@ -43,15 +43,22 @@ import static java.nio.charset.Charset.forName;
 import static org.echocat.jomon.spring.BeanPostConfigurer.PropertyValueType.reference;
 import static org.echocat.jomon.spring.BeanPostConfigurer.PropertyValueType.value;
 
+@SuppressWarnings("CollectionDeclaredAsConcreteClass")
 public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrdered {
 
+    @Nullable
     private Properties _properties;
 
+    @Nonnull
     private Charset _charset = forName("UTF-8");
+    @Nullable
     private Properties _setProperties;
+    @Nullable
     private Resource _propertiesFile;
 
+    @Nullable
     private Properties _setBySystemProperties;
+    @Nullable
     private Properties _setByResource;
 
     public BeanPostConfigurer() throws Exception {
@@ -62,7 +69,7 @@ public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrd
     protected Properties createNewProperties() throws Exception {
         final Properties result = new Properties();
         if (_setProperties != null) {
-            for (Entry<Object, Object> keyAndValue : _setProperties.entrySet()) {
+            for (final Entry<Object, Object> keyAndValue : _setProperties.entrySet()) {
                 final Object key = keyAndValue.getKey();
                 final Object value = keyAndValue.getValue();
                 if (key != null && value != null) {
@@ -82,7 +89,7 @@ public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrd
 
         _setBySystemProperties = new Properties();
         // noinspection unchecked, RedundantCast
-        for (Entry<String, String> keyAndValue : ((Map<String, String>)(Object)System.getProperties()).entrySet()) {
+        for (final Entry<String, String> keyAndValue : ((Map<String, String>)(Object)System.getProperties()).entrySet()) {
             final String key = keyAndValue.getKey();
             if (key.contains("#") || key.contains("@")) {
                 result.put(key, keyAndValue.getValue());
@@ -125,14 +132,14 @@ public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrd
     @Override
     public void postProcessBeanFactory(@Nonnull ConfigurableListableBeanFactory beanFactory) throws BeansException {
         // noinspection unchecked, RedundantCast
-        for (Entry<String, String> keyAndValue : ((Map<String, String>)(Object)_properties).entrySet()) {
+        for (final Entry<String, String> keyAndValue : ((Map<String, String>)(Object)_properties).entrySet()) {
             handleProperty(keyAndValue.getKey(), keyAndValue.getValue(), beanFactory);
         }
     }
 
     protected void handleProperty(@Nonnull String key, @Nullable String value, @Nonnull ConfigurableListableBeanFactory beanFactory) throws BeansException {
         final BeanAndPropertyName beanAndPropertyName = getBeanAndPropertyNameOf(key);
-        for (AbstractBeanDefinition beanDefinition : getAllBeanDefinitionsBy(beanAndPropertyName.getBeanName(), beanFactory)) {
+        for (final AbstractBeanDefinition beanDefinition : getAllBeanDefinitionsBy(beanAndPropertyName.getBeanName(), beanFactory)) {
             handleProperty(beanAndPropertyName, beanDefinition, value, beanAndPropertyName.getPropertyValueType(), beanFactory);
         }
     }
@@ -140,11 +147,11 @@ public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrd
     @Nonnull
     protected List<AbstractBeanDefinition> getAllBeanDefinitionsBy(@Nonnull String targetBeanDefinitionName, @Nonnull ConfigurableListableBeanFactory beanFactory) {
         final List<AbstractBeanDefinition> result = new ArrayList<>();
-        for (String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
+        for (final String beanDefinitionName : beanFactory.getBeanDefinitionNames()) {
             if (targetBeanDefinitionName.equals(beanDefinitionName) || beanDefinitionName.startsWith(targetBeanDefinitionName + "#")) {
                 result.add((AbstractBeanDefinition) beanFactory.getBeanDefinition(beanDefinitionName));
             } else {
-                for (String alias : beanFactory.getAliases(beanDefinitionName)) {
+                for (final String alias : beanFactory.getAliases(beanDefinitionName)) {
                     if (targetBeanDefinitionName.equals(alias)) {
                         result.add((AbstractBeanDefinition) beanFactory.getBeanDefinition(beanDefinitionName));
                     }
@@ -183,7 +190,7 @@ public class BeanPostConfigurer implements BeanFactoryPostProcessor, PriorityOrd
 
     @Nullable
     protected BeanAndPropertyName getBeanAndPropertyNameOf(@Nonnull String key) throws BeansException {
-        final String[] parts = key.split("[\\#|\\@]");
+        final String[] parts = key.split("[#|@]");
         if (parts.length != 2) {
             throw new FatalBeanException("The property key '" + key + "' is invalid. The syntax is: <beanName>#<propertyName>");
         }
