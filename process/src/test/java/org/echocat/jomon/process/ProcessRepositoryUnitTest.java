@@ -17,7 +17,7 @@ package org.echocat.jomon.process;
 import org.echocat.jomon.process.local.LocalProcess;
 import org.echocat.jomon.process.local.LocalProcessRepository;
 import org.echocat.jomon.runtime.iterators.CloseableIterator;
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ import static org.echocat.jomon.process.local.LocalProcessQuery.query;
 public class ProcessRepositoryUnitTest {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void testGetInstance() throws Exception {

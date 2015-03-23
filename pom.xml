@@ -67,6 +67,8 @@
         <versions.springframework>4.0.0.RELEASE</versions.springframework>
         <versions.jetty>8.1.7.v20120910</versions.jetty>
         <versions.org.slf4j>1.7.5</versions.org.slf4j>
+        <versions.org.apache.logging.log4j>2.2</versions.org.apache.logging.log4j>
+        <versions.ch.qos.logback>1.1.2</versions.ch.qos.logback>
         <versions.org.eclipse.mylyn.wikitext>0.9.4.I20090220-1600-e3x</versions.org.eclipse.mylyn.wikitext>
         <versions.jsch.agentproxy.jsch>0.0.6</versions.jsch.agentproxy.jsch>
     </properties>
@@ -117,14 +119,39 @@
                 <version>${versions.org.slf4j}</version>
             </dependency>
             <dependency>
+                <groupId>org.fusesource.jansi</groupId>
+                <artifactId>jansi</artifactId>
+                <version>1.8</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${versions.org.slf4j}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j-impl</artifactId>
+                <version>${versions.org.apache.logging.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${versions.org.apache.logging.log4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${versions.ch.qos.logback}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
                 <artifactId>slf4j-maven-plugin-log</artifactId>
                 <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.1.1</version>
             </dependency>
 
             <!-- Servlet -->

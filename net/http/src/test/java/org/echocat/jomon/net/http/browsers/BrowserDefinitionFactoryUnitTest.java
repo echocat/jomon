@@ -14,12 +14,12 @@
 
 package org.echocat.jomon.net.http.browsers;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.echocat.jomon.cache.LruCache;
 import org.echocat.jomon.cache.management.CacheDefinition;
 import org.echocat.jomon.cache.management.CacheProvider;
-import org.echocat.jomon.testing.environments.LogEnvironment;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
@@ -43,7 +43,7 @@ public class BrowserDefinitionFactoryUnitTest {
     private static final Logger LOG = LoggerFactory.getLogger(BrowserDefinitionFactoryUnitTest.class);
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void test() throws Exception {

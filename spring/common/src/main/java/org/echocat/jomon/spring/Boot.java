@@ -14,19 +14,17 @@
 
 package org.echocat.jomon.spring;
 
-import org.echocat.jomon.runtime.ManifestInformationFactory;
-import org.springframework.context.ApplicationContext;
+import org.echocat.jomon.spring.application.Application;
+import org.echocat.jomon.spring.application.ApplicationRequirement;
+import org.echocat.jomon.spring.application.DefaultApplicationRequirement;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static org.echocat.jomon.runtime.io.UrlUtils.registerUrlStreamHandlerIfNeeded;
-import static org.echocat.jomon.runtime.logging.Log4JUtils.configureRuntime;
-import static org.echocat.jomon.spring.ApplicationGenerators.applicationGenerator;
-import static org.echocat.jomon.spring.ClassBasedApplicationRequirement.applicationBasedOn;
-import static org.echocat.jomon.spring.DefaultApplicationGenerator.getTitleFor;
-import static org.echocat.jomon.spring.PathBasedApplicationRequirement.applicationFor;
+import static org.echocat.jomon.spring.application.ApplicationGenerators.applicationGenerator;
+import static org.echocat.jomon.spring.application.DefaultApplicationRequirement.xmlConfiguredApplicationFor;
 
 public class Boot {
 
@@ -34,21 +32,19 @@ public class Boot {
         registerUrlStreamHandlerIfNeeded();
     }
 
-    @Nonnull
-    private static ManifestInformationFactory c_informationFactory = new ManifestInformationFactory(Boot.class);
-    @Nonnull
-    private static String c_applicationName = Boot.class.getName();
+    @Nullable
+    private static Application c_application;
 
     public static void main(String[] args) {
         if (args == null || (args.length != 1 && args.length != 2)) {
             //noinspection UseOfSystemOutOrSystemErr
-            System.err.println("java -cp <?> " + Boot.class.getName() + " <boot bean.xml in classpath> [log4j configuration in classpath]");
+            System.err.println("java -cp <?> " + Boot.class.getName() + " <boot bean.xml or configuration class name in classpath> [log4j configuration in classpath]");
             //noinspection CallToSystemExit
             System.exit(1);
         } else {
-            final PathBasedApplicationRequirement requirement = applicationFor(Boot.class.getClassLoader(), args[0]);
+            final DefaultApplicationRequirement requirement = xmlConfiguredApplicationFor(Boot.class.getClassLoader(), args[0]);
             if (args.length > 1) {
-                requirement.setLog4jConfigurationInClassPath(args[1]);
+                requirement.withLog4jFor(Boot.class.getClassLoader(), args[1]);
             }
             start(requirement);
         }
@@ -56,39 +52,34 @@ public class Boot {
 
     @Nonnull
     public static Application start(@Nonnull ApplicationRequirement requirement) {
-        configureInformationFactory(requirement);
-        configureLog4j(requirement);
         return startApplication(requirement);
     }
 
     @Nonnull
     public static Application startApplication(@Nonnull ApplicationRequirement requirement) {
-        return applicationGenerator().generate(requirement);
-    }
-
-    @Nonnull
-    public static ManifestInformationFactory getInformationFactory() {
-        return c_informationFactory;
+        final Application application = applicationGenerator().generate(requirement);
+        c_application = application;
+        return application;
     }
 
     /**
-     * @deprecated Use {@link Application#getTitle()} instead.
+     * ====== DEPRECATED METHODS BELOW =========================================================================================================================
+     */
+
+    /**
+     * @deprecated Use {@link Application#getInformation()}.{@link org.echocat.jomon.spring.application.ApplicationInformation#getTitle() getTitle()} instead.
      */
     @Deprecated
     @Nonnull
     public static String getApplicationName() {
-        return c_applicationName;
-    }
-
-    protected static void configureInformationFactory(@Nonnull ApplicationRequirement requirement) {
-        c_informationFactory = new ManifestInformationFactory(requirement.getBeanXmlInClassPath(), requirement.getClassLoader());
-        c_applicationName = getTitleFor(requirement, c_informationFactory);
-    }
-
-    protected static void configureLog4j(@Nonnull ApplicationRequirement requirement) {
-        final String log4jConfigurationInClassPath = requirement.getLog4jConfigurationInClassPath();
-        final ClassLoader classLoader = requirement.getClassLoader();
-        configureRuntime(log4jConfigurationInClassPath != null ? classLoader.getResource(log4jConfigurationInClassPath) : Boot.class.getResource("default.log4j.xml"));
+        final Application application = c_application;
+        final String result;
+        if (application != null) {
+            result = application.getInformation().getTitle();
+        } else {
+            result = Boot.class.getName();
+        }
+        return result;
     }
 
     /**
@@ -97,8 +88,7 @@ public class Boot {
     @Deprecated
     @Nonnull
     public static ConfigurableApplicationContext start(@Nonnull Class<?> reference, @Nonnull String bootBeanXmlFileName) {
-        return start(applicationBasedOn(reference)
-            .withBeanXmlFileName(bootBeanXmlFileName)
+        return (ConfigurableApplicationContext) start(xmlConfiguredApplicationFor(reference, bootBeanXmlFileName)
         ).getApplicationContext();
     }
 
@@ -108,9 +98,8 @@ public class Boot {
     @Deprecated
     @Nonnull
     public static ConfigurableApplicationContext start(@Nonnull Class<?> reference, @Nonnull String bootBeanXmlFileName, @Nullable String log4jConfigurationFileName) {
-        return start(applicationBasedOn(reference)
-            .withBeanXmlFileName(bootBeanXmlFileName)
-            .withLog4jConfigurationFileName(log4jConfigurationFileName)
+        return (ConfigurableApplicationContext) start(xmlConfiguredApplicationFor(reference, bootBeanXmlFileName)
+            .withLog4jFor(reference, log4jConfigurationFileName)
         ).getApplicationContext();
     }
 
@@ -120,7 +109,8 @@ public class Boot {
     @Deprecated
     @Nonnull
     public static ConfigurableApplicationContext start(@Nonnull String bootBeanXmlInClassPath) {
-        return start(applicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)).getApplicationContext();
+        return (ConfigurableApplicationContext) start(xmlConfiguredApplicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
+        ).getApplicationContext();
     }
 
     /**
@@ -129,8 +119,8 @@ public class Boot {
     @Deprecated
     @Nonnull
     public static ConfigurableApplicationContext start(@Nonnull String bootBeanXmlInClassPath, @Nullable String log4jConfigurationInClassPath) {
-        return start(applicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
-            .withLog4jConfigurationInClassPath(log4jConfigurationInClassPath)
+        return (ConfigurableApplicationContext) start(xmlConfiguredApplicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
+            .withLog4jFor(Boot.class.getClassLoader(), log4jConfigurationInClassPath)
         ).getApplicationContext();
     }
 
@@ -140,20 +130,8 @@ public class Boot {
     @Deprecated
     @Nonnull
     public static ConfigurableApplicationContext startComponent(@Nonnull String bootBeanXmlInClassPath, @Nonnull String applicationName) {
-        return start(applicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
-            .withDefaultApplicationName(applicationName)
-        ).getApplicationContext();
-    }
-
-    /**
-     * @deprecated Use {@link #startApplication(ApplicationRequirement)} instead.
-     */
-    @Deprecated
-    @Nonnull
-    public static ConfigurableApplicationContext startComponent(@Nullable ApplicationContext parent, @Nonnull String bootBeanXmlInClassPath, @Nonnull final String applicationName) {
-        return start(applicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
-            .withDefaultApplicationName(applicationName)
-            .withParentApplicationContext(parent)
+        return (ConfigurableApplicationContext) start(xmlConfiguredApplicationFor(Boot.class.getClassLoader(), bootBeanXmlInClassPath)
+            .withApplicationTitle(applicationName)
         ).getApplicationContext();
     }
 

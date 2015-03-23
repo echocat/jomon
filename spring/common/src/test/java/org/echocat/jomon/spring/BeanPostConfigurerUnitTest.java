@@ -14,7 +14,7 @@
 
 package org.echocat.jomon.spring;
 
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -27,7 +27,7 @@ public class BeanPostConfigurerUnitTest {
 
     protected static final String SYSTEM_PROPERTY_NAME = TestBean.class.getName() + "#other";
     @Rule
-    public LogEnvironment _logEnvironment = new LogEnvironment(this);
+    public LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void testWithOutSystemProperties() throws Exception {

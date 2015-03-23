@@ -28,6 +28,8 @@ import static java.util.Arrays.copyOfRange;
 import static org.echocat.jomon.maven.boot.ArtifactFactoryRequest.forArtifact;
 import static org.echocat.jomon.runtime.Log4JUtils.configureRuntime;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.echocat.jomon.runtime.logging.Slf4jUtils.tryFixMdcInSlf4j;
+import static org.echocat.jomon.runtime.logging.Slf4jUtils.tryInstallJulToSlf4jBridge;
 
 public class MavenBoot {
 
@@ -37,6 +39,8 @@ public class MavenBoot {
     private static final Pattern PROPERTY_EXTRACT_PATTERN = Pattern.compile("-D([^=]+)=(.*)");
 
     public static void main(String[] arguments) throws Exception {
+        tryInstallJulToSlf4jBridge();
+        tryFixMdcInSlf4j();
         configureRuntime(MavenBoot.class.getResource("log4j.xml"));
 
         final ArtifactFactory factory = new ArtifactFactory();

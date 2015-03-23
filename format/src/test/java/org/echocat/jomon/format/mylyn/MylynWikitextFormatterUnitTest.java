@@ -17,7 +17,7 @@ package org.echocat.jomon.format.mylyn;
 import org.echocat.jomon.format.Source;
 import org.echocat.jomon.format.Source.Format.Impl;
 import org.echocat.jomon.format.Target;
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertThat;
 public class MylynWikitextFormatterUnitTest {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     protected static final MylynWikitextFormatter FORMATTER = new MylynWikitextFormatter();
 

@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.runtime.logging;
 
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.spi.LocationAwareLogger;
@@ -21,11 +22,21 @@ import org.slf4j.spi.LocationAwareLogger;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.PrintStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
+import static java.util.logging.LogManager.getLogManager;
+import static org.echocat.jomon.runtime.CollectionUtils.asImmutableList;
 import static org.echocat.jomon.runtime.logging.LogLevel.*;
 import static org.echocat.jomon.runtime.logging.LogLevels.allLogLevels;
+import static org.echocat.jomon.runtime.util.ResourceUtils.closeQuietlyIfAutoCloseable;
 import static org.slf4j.spi.LocationAwareLogger.*;
 
 public class Slf4jUtils {
@@ -388,4 +399,170 @@ public class Slf4jUtils {
     }
 
     private Slf4jUtils() {}
+
+    @Nonnull
+    public static Installation tryInstallSlf4jBridges(@Nullable ILoggerFactory loggerFactory) {
+        return new CombinedInstallation(
+            tryInstallClToSlf4jBridge(loggerFactory),
+            tryInstallJulToSlf4jBridge(loggerFactory)
+        );
+    }
+
+    @Nonnull
+    public static Installation tryInstallClToSlf4jBridge(@Nullable ILoggerFactory loggerFactory) {
+        Installation result = new NoopInstallation();
+        try {
+            final Class<?> type = Slf4jUtils.class.getClassLoader().loadClass("org.apache.commons.logging.LogFactory");
+            final Field field = type.getDeclaredField("factories");
+            field.setAccessible(true);
+            if (Map.class.isAssignableFrom(field.getType())) {
+                // noinspection unchecked
+                final Map<ClassLoader, Object> factories = (Map<ClassLoader, Object>) field.get(null);
+                if (factories != null) {
+                    // noinspection SynchronizationOnLocalVariableOrMethodParameter
+                    synchronized (factories) {
+                        final ClassLoader classLoader = classLoader();
+                        factories.put(classLoader, createClToSlf4jLoggerFactoryFor(loggerFactory));
+                        result = new Cl2Slf4jInstallation(factories, classLoader);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException  | IllegalAccessException  |InvocationTargetException | NoSuchMethodException | NoSuchFieldException ignored) {}
+        return result;
+    }
+
+    @Nonnull
+    private static Object createClToSlf4jLoggerFactoryFor(@Nullable ILoggerFactory loggerFactory) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        try {
+            final Class<?> type = classLoader().loadClass("org.echocat.jomon.runtime.logging.Cl2Slf4jLoggerFactory");
+            return type.getConstructor(ILoggerFactory.class).newInstance(loggerFactory);
+        } catch (ClassNotFoundException | InstantiationException  | IllegalAccessException  |InvocationTargetException | NoSuchMethodException e) {
+            // noinspection UseOfSystemOutOrSystemErr
+            final PrintStream stream = System.err;
+            stream.print("WARN Could not initiate instance of org.echocat.jomon.runtime.logging.Cl2Slf4jLoggerFactory.");
+            e.printStackTrace(stream);
+            throw e;
+        }
+    }
+
+    @Nonnull
+    protected static ClassLoader classLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    @Nonnull
+    public static Installation tryInstallJulToSlf4jBridge() {
+        return tryInstallJulToSlf4jBridge(null);
+    }
+
+    @Nonnull
+    public static Installation tryInstallJulToSlf4jBridge(@Nullable ILoggerFactory loggerFactory) {
+        return tryInstallJulToSlf4jBridge(loggerFactory, null);
+    }
+
+    @Nonnull
+    public static Installation tryInstallJulToSlf4jBridge(@Nullable ILoggerFactory loggerFactory, @Nullable LogManager logManager) {
+        final Jul2Slf4jHandler newHandler = new Jul2Slf4jHandler(loggerFactory);
+        final LogManager manager = logManager != null ? logManager : getLogManager();
+        manager.reset();
+        final java.util.logging.Logger logger = manager.getLogger("");
+        final List<Handler> originalHandlers = new ArrayList<>();
+        for (final Handler oldHandlers : logger.getHandlers()) {
+            logger.removeHandler(oldHandlers);
+            originalHandlers.add(newHandler);
+        }
+        logger.addHandler(newHandler);
+        return new Jul2Slf4jInstallation(originalHandlers, newHandler, manager);
+    }
+
+    public static void tryFixMdcInSlf4j() {
+        try {
+            final ClassLoader classLoader = Log4JUtils.class.getClassLoader();
+            final Class<?> mdc = classLoader.loadClass("org.slf4j.MDC");
+            final Class<?> mdcAdapter = classLoader.loadClass("org.slf4j.spi.MDCAdapter");
+            final Field mdcAdapterField = mdc.getDeclaredField("mdcAdapter");
+            if (mdcAdapterField.getType().equals(mdcAdapter)) {
+                mdcAdapterField.setAccessible(true);
+                final Object delegate = mdcAdapterField.get(null);
+                final Object fixed = classLoader.loadClass("org.echocat.jomon.runtime.logging.FixingSlf4jMDCAdapter").getConstructor(mdcAdapter).newInstance(delegate);
+                mdcAdapterField.set(null, fixed);
+            }
+        } catch (final Exception ignored) {}
+    }
+
+    public static interface Installation extends AutoCloseable {}
+
+    private static class NoopInstallation implements Installation {
+
+        @Override
+        public void close() throws Exception {}
+
+    }
+
+    private static class CombinedInstallation implements Installation {
+
+        @Nonnull
+        private final Iterable<Installation> _installations;
+
+        private CombinedInstallation(@Nullable Installation... installations) {
+            this(asImmutableList(installations));
+        }
+
+        private CombinedInstallation(@Nonnull Iterable<Installation> installations) {
+            _installations = installations;
+        }
+
+        @Override
+        public void close() throws Exception {
+            closeQuietlyIfAutoCloseable(_installations);
+        }
+
+    }
+
+    private static class Cl2Slf4jInstallation implements Installation {
+
+        @Nonnull
+        private final Map<ClassLoader, Object> _factories;
+        @Nonnull
+        private final ClassLoader _classLoader;
+
+        private Cl2Slf4jInstallation(@Nonnull Map<ClassLoader, Object> factories, @Nonnull ClassLoader classLoader) {
+            _factories = factories;
+            _classLoader = classLoader;
+        }
+
+        @Override
+        public void close() throws Exception {
+            synchronized (_factories) {
+                _factories.remove(_classLoader);
+            }
+        }
+    }
+
+    private static class Jul2Slf4jInstallation implements Installation {
+
+        @Nonnull
+        private final Iterable<Handler> _originalHandlers;
+        @Nonnull
+        private final Handler _installedHandler;
+        @Nonnull
+        private final LogManager _logManager;
+
+        private Jul2Slf4jInstallation(@Nonnull Iterable<Handler> originalHandlers, @Nonnull Handler installedHandler, @Nonnull LogManager logManager) {
+            _originalHandlers = originalHandlers;
+            _installedHandler = installedHandler;
+            _logManager = logManager;
+        }
+
+        @Override
+        public void close() throws Exception {
+            final java.util.logging.Logger root = _logManager.getLogger("");
+            _logManager.reset();
+            root.removeHandler(_installedHandler);
+            for (final Handler originalHandler : _originalHandlers) {
+                root.addHandler(originalHandler);
+            }
+        }
+    }
+
 }

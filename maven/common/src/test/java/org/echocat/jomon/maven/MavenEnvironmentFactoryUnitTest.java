@@ -14,7 +14,7 @@
 
 package org.echocat.jomon.maven;
 
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertThat;
 public class MavenEnvironmentFactoryUnitTest {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void testCreate() throws Exception {

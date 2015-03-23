@@ -14,7 +14,7 @@
 
 package org.echocat.jomon.format;
 
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ import static org.junit.Assert.fail;
 public class BasicFormatterUnitTest {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     protected static final Formatter FORMATTER = new BasicFormatter();
 

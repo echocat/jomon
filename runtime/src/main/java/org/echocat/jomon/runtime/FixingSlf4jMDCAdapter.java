@@ -17,44 +17,19 @@ package org.echocat.jomon.runtime;
 import org.slf4j.spi.MDCAdapter;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
-public class FixingSlf4jMDCAdapter implements MDCAdapter {
+/**
+ * @deprecated Use {@link org.echocat.jomon.runtime.logging.FixingSlf4jMDCAdapter} instead.
+ */
+@Deprecated
+public class FixingSlf4jMDCAdapter extends org.echocat.jomon.runtime.logging.FixingSlf4jMDCAdapter {
 
-    private final MDCAdapter _delegate;
-
+    /**
+     * @deprecated Use {@link org.echocat.jomon.runtime.logging.FixingSlf4jMDCAdapter} instead.
+     */
+    @Deprecated
     public FixingSlf4jMDCAdapter(@Nonnull MDCAdapter delegate) {
-        _delegate = delegate;
+        super(delegate);
     }
 
-    @Override
-    public void put(String key, String val) {
-        _delegate.put(key, val != null ? val : "");
-    }
-
-    @Override
-    public String get(String key) {
-        return _delegate.get(key);
-    }
-
-    @Override
-    public void remove(String key) {
-        _delegate.remove(key);
-    }
-
-    @Override
-    public void clear() {
-        _delegate.clear();
-    }
-
-    @Override
-    public Map<?, ?> getCopyOfContextMap() {
-        return _delegate.getCopyOfContextMap();
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public void setContextMap(Map contextMap) {
-        _delegate.setContextMap(contextMap);
-    }
 }

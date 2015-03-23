@@ -19,7 +19,7 @@
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
         <param name="Target" value="System.out" />
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p [%t] %m (at %C.%M(%F:%L))%n" />
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p [%t] %m\tat %C.%M(%F:%L)%n" />
         </layout>
     </appender>
 
@@ -39,6 +39,11 @@
     </logger>
 
     <logger name="org.springframework.web.servlet" additivity="false">
+        <level value="WARN" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+    <logger name="org.echocat.jomon.spring.application.JavaBasedApplicationContextGenerator$Impl" additivity="false">
         <level value="WARN" />
         <appender-ref ref="CONSOLE" />
     </logger>

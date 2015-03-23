@@ -18,8 +18,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Closeable;
 
+import static java.lang.Thread.currentThread;
+import static org.echocat.jomon.runtime.reflection.ClassUtils.findClass;
+
 public abstract class BaseEnvironment implements Closeable {
-    
+
     protected BaseEnvironment() {}
 
     @Nullable
@@ -71,4 +74,19 @@ public abstract class BaseEnvironment implements Closeable {
         }
         return parentPackageName;
     }
+
+    @Nonnull
+    protected Class<?> findTopFromCallStack() {
+        final StackTraceElement[] stackTrace = currentThread().getStackTrace();
+        Class<?> found = null;
+        for (final StackTraceElement stackTraceElement : stackTrace) {
+            final Class<?> currentClass = findClass(stackTraceElement.getClassName());
+            if (currentClass != Thread.class && !currentClass.isAssignableFrom(getClass())) {
+                found = currentClass;
+                break;
+            }
+        }
+        return found != null ? found : getClass();
+    }
+
 }

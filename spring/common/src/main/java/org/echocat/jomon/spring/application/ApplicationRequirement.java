@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2014 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,32 +12,23 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.spring;
+package org.echocat.jomon.spring.application;
 
 import org.echocat.jomon.runtime.generation.Requirement;
-import org.springframework.context.ApplicationContext;
+import org.echocat.jomon.runtime.logging.LoggingEnvironmentConfiguration;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface ApplicationRequirement extends Requirement {
 
-    @Nonnull
-    public String getBeanXmlInClassPath();
-
     @Nullable
-    public String getLog4jConfigurationInClassPath();
+    public String getTitle();
 
     @Nonnull
-    public ClassLoader getClassLoader();
+    public ApplicationContextRequirement getApplicationContextRequirement();
 
     @Nonnull
-    public String getDefaultTitle();
-
-    @Nonnull
-    public ApplicationContext getParentApplicationContext();
-
-    @Nonnull
-    public ApplicationContextGenerator getApplicationContextGenerator();
+    public LoggingEnvironmentConfiguration getLoggingEnvironmentConfiguration();
 
 }

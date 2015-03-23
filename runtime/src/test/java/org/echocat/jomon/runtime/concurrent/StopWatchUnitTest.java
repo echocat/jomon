@@ -31,7 +31,7 @@ public class StopWatchUnitTest {
         sleepSafe("9ms");
         final Duration duration = stopWatch.getCurrentDuration();
         assertThat(duration.toPattern(), duration.isGreaterThanOrEqualTo("8ms"), is(true));
-        assertThat(duration.toPattern(), duration.isLessThanOrEqualTo("15ms"), is(true));
+        assertThat(duration.toPattern(), duration.isLessThanOrEqualTo("25ms"), is(true));
     }
 
     @Test

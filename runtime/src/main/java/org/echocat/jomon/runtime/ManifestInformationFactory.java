@@ -35,6 +35,7 @@ public class ManifestInformationFactory {
 
     public static final Name IMPLEMENTATION_BUILD_REVISION = new Name("Implementation-Build-Revision");
     public static final Name IMPLEMENTATION_BUILD_DATE = new Name("Implementation-Build-Date");
+    public static final Name IMPLEMENTATION_BANNER_FILE = new Name("Implementation-Banner-File");
 
     @Nonnull
     private final String _resource;
@@ -95,6 +96,11 @@ public class ManifestInformationFactory {
     @Nullable
     public String getImplementationBuildDate() {
         return getManifestValue(IMPLEMENTATION_BUILD_DATE);
+    }
+
+    @Nullable
+    public String getImplementationBannerFile() {
+        return getManifestValue(IMPLEMENTATION_BANNER_FILE);
     }
 
     @Nullable
@@ -212,6 +218,11 @@ public class ManifestInformationFactory {
             result = emptyIterator();
         }
         return result;
+    }
+
+    @Nonnull
+    public ClassLoader getClassLoader() {
+        return _classLoader;
     }
 
 }

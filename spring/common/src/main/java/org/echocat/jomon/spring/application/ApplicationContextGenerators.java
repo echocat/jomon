@@ -12,11 +12,12 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.spring;
+package org.echocat.jomon.spring.application;
+
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static java.util.ServiceLoader.load;
@@ -28,7 +29,7 @@ public class ApplicationContextGenerators {
     @Nonnull
     private static final Iterable<ApplicationContextGenerator> ALL = loadAll();
     @Nonnull
-    private static final ApplicationContextGenerator DEFAULT = loadDefaultOf(ALL);
+    private static final ApplicationContextGenerator DEFAULT = new Combined();
 
     private ApplicationContextGenerators() {}
 
@@ -51,14 +52,38 @@ public class ApplicationContextGenerators {
     private static Iterable<ApplicationContextGenerator> loadAll() {
         final List<ApplicationContextGenerator> result = new ArrayList<>();
         addAll(result, load(ApplicationContextGenerator.class));
-        result.add(DefaultApplicationContextGenerator.getInstance());
         return asImmutableList(result);
     }
 
-    @Nonnull
-    private static ApplicationContextGenerator loadDefaultOf(Iterable<ApplicationContextGenerator> applicationGenerators) {
-        final Iterator<ApplicationContextGenerator> i = applicationGenerators.iterator();
-        return i.next();
+    private static class Combined implements ApplicationContextGenerator {
+
+        @Nonnull
+        @Override
+        public ConfigurableApplicationContext generate(@Nonnull ApplicationContextRequirement requirement) {
+            ConfigurableApplicationContext result = null;
+            for (final ApplicationContextGenerator generator : ALL) {
+                if (generator.supports(requirement)) {
+                    result = generator.generate(requirement);
+                }
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Could not generate context for " + requirement + ".");
+            }
+            return result;
+        }
+
+        @Override
+        public boolean supports(@Nonnull ApplicationContextRequirement configuration) {
+            boolean result = false;
+            for (final ApplicationContextGenerator generator : ALL) {
+                if (generator.supports(configuration)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
     }
 
 }

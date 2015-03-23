@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2014 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,14 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.spring;
+package org.echocat.jomon.runtime.logging;
 
 import org.echocat.jomon.runtime.generation.Generator;
-import org.springframework.context.ConfigurableApplicationContext;
 
-public interface ApplicationContextGenerator extends Generator<ConfigurableApplicationContext, ApplicationRequirement> {
+import javax.annotation.Nonnull;
+
+public interface LoggingEnvironmentGenerator extends Generator<LoggingEnvironment, LoggingEnvironmentConfiguration> {
+
+    public boolean supports(@Nonnull LoggingEnvironmentConfiguration configuration);
+
 }

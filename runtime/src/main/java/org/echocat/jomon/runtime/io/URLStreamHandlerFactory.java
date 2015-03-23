@@ -3,7 +3,7 @@
  *
  * Version: MPL 2.0
  *
- * echocat Jomon, Copyright (c) 2012-2014 echocat
+ * echocat Jomon, Copyright (c) 2012-2015 echocat
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,18 +12,16 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.spring;
+package org.echocat.jomon.runtime.io;
 
-import org.springframework.context.ConfigurableApplicationContext;
+import javax.annotation.Nullable;
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 
-import javax.annotation.Nonnull;
+public interface UrlStreamHandlerFactory extends URLStreamHandlerFactory {
 
-public interface Application extends AutoCloseable {
-
-    @Nonnull
-    public ConfigurableApplicationContext getApplicationContext();
-
-    @Nonnull
-    public String getTitle();
+    @Override
+    @Nullable
+    public URLStreamHandler createURLStreamHandler(@Nullable String protocol);
 
 }

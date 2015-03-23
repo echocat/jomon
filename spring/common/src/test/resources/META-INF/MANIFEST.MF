@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven
+Specification-Title: echocat Jomon Runtime
+Specification-Version: 1.5.0
+Specification-Vendor: echocat
+Implementation-Title: echocat Jomon Runtime
+Implementation-Version: 1.5.0
+Implementation-Vendor-Id: org.echocat.jomon
+Implementation-Vendor: echocat
+Implementation-Banner-File: META-INF/jomon-banner.txt
+

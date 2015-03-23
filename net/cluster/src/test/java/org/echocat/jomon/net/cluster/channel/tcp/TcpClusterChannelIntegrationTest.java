@@ -101,7 +101,7 @@ public class TcpClusterChannelIntegrationTest extends ClusterChannelTestSupport<
         final List<TcpClusterChannel> channels = channels(U1, U2, U3, U4, U5, U6);
         try {
             final int numberOfWorkersPerChannel = 5;
-            final int numberOfMessagesPerWorker = 250;
+            final int numberOfMessagesPerWorker = 100;
             final Set<String> messagesSend = Collections.synchronizedSet(new HashSet<String>());
             final OverPeriodCounter counter = new OverPeriodCounter(new Duration("1m"), new Duration("1s"));
             final List<Worker> workers = createWorkersFor(numberOfWorkersPerChannel, numberOfMessagesPerWorker, messagesSend, channels, counter);

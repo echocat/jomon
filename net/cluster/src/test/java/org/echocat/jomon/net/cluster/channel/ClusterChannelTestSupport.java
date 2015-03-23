@@ -14,13 +14,13 @@
 
 package org.echocat.jomon.net.cluster.channel;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.echocat.jomon.runtime.math.OverPeriodCounter;
 import org.echocat.jomon.runtime.util.Duration;
 import org.echocat.jomon.runtime.util.ResourceUtils;
 import org.echocat.jomon.testing.concurrent.ParallelTestRunner.Worker;
-import org.echocat.jomon.testing.environments.LogEnvironment;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 
 import javax.annotation.Nonnegative;
@@ -41,7 +41,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
     protected static final UUID U6 = new UUID(0, 6);
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     private final MessageHandlerImpl<ID, N, C> _messageHandler = new MessageHandlerImpl<>();
     private final StateHandler<C> _stateHandler;
@@ -51,7 +51,7 @@ public abstract class ClusterChannelTestSupport<ID, N extends Node<ID>, C extend
     }
 
     @Nonnull
-    protected LogEnvironment getLogEnvironment() {
+    protected LoggingEnvironment getLogEnvironment() {
         return _logEnvironment;
     }
 

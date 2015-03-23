@@ -1,0 +1,2 @@
+org.echocat.jomon.spring.application.XmlBasedApplicationContextGenerator
+org.echocat.jomon.spring.application.JavaBasedApplicationContextGenerator

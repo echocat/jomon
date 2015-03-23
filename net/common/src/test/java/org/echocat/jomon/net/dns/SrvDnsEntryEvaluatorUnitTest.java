@@ -20,7 +20,7 @@ import org.echocat.jomon.net.dns.SrvDnsEntryEvaluator.NoSuchSrvRecordException;
 import org.echocat.jomon.runtime.concurrent.RetryForSpecifiedCountStrategy;
 import org.echocat.jomon.runtime.concurrent.RetryingStrategy;
 import org.echocat.jomon.runtime.util.ServiceTemporaryUnavailableException;
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 import org.xbill.DNS.SimpleResolver;
@@ -55,7 +55,7 @@ public class SrvDnsEntryEvaluatorUnitTest {
     protected static final RetryingStrategy<List<HostService>> RETRY_STRATEGY = RetryForSpecifiedCountStrategy.<List<HostService>>retryForSpecifiedCountOf(10).withExceptionsThatForceRetry(ServiceTemporaryUnavailableException.class).asUnmodifiable();
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
     @Rule
     public final TestDnsServer _dnsServer = new TestDnsServer();
 

@@ -14,6 +14,7 @@
 
 package org.echocat.jomon.runtime.logging;
 
+import org.apache.log4j.spi.LoggerRepository;
 import org.apache.log4j.xml.DOMConfigurator;
 
 import javax.annotation.Nonnull;
@@ -22,51 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Handler;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.log4j.LogManager.getLoggerRepository;
 
 public class Log4JUtils {
-
-    static {
-        tryInstallJulToSlf4jBridge();
-        tryFixMdcInSlf4j();
-    }
-
-    protected static void tryInstallJulToSlf4jBridge() {
-        try {
-            final ClassLoader classLoader = Log4JUtils.class.getClassLoader();
-            final Handler handler = (Handler) classLoader.loadClass("org.slf4j.bridge.SLF4JBridgeHandler").newInstance();
-            final LogManager logManager = LogManager.getLogManager();
-            logManager.reset();
-            final Logger logger = logManager.getLogger("");
-            for (final Handler oldHandlers : logger.getHandlers()) {
-                logger.removeHandler(oldHandlers);
-            }
-            logger.addHandler(handler);
-        } catch (final Exception ignored) {}
-    }
-
-    protected static void tryFixMdcInSlf4j() {
-        try {
-            final ClassLoader classLoader = Log4JUtils.class.getClassLoader();
-            final Class<?> mdc = classLoader.loadClass("org.slf4j.MDC");
-            final Class<?> mdcAdapter = classLoader.loadClass("org.slf4j.spi.MDCAdapter");
-            final Field mdcAdapterField = mdc.getDeclaredField("mdcAdapter");
-            if (mdcAdapterField.getType().equals(mdcAdapter)) {
-                mdcAdapterField.setAccessible(true);
-                final Object delegate = mdcAdapterField.get(null);
-                final Object fixed = classLoader.loadClass("org.echocat.jomon.runtime.FixingSlf4jMDCAdapter").getConstructor(mdcAdapter).newInstance(delegate);
-                mdcAdapterField.set(null, fixed);
-            }
-        } catch (final Exception ignored) {}
-    }
 
     public static void configureRuntime(@Nullable URL defaultXmlConfigUrl) {
         final URL xmlConfigUrl = resolveXmlConfigUrl(defaultXmlConfigUrl);
@@ -91,8 +54,12 @@ public class Log4JUtils {
 
 
     public static void configureRuntime(@Nonnull Reader log4jXmlConfigAsReader) throws IOException {
+        configure(log4jXmlConfigAsReader, getLoggerRepository());
+    }
+
+    public static void configure(@Nonnull Reader log4jXmlConfigAsReader, @Nonnull LoggerRepository on) throws IOException {
         final DOMConfigurator domConfigurator = new DOMConfigurator();
-        domConfigurator.doConfigure(log4jXmlConfigAsReader, getLoggerRepository());
+        domConfigurator.doConfigure(log4jXmlConfigAsReader, on);
     }
 
     @Nonnull

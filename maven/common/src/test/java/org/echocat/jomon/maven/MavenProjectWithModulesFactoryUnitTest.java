@@ -14,9 +14,9 @@
 
 package org.echocat.jomon.maven;
 
-import org.echocat.jomon.maven.TestPom.NameOfPomFileIs;
-import org.echocat.jomon.testing.environments.LogEnvironment;
 import org.apache.maven.model.Dependency;
+import org.echocat.jomon.maven.TestPom.NameOfPomFileIs;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 public class MavenProjectWithModulesFactoryUnitTest {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
     @Rule
     public final TestPom _pom = new TestPom();
 

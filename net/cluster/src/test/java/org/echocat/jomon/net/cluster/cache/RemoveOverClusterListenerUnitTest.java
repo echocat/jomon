@@ -21,7 +21,7 @@ import org.echocat.jomon.cache.management.CacheRepository;
 import org.echocat.jomon.net.cluster.channel.HandlerEnabledClusterChannel;
 import org.echocat.jomon.net.cluster.channel.Message;
 import org.echocat.jomon.runtime.util.Value;
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 public class RemoveOverClusterListenerUnitTest extends ClusterListenerTestSupport {
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void testHandleOfWrongCommand() throws Exception {

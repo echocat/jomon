@@ -21,6 +21,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
 
+import java.util.concurrent.TimeUnit;
+
 import static java.lang.System.nanoTime;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
@@ -70,6 +72,16 @@ public class StopWatch {
     }
 
     @Nonnull
+    public String toCurrentPattern() {
+        return getCurrentDuration().toPattern();
+    }
+
+    @Nonnull
+    public String toCurrentPattern(@Nonnull TimeUnit minimalUnit) {
+        return getCurrentDuration().toPattern(minimalUnit);
+    }
+
+    @Nonnull
     public StopWatch reset() {
         synchronized (this) {
             if (_startedNanos > 0) {
@@ -106,7 +118,7 @@ public class StopWatch {
     @Override
     public String toString() {
         synchronized (this) {
-            return isRunning() ? getCurrentDuration().toString() : "paused";
+            return isRunning() ? toCurrentPattern() : "paused";
         }
     }
 

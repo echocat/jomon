@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  ~ **** BEGIN LICENSE BLOCK *****
+  ~
+  ~ Version: MPL 2.0
+  ~
+  ~ echocat Jomon, Copyright (c) 2012-2015 echocat
+  ~
+  ~ This Source Code Form is subject to the terms of the Mozilla Public
+  ~ License, v. 2.0. If a copy of the MPL was not distributed with this
+  ~ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  ~
+  ~ **** END LICENSE BLOCK *****
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %msg @at %C{0}.%M\(%F:%L\)%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework.beans.factory.xml.XmlBeanDefinitionReader" level="WARN" />
+    <logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="WARN" />
+    <logger name="org.springframework.context.support" level="WARN" />
+    <logger name="org.springframework.web.servlet" level="WARN" />
+    <logger name="org.echocat.jomon.spring.application.JavaBasedApplicationContextGenerator$Impl" level="WARN" />
+    <logger name="org.eclipse.jetty" level="WARN" />
+
+    <root level="info">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>

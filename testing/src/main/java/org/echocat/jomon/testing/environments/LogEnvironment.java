@@ -14,90 +14,34 @@
 
 package org.echocat.jomon.testing.environments;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static java.lang.Thread.currentThread;
-import static org.echocat.jomon.runtime.Log4JUtils.configureRuntime;
-import static org.echocat.jomon.runtime.reflection.ClassUtils.findClass;
+import static org.echocat.jomon.testing.environments.LoggingEnvironment.Type.log4j;
 
-public class LogEnvironment extends BaseEnvironment implements TestRule {
+/**
+ * @deprecated Use {@link LoggingEnvironment} instead.
+ */
+@Deprecated
+public class LogEnvironment extends LoggingEnvironment {
 
-    private final Class<?> _reference;
-
-    public LogEnvironment() {
-        this(null);
-    }
+    public LogEnvironment() { super(log4j); }
 
     public LogEnvironment(@Nonnull Object object) {
-        this(object instanceof Class ? (Class<?>)object : object.getClass());
+        super(object, log4j);
     }
 
     public LogEnvironment(@Nullable Class<?> clazz) {
-        final Class<?> targetClass = clazz != null ? clazz : findTopFromCallStack();
-        String configuration = findFileFor(targetClass, getLog4JFileNameSuffixOfClasses(), getLog4JConfigurationFileNameInPackage());
-        if (configuration == null) {
-            configuration = findFileFor(LogEnvironment.class, getLog4JFileNameSuffixOfClasses(), getLog4JConfigurationFileNameInPackage());
-        }
-        if (configuration != null) {
-            configureRuntime(targetClass.getClassLoader().getResource(configuration));
-        }
-        _reference = targetClass;
-    }
-
-    @Override
-    public void close() {}
-
-    @Nonnull
-    protected String getLog4JFileNameSuffixOfClasses() {
-        return ".log4j.xml";
+        super(clazz, log4j);
     }
 
     @Nonnull
-    protected String getLog4JConfigurationFileNameInPackage() {
-        return "log4j.xml";
-    }
-
-    @Override
-    public Statement apply(final Statement base, Description description) {
-        return new Statement() { @Override public void evaluate() throws Throwable {
-            base.evaluate();
-        }};
-    }
-
-    @Nonnull
+    @Deprecated
     public Logger getLogger() {
-        return getLogger(_reference);
-    }
-
-    @Nonnull
-    public Logger getLogger(@Nonnull String name) {
-        return LoggerFactory.getLogger(name);
-    }
-
-    @Nonnull
-    public Logger getLogger(@Nonnull Class<?> reference) {
-        return LoggerFactory.getLogger(reference);
-    }
-
-    @Nonnull
-    protected Class<?> findTopFromCallStack() {
-        final StackTraceElement[] stackTrace = currentThread().getStackTrace();
-        Class<?> found = null;
-        for (final StackTraceElement stackTraceElement : stackTrace) {
-            final Class<?> currentClass = findClass(stackTraceElement.getClassName());
-            if (currentClass != Thread.class && !currentClass.isAssignableFrom(LogEnvironment.class)) {
-                found = currentClass;
-                break;
-            }
-        }
-        return found != null ? found : getClass();
+        // noinspection deprecation
+        return getLogger(getReference());
     }
 
 }

@@ -364,6 +364,11 @@ public class Duration implements Comparable<Duration>, Serializable {
     }
 
     @Nonnull
+    public String toPattern(@Nonnull TimeUnit minimalUnit) {
+        return trim(minimalUnit).toPattern();
+    }
+
+    @Nonnull
     public Map<TimeUnit, Long> toUnitToValue() {
         return toUnitToValue(getMilliSeconds(), getNanoSeconds());
     }

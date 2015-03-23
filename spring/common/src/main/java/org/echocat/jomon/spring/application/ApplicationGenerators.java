@@ -12,11 +12,10 @@
  * *** END LICENSE BLOCK *****
  ****************************************************************************************/
 
-package org.echocat.jomon.spring;
+package org.echocat.jomon.spring.application;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import static java.util.ServiceLoader.load;
@@ -28,7 +27,7 @@ public class ApplicationGenerators {
     @Nonnull
     private static final Iterable<ApplicationGenerator> ALL = loadAll();
     @Nonnull
-    private static final ApplicationGenerator DEFAULT = loadDefaultOf(ALL);
+    private static final ApplicationGenerator DEFAULT = new Combined();
 
     private ApplicationGenerators() {}
 
@@ -51,14 +50,39 @@ public class ApplicationGenerators {
     private static Iterable<ApplicationGenerator> loadAll() {
         final List<ApplicationGenerator> result = new ArrayList<>();
         addAll(result, load(ApplicationGenerator.class));
-        result.add(DefaultApplicationGenerator.getInstance());
+        result.add(new DefaultApplicationGenerator());
         return asImmutableList(result);
     }
 
-    @Nonnull
-    private static ApplicationGenerator loadDefaultOf(Iterable<ApplicationGenerator> applicationGenerators) {
-        final Iterator<ApplicationGenerator> i = applicationGenerators.iterator();
-        return i.next();
+    private static class Combined implements ApplicationGenerator {
+
+        @Nonnull
+        @Override
+        public Application generate(@Nonnull ApplicationRequirement requirement) {
+            Application result = null;
+            for (final ApplicationGenerator generator : ALL) {
+                if (generator.supports(requirement)) {
+                    result = generator.generate(requirement);
+                }
+            }
+            if (result == null) {
+                throw new IllegalArgumentException("Could not generate application for " + requirement + ".");
+            }
+            return result;
+        }
+
+        @Override
+        public boolean supports(@Nonnull ApplicationRequirement requirement) {
+            boolean result = false;
+            for (final ApplicationGenerator generator : ALL) {
+                if (generator.supports(requirement)) {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
     }
 
 }

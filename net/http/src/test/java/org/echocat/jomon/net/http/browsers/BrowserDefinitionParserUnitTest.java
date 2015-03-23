@@ -18,7 +18,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.echocat.jomon.net.http.browsers.BrowserDefinitionParser.Row;
 import org.echocat.jomon.net.http.browsers.BrowserDefinitionParser.Rows;
 import org.echocat.jomon.runtime.CollectionUtils;
-import org.echocat.jomon.testing.environments.LogEnvironment;
+import org.echocat.jomon.testing.environments.LoggingEnvironment;
 import org.echocat.jomon.testing.io.DummyUrlFactory;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
@@ -40,7 +40,7 @@ public class BrowserDefinitionParserUnitTest {
     private static final String TEST_BROWSER_DEFINITION_DATE = "Wed, 21 Jun 2011 23:26:51 -0000";
 
     @Rule
-    public final LogEnvironment _logEnvironment = new LogEnvironment();
+    public final LoggingEnvironment _logEnvironment = new LoggingEnvironment();
 
     @Test
     public void testFallbackToClassPathVersionIfFileFactoryDoReturnIllegalFile() throws Exception {

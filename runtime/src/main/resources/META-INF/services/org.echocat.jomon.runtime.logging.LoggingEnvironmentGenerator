@@ -1,0 +1,3 @@
+org.echocat.jomon.runtime.logging.Log4JBasedLoggingEnvironmentGenerator
+org.echocat.jomon.runtime.logging.Log4J2BasedLoggingEnvironmentGenerator
+org.echocat.jomon.runtime.logging.LogbackBasedLoggingEnvironmentGenerator
