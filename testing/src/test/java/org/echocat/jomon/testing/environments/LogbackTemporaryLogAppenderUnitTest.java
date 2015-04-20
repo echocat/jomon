@@ -18,6 +18,8 @@ package org.echocat.jomon.testing.environments;
 import org.echocat.jomon.testing.environments.LoggingEnvironment.Type;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.isEqualTo;
@@ -28,33 +30,33 @@ public class LogbackTemporaryLogAppenderUnitTest {
 
     private static final String LOGGER_NAME = LogbackTemporaryLogAppenderUnitTest.class.getName();
 
+    private final LoggingEnvironment _loggingEnvironment = new LoggingEnvironment(Type.logback);
+    private final LogbackTemporaryLogAppender _temporaryLogAppender = new LogbackTemporaryLogAppender(_loggingEnvironment, getClass());
+
     @Rule
-    public LoggingEnvironment _loggingEnvironment = new LoggingEnvironment(Type.logback);
+    public final TestRule _testRule = RuleChain.outerRule(_loggingEnvironment).around(_temporaryLogAppender);
 
     @Test(expected = UnsupportedOperationException.class)
-    public void nonLogbackLoggerInstanceIsNotSupported() {
+    public void nonLogbackLoggerInstanceIsNotSupported() throws Throwable {
         final LoggingEnvironment mockedLoggingEnvironment = mock(LoggingEnvironment.class);
         //noinspection UnnecessaryFullyQualifiedName
         final org.slf4j.Logger mockedLogger = mock(org.slf4j.Logger.class);
         doReturn(mockedLogger).when(mockedLoggingEnvironment).getLogger(LOGGER_NAME);
-        new LogbackTemporaryLogAppender(mockedLoggingEnvironment, LoggingEnvironment.class);
+        final LogbackTemporaryLogAppender logAppender = new LogbackTemporaryLogAppender(mockedLoggingEnvironment, LoggingEnvironment.class.getName());
+        logAppender.before();
     }
 
     @Test
     public void logMessageIsReturnedInToString() throws Throwable {
-        final LogbackTemporaryLogAppender logAppender = new LogbackTemporaryLogAppender(_loggingEnvironment, getClass());
-        logAppender.before();
         _loggingEnvironment.getLogger(LOGGER_NAME).info("Test message");
-        assertThat(logAppender.toString(), isEqualTo("[INFO] Test message\n"));
+        assertThat(_temporaryLogAppender.toString(), isEqualTo("[INFO] Test message\n"));
     }
 
     @Test
     public void onceAfterMethodWasInvokedNoMoreMessagesWillBeLogged() throws Throwable {
-        final LogbackTemporaryLogAppender logAppender = new LogbackTemporaryLogAppender(_loggingEnvironment, getClass());
-        logAppender.before();
         _loggingEnvironment.getLogger(LOGGER_NAME).info("This invocation is expected");
-        logAppender.after();
+        _temporaryLogAppender.after();
         _loggingEnvironment.getLogger(LOGGER_NAME).error("UNEXPECTED");
-        assertThat(logAppender.toString(), isEqualTo("[INFO] This invocation is expected\n"));
+        assertThat(_temporaryLogAppender.toString(), isEqualTo("[INFO] This invocation is expected\n"));
     }
 }

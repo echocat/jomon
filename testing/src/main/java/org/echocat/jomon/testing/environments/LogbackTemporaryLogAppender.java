@@ -65,14 +65,14 @@ public class LogbackTemporaryLogAppender extends ExternalResource {
     public LogbackTemporaryLogAppender(@Nonnull LoggingEnvironment loggingEnvironment, @Nonnull String forLogger) {
         _loggingEnvironment = loggingEnvironment;
         _forLogger = forLogger;
-        final org.slf4j.Logger loggerInstance = getSlf4jLogger();
-        if (!Logger.class.isInstance(loggerInstance)) {
-            throw new UnsupportedOperationException("Logger instance '" + loggerInstance + "' not supported at the moment. Only instances of " + Logger.class + " are supported, yet.");
-        }
     }
 
     @Override
     protected void before() throws Throwable {
+        final org.slf4j.Logger loggerInstance = getSlf4jLogger();
+        if (!Logger.class.isInstance(loggerInstance)) {
+            throw new UnsupportedOperationException("Logger instance '" + loggerInstance + "' not supported at the moment. Only instances of " + Logger.class + " are supported, yet.");
+        }
         _temporaryAppender.start();
         getLogbackLogger().addAppender(_temporaryAppender);
     }
