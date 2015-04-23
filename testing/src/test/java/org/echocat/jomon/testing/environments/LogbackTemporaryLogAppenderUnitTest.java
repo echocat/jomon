@@ -21,8 +21,14 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+
 import static org.echocat.jomon.testing.Assert.assertThat;
 import static org.echocat.jomon.testing.BaseMatchers.isEqualTo;
+import static org.echocat.jomon.testing.StringMatchers.contains;
+import static org.echocat.jomon.testing.StringMatchers.startsWith;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
@@ -58,5 +64,26 @@ public class LogbackTemporaryLogAppenderUnitTest {
         _temporaryLogAppender.after();
         _loggingEnvironment.getLogger(LOGGER_NAME).error("UNEXPECTED");
         assertThat(_temporaryLogAppender.toString(), isEqualTo("[INFO] This invocation is expected\n"));
+    }
+
+    @Test
+    public void logMessageWithExceptionWithCause() throws Throwable {
+        final UnsupportedOperationException causingException = new UnsupportedOperationException("I caused a crash and I liked it!");
+        final RuntimeException exception = new RuntimeException("MyMessage", causingException);
+        _loggingEnvironment.getLogger(LOGGER_NAME).error("Test message", exception);
+        final String logMessages = _temporaryLogAppender.toString();
+        final StringBuilder sb = new StringBuilder();
+        final OutputStream out = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                sb.append((char) b);
+            }
+        };
+        try (final PrintStream s = new PrintStream(out)) {
+            exception.printStackTrace(s);
+        }
+        assertThat(logMessages, startsWith("[ERROR] Test message\n" + sb.toString()));
+        assertThat(logMessages, contains(exception.getClass().getName() + ": " + exception.getMessage()));
+        assertThat(logMessages, contains("Caused by: " + causingException.getClass().getName() + ": " + causingException.getMessage()));
     }
 }

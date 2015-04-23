@@ -16,11 +16,17 @@ package org.echocat.jomon.testing.environments;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxy;
+import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.read.ListAppender;
 import org.junit.rules.ExternalResource;
 import org.echocat.jomon.runtime.logging.LoggingEnvironment;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -99,6 +105,21 @@ public class LogbackTemporaryLogAppender extends ExternalResource {
         final Collection<ILoggingEvent> loggingEvents = new ArrayList<>(_temporaryAppender.list);
         for (final ILoggingEvent loggingEvent : loggingEvents) {
             sb.append(loggingEvent).append("\n");
+            final IThrowableProxy throwableProxy = loggingEvent.getThrowableProxy();
+            if (ThrowableProxy.class.isInstance(throwableProxy)) { // ... dump common exception format when its a ThrowableProxy class instance
+                final OutputStream outputStream = new OutputStream() {
+                    @Override
+                    public void write(int b) throws IOException {
+                        sb.append((char) b);
+                    }
+                };
+                try (final PrintStream s = new PrintStream(outputStream)) {
+                    //noinspection ThrowableResultOfMethodCallIgnored
+                    ((ThrowableProxy) throwableProxy).getThrowable().printStackTrace(s);
+                }
+            } else if (throwableProxy != null) { // ... well unfortunately some additional package data are dump here making to complicated to test TTD against it.
+                sb.append(ThrowableProxyUtil.asString(throwableProxy));
+            }
         }
         return sb.toString();
     }
