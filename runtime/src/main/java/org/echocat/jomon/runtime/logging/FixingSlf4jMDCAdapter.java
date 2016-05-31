@@ -48,13 +48,12 @@ public class FixingSlf4jMDCAdapter implements MDCAdapter {
     }
 
     @Override
-    public Map<?, ?> getCopyOfContextMap() {
+    public Map<String, String> getCopyOfContextMap() {
         return _delegate.getCopyOfContextMap();
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public void setContextMap(Map contextMap) {
+    public void setContextMap(Map<String, String> contextMap) {
         _delegate.setContextMap(contextMap);
     }
 }

@@ -65,18 +65,19 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="org.echocat.jomon" target="1.7" />
+      <module name="org.echocat.jomon" target="1.5" />
       <module name="org.echocat.jomon.bundle" target="1.7" />
       <module name="org.echocat.jomon.cache" target="1.7" />
-      <module name="org.echocat.jomon.demo" target="1.7" />
+      <module name="org.echocat.jomon.demo" target="1.5" />
       <module name="org.echocat.jomon.demo.generator" target="1.7" />
       <module name="org.echocat.jomon.demo.repository" target="1.7" />
       <module name="org.echocat.jomon.format" target="1.7" />
-      <module name="org.echocat.jomon.maven" target="1.7" />
+      <module name="org.echocat.jomon.maven" target="1.5" />
       <module name="org.echocat.jomon.maven.boot" target="1.7" />
       <module name="org.echocat.jomon.maven.common" target="1.7" />
+      <module name="org.echocat.jomon.maven.plugins" target="1.5" />
       <module name="org.echocat.jomon.maven.plugins.common" target="1.7" />
-      <module name="org.echocat.jomon.net" target="1.7" />
+      <module name="org.echocat.jomon.net" target="1.5" />
       <module name="org.echocat.jomon.net.cluster" target="1.7" />
       <module name="org.echocat.jomon.net.common" target="1.7" />
       <module name="org.echocat.jomon.net.http" target="1.7" />
@@ -86,7 +87,7 @@
       <module name="org.echocat.jomon.process" target="1.7" />
       <module name="org.echocat.jomon.resources" target="1.7" />
       <module name="org.echocat.jomon.runtime" target="1.7" />
-      <module name="org.echocat.jomon.spring" target="1.7" />
+      <module name="org.echocat.jomon.spring" target="1.5" />
       <module name="org.echocat.jomon.spring.common" target="1.7" />
       <module name="org.echocat.jomon.spring.testing" target="1.7" />
       <module name="org.echocat.jomon.testing" target="1.7" />
@@ -98,4 +99,3 @@
     <option name="MAXIMUM_HEAP_SIZE" value="256" />
   </component>
 </project>
-

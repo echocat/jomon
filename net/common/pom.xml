@@ -43,8 +43,8 @@
 
         <!-- Net -->
         <dependency>
-            <groupId>org.xbill</groupId>
-            <artifactId>DNS</artifactId>
+            <groupId>dnsjava</groupId>
+            <artifactId>dnsjava</artifactId>
         </dependency>
 
         <!-- Test -->

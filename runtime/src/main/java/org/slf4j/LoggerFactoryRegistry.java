@@ -43,7 +43,7 @@ public class LoggerFactoryRegistry {
 
     }
 
-    public static interface Registration extends AutoCloseable {}
+    public interface Registration extends AutoCloseable {}
 
     private static class ActivationRegistration implements Registration {
 
@@ -59,7 +59,7 @@ public class LoggerFactoryRegistry {
         private ActivationRegistration() {
             synchronized (LoggerFactoryRegistry.class) {
                 _originalInitializationState = LoggerFactory.INITIALIZATION_STATE;
-                _originalTempFactory = LoggerFactory.TEMP_FACTORY;
+                _originalTempFactory = LoggerFactory.SUBST_FACTORY;
                 _originalNopFallbackFactory = LoggerFactory.NOP_FALLBACK_FACTORY;
             }
         }
@@ -70,7 +70,7 @@ public class LoggerFactoryRegistry {
                 if (!_alreadyClosed) {
                     _alreadyClosed = true;
                     LoggerFactory.INITIALIZATION_STATE = _originalInitializationState;
-                    LoggerFactory.TEMP_FACTORY = _originalTempFactory;
+                    LoggerFactory.SUBST_FACTORY = _originalTempFactory;
                     LoggerFactory.NOP_FALLBACK_FACTORY = _originalNopFallbackFactory;
                 }
             }

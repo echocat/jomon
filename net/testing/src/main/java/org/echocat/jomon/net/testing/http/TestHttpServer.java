@@ -18,7 +18,7 @@ import org.echocat.jomon.net.FreeTcpPortDetector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -161,13 +161,13 @@ public class TestHttpServer implements Closeable, TestRule {
     @Nonnull
     private static Server createServer(@Nonnull InetSocketAddress socketAddress) throws Exception {
         final Server server = new Server();
-        server.addConnector(createConnector(socketAddress));
+        server.addConnector(createConnector(socketAddress, server));
         return server;
     }
 
     @Nonnull
-    private static SocketConnector createConnector(@Nonnull InetSocketAddress socketAddress) throws IOException {
-        final SocketConnector connector = new SocketConnector();
+    private static ServerConnector createConnector(@Nonnull InetSocketAddress socketAddress, Server server) throws IOException {
+        final ServerConnector connector = new ServerConnector(server);
         connector.setHost(socketAddress.getHostName());
         connector.setPort(socketAddress.getPort());
         return connector;
