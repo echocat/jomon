@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.echocat.jomon</groupId>
         <artifactId>net</artifactId>
-        <version>1.6.3</version>
+        <version>1.6.4-SNAPSHOT</version>
     </parent>
 
     <name>echocat Jomon NET-Cluster</name>
