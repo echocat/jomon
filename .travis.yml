@@ -2,7 +2,7 @@ language: java
 install:
   - echo "Skip"
 jdk:
-  - openjdk7
   - oraclejdk7
-script: 
+  - oraclejdk8
+script:
   - mvn -Dsurefire.useFile=false clean test
